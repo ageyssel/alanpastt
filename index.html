@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alanpastt | Soluciones de Goma para Seguridad y Construcción</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        /* INSTRUCCIÓN: Reemplaza estos códigos HEX por los colores exactos del logo de Alanpastt */
+                        alanpastt: {
+                            primario: '#1E3A8A',   /* Reemplazar por el color principal del logo */
+                            secundario: '#F59E0B', /* Reemplazar por el color secundario o de acento */
+                            oscuro: '#0F172A',     /* Tono oscuro para fondos (opcionalmente derivado del logo) */
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        html { scroll-behavior: smooth; }
+    </style>
+</head>
+<body class="font-sans text-slate-800 bg-slate-50 antialiased">
+
+    <header class="sticky top-0 z-50 bg-white shadow-md h-20">
+        <div class="container mx-auto px-4 h-full flex justify-between items-center">
+            <a href="#" class="flex items-center h-full py-2">
+                <img src="logo-alanpastt.jpg" alt="Logo Alanpastt" class="h-full object-contain">
+            </a>
+            
+            <nav class="hidden md:flex space-x-8 font-medium text-slate-600">
+                <a href="#inicio" class="hover:text-alanpastt-primario transition-colors">Inicio</a>
+                <a href="#nosotros" class="hover:text-alanpastt-primario transition-colors">Nosotros</a>
+                <a href="#productos" class="hover:text-alanpastt-primario transition-colors">Productos</a>
+                <a href="#contacto" class="hover:text-alanpastt-primario transition-colors">Contacto</a>
+            </nav>
+
+            <a href="#contacto" class="hidden md:inline-block bg-alanpastt-primario text-white px-5 py-2 rounded-md font-semibold hover:opacity-90 transition-opacity">
+                Cotizar ahora
+            </a>
+        </div>
+    </header>
+
+    <section id="inicio" class="relative bg-alanpastt-oscuro text-white py-24 lg:py-32 overflow-hidden">
+        <div class="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1504307651254-35680f356f12?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80')] bg-cover bg-center"></div>
+        
+        <div class="container mx-auto px-4 relative z-10 flex flex-col items-center text-center">
+            
+            <img src="logo-alanpastt.jpg" alt="Alanpastt" class="w-1/5 min-w-[120px] max-w-[250px] mb-8 rounded bg-white p-2 shadow-lg">
+            
+            <h1 class="text-4xl md:text-6xl font-bold mb-4 tracking-tight">
+                Soluciones de Goma para<br>
+                <span class="text-alanpastt-secundario">Seguridad y Construcción</span>
+            </h1>
+            <p class="text-lg md:text-xl text-slate-300 mb-10 max-w-2xl mx-auto">
+                Calidad superior y atención personalizada en pisos antideslizantes, gradas, correas industriales y más.
+            </p>
+            
+            <a href="#productos" class="bg-alanpastt-primario text-white px-8 py-3 rounded-md text-lg font-bold hover:opacity-90 transition-opacity shadow-lg">
+                Ver Catálogo
+            </a>
+        </div>
+    </section>
+
+    <section id="nosotros" class="scroll-mt-24 py-20 bg-white">
+        <div class="container mx-auto px-4 max-w-4xl text-center">
+            <h2 class="text-3xl font-bold text-slate-800 mb-6">Especialistas en Caucho Industrial</h2>
+            <p class="text-slate-600 text-lg leading-relaxed">
+                En <strong>Alanpastt</strong>, nos dedicamos a proveer soluciones duraderas e innovadoras en productos de goma. Comprendemos las exigencias del sector de la construcción y la importancia de la seguridad industrial, por lo que cada uno de nuestros productos está fabricado bajo los más altos estándares de calidad para garantizar resistencia y confiabilidad.
+            </p>
+        </div>
+    </section>
+
+    <section id="productos" class="scroll-mt-24 py-20 bg-slate-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-slate-800 mb-12">Nuestros Productos Destacados</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-white rounded-lg shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-shadow">
+                    <div class="h-48 bg-slate-200 flex items-center justify-center">
+                        <span class="text-slate-400">[Imagen Piso Antideslizante]</span>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">Pisos Antideslizantes</h3>
+                        <p class="text-slate-600 mb-4">Superficies de alta tracción ideales para zonas de alto tráfico, rampas y áreas húmedas. Previenen accidentes y garantizan durabilidad.</p>
+                        <a href="#contacto" class="text-alanpastt-primario font-semibold hover:text-opacity-80">Consultar stock &rarr;</a>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-shadow">
+                    <div class="h-48 bg-slate-200 flex items-center justify-center">
+                        <span class="text-slate-400">[Imagen Gradas de Goma]</span>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">Gradas de Goma</h3>
+                        <p class="text-slate-600 mb-4">Revestimientos para escalones que protegen los bordes, reducen el desgaste y proporcionan pisadas seguras en entornos industriales y comerciales.</p>
+                        <a href="#contacto" class="text-alanpastt-primario font-semibold hover:text-opacity-80">Consultar stock &rarr;</a>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-shadow">
+                    <div class="h-48 bg-slate-200 flex items-center justify-center">
+                        <span class="text-slate-400">[Imagen Correa Cortadora]</span>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">Correa para Cortadora</h3>
+                        <p class="text-slate-600 mb-4">Correas de transmisión reforzadas para cortadoras de pavimento. Diseñadas para soportar fricción extrema y mantener un rendimiento constante.</p>
+                        <a href="#contacto" class="text-alanpastt-primario font-semibold hover:text-opacity-80">Consultar stock &rarr;</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-alanpastt-oscuro text-slate-400 py-10 border-t border-slate-800">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center text-sm">
+            <div class="mb-4 md:mb-0 flex items-center space-x-4">
+                <img src="logo-alanpastt.jpg" alt="Alanpastt" class="h-8 grayscale opacity-70">
+                <p>&copy; 2026 Alanpastt. Todos los derechos reservados.</p>
+            </div>
+            <div>
+                <p>Desarrollado por <span class="text-slate-300 font-semibold">FocusFrame Media SpA</span></p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
