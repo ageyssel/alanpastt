@@ -8,7 +8,6 @@
     <link rel="shortcut icon" href="public/images/logo.png" type="image/x-icon">
     
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <script>
@@ -35,13 +34,15 @@
             background-size: cover;
             background-position: center;
         }
-        .float-wa {
-            animation: pulse 2s infinite;
-        }
+        .float-wa { animation: pulse 2s infinite; }
         @keyframes pulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.05); }
             100% { transform: scale(1); }
+        }
+        /* Resplandor blanco suave para el logo del pie */
+        .footer-logo-glow {
+            filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.45));
         }
     </style>
 </head>
@@ -61,7 +62,7 @@
             </nav>
 
             <div class="hidden md:flex items-center space-x-4">
-                <a href="mailto:ventas@alanpastt.cl" class="text-sm font-bold text-alanpastt-negro hidden xl:block hover:text-alanpastt-acento transition-colors">ventas@alanpastt.cl</a>
+                <a href="mailto:ventas@alanpastt.cl" class="text-sm font-bold text-alanpastt-negro hidden xl:block hover:text-alanpastt-acento">ventas@alanpastt.cl</a>
                 <a href="#contacto" class="bg-alanpastt-negro text-alanpastt-amarillo px-6 py-3 rounded font-black hover:bg-alanpastt-amarillo hover:text-alanpastt-negro transition-all shadow-lg uppercase tracking-wide">
                     Cotizar Ahora
                 </a>
@@ -91,56 +92,49 @@
         </div>
     </section>
 
-    <section id="productos" class="scroll-mt-24 py-24 bg-white">
+    <section id="productos" class="scroll-mt-32 py-24 bg-white">
         <div class="container mx-auto px-4">
-            <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-4">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-4 border-l-8 border-alanpastt-amarillo pl-6">
                 <div>
                     <h2 class="text-5xl font-black text-alanpastt-negro uppercase tracking-tighter">Nuestros Productos</h2>
-                    <div class="w-20 h-2 bg-alanpastt-amarillo mt-4"></div>
+                    <p class="text-slate-500 font-bold max-w-md mt-2 uppercase text-sm tracking-widest">Soluciones de caucho industrial</p>
                 </div>
-                <p class="text-slate-500 font-bold max-w-md">Soluciones fabricadas para resistir el uso intensivo en faenas mineras, industriales y comerciales.</p>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
                 <div class="group cursor-pointer">
                     <div class="relative overflow-hidden rounded-lg h-80 mb-6 shadow-xl border-b-8 border-alanpastt-amarillo">
-                        <img src="public/images/piso_goma.jpg" alt="Pisos de Goma Texturizados" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                        <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
+                        <img src="public/images/piso_goma.jpg" alt="Pisos de Goma" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                     </div>
                     <h3 class="text-2xl font-black uppercase text-alanpastt-negro">Pisos Antideslizantes</h3>
-                    <p class="text-slate-600 mt-2 mb-4">Superficies de caucho de alta densidad. Máxima tracción para áreas de alto tráfico húmedo o seco.</p>
-                    <a href="#contacto" class="text-alanpastt-negro font-black border-b-2 border-alanpastt-amarillo pb-1 hover:text-alanpastt-acento">CONSULTAR PRECIOS &rarr;</a>
+                    <p class="text-slate-600 mt-2 mb-4">Máxima tracción para rampas y áreas de alto tráfico húmedo o seco.</p>
                 </div>
 
                 <div class="group cursor-pointer">
                     <div class="relative overflow-hidden rounded-lg h-80 mb-6 shadow-xl border-b-8 border-alanpastt-amarillo">
-                        <img src="public/images/gradas.jpg" alt="Gradas y Escalones Industriales" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                        <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
+                        <img src="public/images/gradas.jpg" alt="Gradas de Goma" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                     </div>
                     <h3 class="text-2xl font-black uppercase text-alanpastt-negro">Gradas de Goma</h3>
-                    <p class="text-slate-600 mt-2 mb-4">Revestimientos estriados para la protección de bordes y seguridad total en escaleras industriales.</p>
-                    <a href="#contacto" class="text-alanpastt-negro font-black border-b-2 border-alanpastt-amarillo pb-1 hover:text-alanpastt-acento">COTIZAR GRADAS &rarr;</a>
+                    <p class="text-slate-600 mt-2 mb-4">Seguridad total para escaleras industriales con revestimientos estriados.</p>
                 </div>
 
                 <div class="group cursor-pointer">
                     <div class="relative overflow-hidden rounded-lg h-80 mb-6 shadow-xl border-b-8 border-alanpastt-amarillo">
-                        <img src="public/images/correas.jpeg" alt="Correas Industriales de Transmisión" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                        <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
+                        <img src="public/images/correas.jpeg" alt="Correas Industriales" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                     </div>
                     <h3 class="text-2xl font-black uppercase text-alanpastt-negro">Correas de Transmisión</h3>
-                    <p class="text-slate-600 mt-2 mb-4">Correas trapezoidales y dentadas de alta fricción para maquinaria pesada y cortadoras.</p>
-                    <a href="#contacto" class="text-alanpastt-negro font-black border-b-2 border-alanpastt-amarillo pb-1 hover:text-alanpastt-acento">VER ESPECIFICACIONES &rarr;</a>
+                    <p class="text-slate-600 mt-2 mb-4">Alta fricción y resistencia para maquinaria pesada y cortadoras de pavimento.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="contacto" class="scroll-mt-24 py-24 bg-alanpastt-negro text-white">
+    <section id="contacto" class="scroll-mt-32 py-24 bg-alanpastt-negro text-white">
         <div class="container mx-auto px-4">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
                 <div>
                     <h2 class="text-5xl font-black uppercase tracking-tighter mb-8">Hablemos de tu <br><span class="text-alanpastt-amarillo">Proyecto</span></h2>
-                    <p class="text-xl text-gray-400 mb-12">Estamos listos para asesorarte con soluciones técnicas en goma. Contáctanos por cualquier canal.</p>
+                    <p class="text-xl text-gray-400 mb-12">Asesoría técnica y soluciones a medida en caucho.</p>
                     
                     <div class="space-y-8">
                         <div class="flex items-start space-x-4">
@@ -148,7 +142,7 @@
                                 <svg class="w-6 h-6 text-alanpastt-negro" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                             </div>
                             <div>
-                                <h4 class="font-black uppercase text-alanpastt-amarillo">Ventas Directas</h4>
+                                <h4 class="font-black uppercase text-alanpastt-amarillo">Ventas</h4>
                                 <a href="mailto:ventas@alanpastt.cl" class="text-xl hover:text-alanpastt-amarillo transition-colors">ventas@alanpastt.cl</a>
                             </div>
                         </div>
@@ -157,58 +151,57 @@
                                 <svg class="w-6 h-6 text-alanpastt-negro" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             </div>
                             <div>
-                                <h4 class="font-black uppercase text-alanpastt-amarillo">Información General</h4>
+                                <h4 class="font-black uppercase text-alanpastt-amarillo">Contacto</h4>
                                 <a href="mailto:contacto@alanpastt.cl" class="text-xl hover:text-alanpastt-amarillo transition-colors">contacto@alanpastt.cl</a>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-white p-8 md:p-12 rounded-xl">
+                <div class="bg-white p-8 md:p-12 rounded-xl text-alanpastt-negro">
                     <form id="form-cotizacion" class="space-y-6">
                         <div>
-                            <label class="block text-alanpastt-negro font-black uppercase text-xs mb-2">Nombre o Empresa</label>
-                            <input type="text" id="nombre" required class="w-full px-4 py-4 bg-slate-100 border-none rounded focus:ring-4 focus:ring-alanpastt-amarillo transition-all text-alanpastt-negro font-bold">
+                            <label class="block font-black uppercase text-xs mb-2">Nombre o Empresa</label>
+                            <input type="text" id="nombre" required class="w-full px-4 py-4 bg-slate-100 border-none rounded focus:ring-4 focus:ring-alanpastt-amarillo transition-all font-bold">
                         </div>
                         <div>
-                            <label class="block text-alanpastt-negro font-black uppercase text-xs mb-2">Email de Contacto</label>
-                            <input type="email" id="email" required class="w-full px-4 py-4 bg-slate-100 border-none rounded focus:ring-4 focus:ring-alanpastt-amarillo transition-all text-alanpastt-negro font-bold">
+                            <label class="block font-black uppercase text-xs mb-2">Email</label>
+                            <input type="email" id="email" required class="w-full px-4 py-4 bg-slate-100 border-none rounded focus:ring-4 focus:ring-alanpastt-amarillo transition-all font-bold">
                         </div>
                         <div>
-                            <label class="block text-alanpastt-negro font-black uppercase text-xs mb-2">Mensaje / Requerimiento</label>
-                            <textarea id="mensaje" rows="4" required class="w-full px-4 py-4 bg-slate-100 border-none rounded focus:ring-4 focus:ring-alanpastt-amarillo transition-all text-alanpastt-negro font-bold resize-none"></textarea>
+                            <label class="block font-black uppercase text-xs mb-2">Mensaje</label>
+                            <textarea id="mensaje" rows="4" required class="w-full px-4 py-4 bg-slate-100 border-none rounded focus:ring-4 focus:ring-alanpastt-amarillo transition-all font-bold resize-none"></textarea>
                         </div>
-                        <button type="submit" id="btn-enviar" class="w-full bg-alanpastt-negro text-alanpastt-amarillo font-black py-5 rounded-lg shadow-xl hover:bg-alanpastt-amarillo hover:text-alanpastt-negro transition-all uppercase tracking-widest text-lg">
+                        <button type="submit" class="w-full bg-alanpastt-negro text-alanpastt-amarillo font-black py-5 rounded-lg hover:bg-alanpastt-amarillo hover:text-alanpastt-negro transition-all uppercase tracking-widest text-lg">
                             Enviar Solicitud
                         </button>
                     </form>
-                    <div id="mensaje-exito" class="hidden mt-6 bg-green-500 text-white font-black p-4 rounded text-center">¡SOLICITUD ENVIADA CON ÉXITO!</div>
                 </div>
             </div>
         </div>
     </section>
 
-    <footer class="bg-alanpastt-negro text-gray-400 py-16 border-t border-gray-900">
+    <footer class="bg-alanpastt-negro text-gray-400 py-20 border-t border-gray-900">
         <div class="container mx-auto px-4 flex flex-col items-center text-center">
             
-            <div class="mb-14 w-full flex justify-center">
-                <img src="public/images/logo.png" alt="Alanpastt Footer" class="h-48 md:h-64 object-contain drop-shadow-[0_0_12px_rgba(255,255,255,0.85)] transition-transform duration-500 hover:scale-105">
+            <div class="mb-14">
+                <img src="public/images/logo.png" alt="Alanpastt Footer" class="h-48 md:h-64 object-contain footer-logo-glow transition-transform duration-500 hover:scale-105">
             </div>
             
-            <p class="font-bold text-lg mb-1 text-white">&copy; 2026 Alanpastt. Todos los derechos reservados.</p>
-            <p class="text-sm mb-12">Santiago, Chile.</p>
+            <p class="font-bold text-lg mb-1 text-white uppercase tracking-widest italic">&copy; 2026 Alanpastt</p>
+            <p class="text-sm mb-12">Soluciones Industriales - Santiago, Chile.</p>
             
-            <div class="border-t border-gray-800 pt-8 w-full max-w-sm mx-auto">
-                <p class="mb-1 uppercase tracking-widest text-xs text-gray-500">Desarrollado por</p>
-                <a href="https://focusframe.cl" target="_blank" class="text-alanpastt-amarillo font-bold text-sm hover:text-white transition-colors">
-                    FocusFrame Media SpA
+            <div class="border-t border-gray-800 pt-8 w-full max-w-sm">
+                <p class="mb-2 uppercase tracking-widest text-[10px] text-gray-600">Desarrollo Digital</p>
+                <a href="https://focusframe.cl" target="_blank" class="text-alanpastt-amarillo font-bold text-sm hover:text-white transition-colors tracking-tighter">
+                    FocusFrame Media SpA.
                 </a>
             </div>
             
         </div>
     </footer>
 
-    <a href="https://wa.me/56933365549?text=Hola%20Alanpastt,%20me%20gustaría%20solicitar%20una%20cotización%20sobre%20sus%20productos." target="_blank" class="fixed bottom-6 right-6 z-[100] bg-[#25D366] text-white p-4 rounded-full shadow-2xl float-wa hover:scale-110 transition-transform">
+    <a href="https://wa.me/56933365549?text=Hola%20Alanpastt,%20me%20gustaría%20solicitar%20una%20cotización." target="_blank" class="fixed bottom-6 right-6 z-[100] bg-[#25D366] text-white p-4 rounded-full shadow-2xl float-wa hover:scale-110 transition-transform">
         <svg class="w-10 h-10" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.588-5.946 0-6.556 5.332-11.891 11.893-11.891 3.181 0 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.481 8.403 0 6.556-5.332 11.891-11.893 11.891-2.01 0-3.991-.511-5.758-1.483l-6.235 1.635zm5.136-4.524l.368.219c1.503.893 3.238 1.364 5.025 1.364 5.398 0 9.791-4.394 9.791-9.793 0-2.617-1.02-5.078-2.871-6.93s-4.313-2.871-6.931-2.871c-5.396 0-9.791 4.394-9.791 9.793 0 1.831.509 3.618 1.472 5.18l.24.388-1.047 3.824 3.921-1.027zm10.771-6.611c-.305-.152-1.805-.891-2.085-.993-.28-.103-.485-.152-.69.152-.204.304-.791.993-.969 1.196-.178.203-.356.229-.661.077-.305-.152-1.287-.474-2.451-1.512-.906-.808-1.517-1.806-1.695-2.11-.178-.304-.019-.468.133-.62.137-.136.305-.355.457-.533.153-.178.203-.304.305-.507.102-.203.051-.381-.026-.533-.076-.152-.69-1.66-.945-2.27-.248-.594-.5-.513-.69-.523-.178-.008-.382-.01-.585-.01-.203 0-.534.076-.814.381-.28.305-1.069 1.04-1.069 2.539 0 1.498 1.092 2.943 1.245 3.146.152.203 2.15 3.284 5.21 4.605.727.314 1.293.501 1.735.642.73.232 1.393.199 1.918.121.585-.087 1.805-.737 2.06-1.448.254-.71.254-1.319.178-1.448-.076-.129-.28-.203-.585-.355z"/></svg>
     </a>
 
@@ -220,11 +213,15 @@
             
             window.addEventListener('scroll', () => {
                 if (window.scrollY > 50) {
-                    header.classList.replace('h-48', 'h-24');
-                    logo.classList.replace('h-40', 'h-16');
+                    // Header se reduce a h-24 y logo a h-20 (Tamaño equilibrado)
+                    header.style.height = "96px";
+                    logo.style.height = "80px";
+                    header.classList.add('shadow-2xl');
                 } else {
-                    header.classList.replace('h-24', 'h-48');
-                    logo.classList.replace('h-16', 'h-40');
+                    // Header vuelve a h-48 y logo a h-40 (Marca protagonista)
+                    header.style.height = "192px";
+                    logo.style.height = "160px";
+                    header.classList.remove('shadow-2xl');
                 }
             });
         });
