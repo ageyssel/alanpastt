@@ -5,18 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alanpastt | Soluciones de Goma para Seguridad y Construcción</title>
     
+    <link rel="icon" type="image/jpeg" href="public/images/logo-alanpastt.jpg">
+    
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        /* INSTRUCCIÓN: Reemplaza estos códigos HEX por los colores exactos del logo de Alanpastt */
                         alanpastt: {
-                            primario: '#1E3A8A',   /* Reemplazar por el color principal del logo */
-                            secundario: '#F59E0B', /* Reemplazar por el color secundario o de acento */
-                            oscuro: '#0F172A',     /* Tono oscuro para fondos (opcionalmente derivado del logo) */
+                            primario: '#FACC15',   /* Amarillo Industrial / Seguridad */
+                            secundario: '#111827', /* Negro Corporativo Oscuro */
+                            oscuro: '#000000',     /* Negro Puro */
+                            acento: '#EAB308'      /* Amarillo Hover */
                         }
                     }
                 }
@@ -30,107 +34,170 @@
 </head>
 <body class="font-sans text-slate-800 bg-slate-50 antialiased">
 
-    <header class="sticky top-0 z-50 bg-white shadow-md h-20">
+    <header class="sticky top-0 z-50 bg-white shadow-md h-20 border-b-4 border-alanpastt-primario">
         <div class="container mx-auto px-4 h-full flex justify-between items-center">
             <a href="#" class="flex items-center h-full py-2">
-                <img src="logo-alanpastt.jpg" alt="Logo Alanpastt" class="h-full object-contain">
+                <img src="public/images/logo-alanpastt.jpg" alt="Logo Alanpastt" class="h-full object-contain">
             </a>
             
-            <nav class="hidden md:flex space-x-8 font-medium text-slate-600">
-                <a href="#inicio" class="hover:text-alanpastt-primario transition-colors">Inicio</a>
-                <a href="#nosotros" class="hover:text-alanpastt-primario transition-colors">Nosotros</a>
-                <a href="#productos" class="hover:text-alanpastt-primario transition-colors">Productos</a>
-                <a href="#contacto" class="hover:text-alanpastt-primario transition-colors">Contacto</a>
+            <nav class="hidden md:flex space-x-8 font-bold text-alanpastt-secundario">
+                <a href="#inicio" class="hover:text-alanpastt-acento transition-colors">Inicio</a>
+                <a href="#nosotros" class="hover:text-alanpastt-acento transition-colors">Nosotros</a>
+                <a href="#productos" class="hover:text-alanpastt-acento transition-colors">Productos</a>
+                <a href="#contacto" class="hover:text-alanpastt-acento transition-colors">Contacto</a>
             </nav>
 
-            <a href="#contacto" class="hidden md:inline-block bg-alanpastt-primario text-white px-5 py-2 rounded-md font-semibold hover:opacity-90 transition-opacity">
+            <a href="#contacto" class="hidden md:inline-block bg-alanpastt-secundario text-white px-6 py-2 rounded-md font-bold hover:bg-alanpastt-primario hover:text-alanpastt-secundario transition-all shadow-md">
                 Cotizar ahora
             </a>
         </div>
     </header>
 
-    <section id="inicio" class="relative bg-alanpastt-oscuro text-white py-24 lg:py-32 overflow-hidden">
-        <div class="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1504307651254-35680f356f12?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80')] bg-cover bg-center"></div>
+    <section id="inicio" class="relative bg-alanpastt-oscuro text-white py-24 lg:py-32 overflow-hidden border-b-8 border-alanpastt-primario">
+        <div class="absolute inset-0 opacity-30 bg-[url('https://images.unsplash.com/photo-1504307651254-35680f356f12?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80')] bg-cover bg-center grayscale"></div>
         
         <div class="container mx-auto px-4 relative z-10 flex flex-col items-center text-center">
             
-            <img src="logo-alanpastt.jpg" alt="Alanpastt" class="w-1/5 min-w-[120px] max-w-[250px] mb-8 rounded bg-white p-2 shadow-lg">
+            <img src="public/images/logo-alanpastt.jpg" alt="Alanpastt" class="w-1/5 min-w-[120px] max-w-[250px] mb-8 rounded bg-white p-2 shadow-2xl">
             
-            <h1 class="text-4xl md:text-6xl font-bold mb-4 tracking-tight">
+            <h1 class="text-4xl md:text-6xl font-black mb-4 tracking-tight uppercase">
                 Soluciones de Goma para<br>
-                <span class="text-alanpastt-secundario">Seguridad y Construcción</span>
+                <span class="text-alanpastt-primario drop-shadow-md">Seguridad y Construcción</span>
             </h1>
-            <p class="text-lg md:text-xl text-slate-300 mb-10 max-w-2xl mx-auto">
+            <p class="text-lg md:text-xl text-gray-300 mb-10 max-w-2xl mx-auto font-medium">
                 Calidad superior y atención personalizada en pisos antideslizantes, gradas, correas industriales y más.
             </p>
             
-            <a href="#productos" class="bg-alanpastt-primario text-white px-8 py-3 rounded-md text-lg font-bold hover:opacity-90 transition-opacity shadow-lg">
-                Ver Catálogo
+            <a href="#productos" class="bg-alanpastt-primario text-alanpastt-secundario px-10 py-4 rounded-md text-xl font-black hover:bg-white transition-colors shadow-[0_0_15px_rgba(250,204,21,0.5)]">
+                Ver Catálogo de Productos
             </a>
         </div>
     </section>
 
     <section id="nosotros" class="scroll-mt-24 py-20 bg-white">
         <div class="container mx-auto px-4 max-w-4xl text-center">
-            <h2 class="text-3xl font-bold text-slate-800 mb-6">Especialistas en Caucho Industrial</h2>
-            <p class="text-slate-600 text-lg leading-relaxed">
-                En <strong>Alanpastt</strong>, nos dedicamos a proveer soluciones duraderas e innovadoras en productos de goma. Comprendemos las exigencias del sector de la construcción y la importancia de la seguridad industrial, por lo que cada uno de nuestros productos está fabricado bajo los más altos estándares de calidad para garantizar resistencia y confiabilidad.
+            <span class="text-alanpastt-acento font-bold uppercase tracking-widest text-sm">Sobre Nosotros</span>
+            <h2 class="text-4xl font-black text-alanpastt-secundario mb-6 mt-2">Especialistas en Caucho Industrial</h2>
+            <div class="w-24 h-1 bg-alanpastt-primario mx-auto mb-8"></div>
+            <p class="text-slate-600 text-lg leading-relaxed font-medium">
+                En <strong class="text-alanpastt-secundario">Alanpastt</strong>, nos dedicamos a proveer soluciones duraderas e innovadoras en productos de goma. Comprendemos las exigencias del sector de la construcción y la importancia de la seguridad industrial, por lo que cada uno de nuestros productos está fabricado bajo los más altos estándares de calidad para garantizar resistencia, eficiencia y confiabilidad en terreno.
             </p>
         </div>
     </section>
 
-    <section id="productos" class="scroll-mt-24 py-20 bg-slate-50">
+    <section id="productos" class="scroll-mt-24 py-20 bg-slate-100 border-y border-slate-200">
         <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center text-slate-800 mb-12">Nuestros Productos Destacados</h2>
+            <div class="text-center mb-16">
+                <span class="text-alanpastt-acento font-bold uppercase tracking-widest text-sm">Catálogo</span>
+                <h2 class="text-4xl font-black text-alanpastt-secundario mt-2">Nuestros Productos Destacados</h2>
+                <div class="w-24 h-1 bg-alanpastt-primario mx-auto mt-6"></div>
+            </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="bg-white rounded-lg shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-shadow">
-                    <div class="h-48 bg-slate-200 flex items-center justify-center">
-                        <span class="text-slate-400">[Imagen Piso Antideslizante]</span>
+                <div class="bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 group">
+                    <div class="h-56 bg-slate-200 flex items-center justify-center overflow-hidden">
+                        <span class="text-slate-400 font-medium group-hover:scale-110 transition-transform">[Imagen Piso Antideslizante]</span>
                     </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold mb-2">Pisos Antideslizantes</h3>
-                        <p class="text-slate-600 mb-4">Superficies de alta tracción ideales para zonas de alto tráfico, rampas y áreas húmedas. Previenen accidentes y garantizan durabilidad.</p>
-                        <a href="#contacto" class="text-alanpastt-primario font-semibold hover:text-opacity-80">Consultar stock &rarr;</a>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-lg shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-shadow">
-                    <div class="h-48 bg-slate-200 flex items-center justify-center">
-                        <span class="text-slate-400">[Imagen Gradas de Goma]</span>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold mb-2">Gradas de Goma</h3>
-                        <p class="text-slate-600 mb-4">Revestimientos para escalones que protegen los bordes, reducen el desgaste y proporcionan pisadas seguras en entornos industriales y comerciales.</p>
-                        <a href="#contacto" class="text-alanpastt-primario font-semibold hover:text-opacity-80">Consultar stock &rarr;</a>
+                    <div class="p-8 border-t-4 border-alanpastt-primario">
+                        <h3 class="text-2xl font-black text-alanpastt-secundario mb-3">Pisos Antideslizantes</h3>
+                        <p class="text-slate-600 mb-6 font-medium">Superficies de alta tracción ideales para zonas de alto tráfico, rampas y áreas húmedas. Previenen accidentes y garantizan durabilidad extrema.</p>
+                        <a href="#contacto" class="inline-block bg-alanpastt-secundario text-white font-bold px-4 py-2 rounded hover:bg-alanpastt-primario hover:text-alanpastt-secundario transition-colors w-full text-center">Consultar stock</a>
                     </div>
                 </div>
 
-                <div class="bg-white rounded-lg shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-shadow">
-                    <div class="h-48 bg-slate-200 flex items-center justify-center">
-                        <span class="text-slate-400">[Imagen Correa Cortadora]</span>
+                <div class="bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 group">
+                    <div class="h-56 bg-slate-200 flex items-center justify-center overflow-hidden">
+                        <span class="text-slate-400 font-medium group-hover:scale-110 transition-transform">[Imagen Gradas de Goma]</span>
                     </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold mb-2">Correa para Cortadora</h3>
-                        <p class="text-slate-600 mb-4">Correas de transmisión reforzadas para cortadoras de pavimento. Diseñadas para soportar fricción extrema y mantener un rendimiento constante.</p>
-                        <a href="#contacto" class="text-alanpastt-primario font-semibold hover:text-opacity-80">Consultar stock &rarr;</a>
+                    <div class="p-8 border-t-4 border-alanpastt-primario">
+                        <h3 class="text-2xl font-black text-alanpastt-secundario mb-3">Gradas de Goma</h3>
+                        <p class="text-slate-600 mb-6 font-medium">Revestimientos para escalones que protegen los bordes, reducen el desgaste y proporcionan pisadas 100% seguras en entornos industriales.</p>
+                        <a href="#contacto" class="inline-block bg-alanpastt-secundario text-white font-bold px-4 py-2 rounded hover:bg-alanpastt-primario hover:text-alanpastt-secundario transition-colors w-full text-center">Consultar stock</a>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 group">
+                    <div class="h-56 bg-slate-200 flex items-center justify-center overflow-hidden">
+                        <span class="text-slate-400 font-medium group-hover:scale-110 transition-transform">[Imagen Correa Cortadora]</span>
+                    </div>
+                    <div class="p-8 border-t-4 border-alanpastt-primario">
+                        <h3 class="text-2xl font-black text-alanpastt-secundario mb-3">Correa para Cortadora</h3>
+                        <p class="text-slate-600 mb-6 font-medium">Correas de transmisión reforzadas para cortadoras de pavimento. Diseñadas para soportar fricción extrema y mantener un rendimiento constante.</p>
+                        <a href="#contacto" class="inline-block bg-alanpastt-secundario text-white font-bold px-4 py-2 rounded hover:bg-alanpastt-primario hover:text-alanpastt-secundario transition-colors w-full text-center">Consultar stock</a>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <footer class="bg-alanpastt-oscuro text-slate-400 py-10 border-t border-slate-800">
-        <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center text-sm">
-            <div class="mb-4 md:mb-0 flex items-center space-x-4">
-                <img src="logo-alanpastt.jpg" alt="Alanpastt" class="h-8 grayscale opacity-70">
-                <p>&copy; 2026 Alanpastt. Todos los derechos reservados.</p>
+    <section id="contacto" class="scroll-mt-24 py-20 bg-white">
+        <div class="container mx-auto px-4 max-w-3xl">
+            <div class="text-center mb-12">
+                <span class="text-alanpastt-acento font-bold uppercase tracking-widest text-sm">Atención Personalizada</span>
+                <h2 class="text-4xl font-black text-alanpastt-secundario mt-2 mb-4">Solicita tu Cotización</h2>
+                <div class="w-24 h-1 bg-alanpastt-primario mx-auto mb-6"></div>
+                <p class="text-slate-600 font-medium text-lg">Déjanos tus datos y un especialista de Alanpastt te contactará a la brevedad para asesorarte.</p>
             </div>
-            <div>
-                <p>Desarrollado por <span class="text-slate-300 font-semibold">FocusFrame Media SpA</span></p>
+
+            <div class="bg-alanpastt-secundario p-8 md:p-10 rounded-2xl shadow-2xl relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-2 bg-alanpastt-primario"></div>
+
+                <form id="form-cotizacion" class="space-y-6 relative z-10">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="nombre" class="block text-sm font-bold text-gray-300 mb-2">Nombre completo *</label>
+                            <input type="text" id="nombre" required class="w-full px-4 py-3 bg-white border-none rounded-md focus:ring-4 focus:ring-alanpastt-primario outline-none transition-all text-slate-800 font-medium">
+                        </div>
+                        <div>
+                            <label for="email" class="block text-sm font-bold text-gray-300 mb-2">Correo electrónico *</label>
+                            <input type="email" id="email" required class="w-full px-4 py-3 bg-white border-none rounded-md focus:ring-4 focus:ring-alanpastt-primario outline-none transition-all text-slate-800 font-medium">
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="telefono" class="block text-sm font-bold text-gray-300 mb-2">Teléfono</label>
+                            <input type="tel" id="telefono" class="w-full px-4 py-3 bg-white border-none rounded-md focus:ring-4 focus:ring-alanpastt-primario outline-none transition-all text-slate-800 font-medium">
+                        </div>
+                        <div>
+                            <label for="empresa" class="block text-sm font-bold text-gray-300 mb-2">Empresa</label>
+                            <input type="text" id="empresa" class="w-full px-4 py-3 bg-white border-none rounded-md focus:ring-4 focus:ring-alanpastt-primario outline-none transition-all text-slate-800 font-medium">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="mensaje" class="block text-sm font-bold text-gray-300 mb-2">¿Qué productos o soluciones necesitas? *</label>
+                        <textarea id="mensaje" rows="4" required class="w-full px-4 py-3 bg-white border-none rounded-md focus:ring-4 focus:ring-alanpastt-primario outline-none transition-all resize-none text-slate-800 font-medium"></textarea>
+                    </div>
+
+                    <div id="mensaje-exito" class="hidden bg-green-500 text-white font-bold p-4 rounded-md text-center shadow-lg">
+                        ¡Mensaje enviado con éxito! Te contactaremos muy pronto.
+                    </div>
+                    <div id="mensaje-error" class="hidden bg-red-500 text-white font-bold p-4 rounded-md text-center shadow-lg">
+                        Hubo un error al enviar el mensaje. Por favor, intenta nuevamente.
+                    </div>
+
+                    <button type="submit" id="btn-enviar" class="w-full bg-alanpastt-primario text-alanpastt-secundario text-lg font-black py-4 px-4 rounded-md hover:bg-white transition-colors shadow-lg uppercase tracking-wide">
+                        Enviar Solicitud
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-alanpastt-oscuro text-slate-400 py-12 border-t border-slate-800">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center text-sm font-medium">
+            <div class="mb-6 md:mb-0 flex items-center space-x-4">
+                <img src="public/images/logo-alanpastt.jpg" alt="Alanpastt" class="h-10 rounded-sm">
+                <p>&copy; 2026 Alanpastt.<br>Todos los derechos reservados.</p>
+            </div>
+            <div class="text-center md:text-right">
+                <p>Desarrollado por <span class="text-alanpastt-primario font-bold">FocusFrame Media SpA</span></p>
+                <p class="mt-1 text-slate-500">Santiago, Chile</p>
             </div>
         </div>
     </footer>
 
+    <script src="src/js/main.js"></script>
 </body>
 </html>
