@@ -2,7 +2,15 @@
   'use strict';
 
   const config = window.ALANPASTT_CONFIG || {};
-  const supabaseClient = window.supabase.createClient(config.supabaseUrl, config.supabaseAnonKey);
+  const supabaseUrl = config.supabaseUrl || config.SUPABASE_URL;
+  const supabaseAnonKey = config.supabaseAnonKey || config.SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.error('Configuración Supabase faltante:', config);
+    throw new Error('Falta configurar Supabase URL o Supabase anon key en src/js/config.js');
+  }
+
+  const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
   const bucket = config.storageBucket || 'alanpastt-assets';
 
   const $ = (selector) => document.querySelector(selector);
