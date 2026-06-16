@@ -1,0 +1,15 @@
+
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Backups temporales
+*.backup.*
+*.backup.*.html
+*.backup.*.js
+
+# ZIPs locales
+*.zip
+
+# Scripts temporales de instalación
+setup_*.sh
