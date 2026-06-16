@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seguimiento de Solicitud | Alanpastt</title>
+  <link rel="shortcut icon" href="public/images/logo.png" type="image/x-icon">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            alanpastt: {
+              amarillo: '#FACC15',
+              negro: '#000000',
+              gris: '#1F2937',
+              acento: '#EAB308'
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-slate-100 text-slate-900 min-h-screen">
+
+  <header class="bg-black border-b-4 border-alanpastt-amarillo">
+    <div class="max-w-5xl mx-auto px-4 py-6 flex items-center justify-between gap-4">
+      <a href="index.html" class="flex items-center gap-4">
+        <img src="public/images/logo.png" class="h-16 bg-white rounded p-2" alt="Alanpastt">
+        <div>
+          <p class="text-alanpastt-amarillo text-xs font-black uppercase tracking-[0.3em]">Alanpastt</p>
+          <h1 class="text-white text-2xl md:text-3xl font-black uppercase">Seguimiento</h1>
+        </div>
+      </a>
+      <a href="index.html" class="bg-alanpastt-amarillo text-black px-4 py-2 rounded font-black uppercase text-sm">
+        Volver
+      </a>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-4 py-10">
+    <section class="bg-white rounded-2xl shadow-xl overflow-hidden">
+      <div class="bg-black text-white p-8 border-b-4 border-alanpastt-amarillo">
+        <p class="text-alanpastt-amarillo font-black uppercase tracking-widest text-sm">Consulta tu solicitud</p>
+        <h2 class="text-3xl md:text-5xl font-black uppercase tracking-tight mt-2">
+          Revisa el estado de tu cotización
+        </h2>
+        <p class="text-slate-300 mt-4 max-w-2xl">
+          Ingresa el código de seguimiento enviado a tu correo y el email utilizado al solicitar la cotización.
+        </p>
+      </div>
+
+      <div class="p-6 md:p-8">
+        <form id="tracking-form" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="block font-black uppercase text-xs mb-2">Código de seguimiento</label>
+            <input id="tracking-code" type="text" required placeholder="ALP-20260616-XXXXXX" class="w-full bg-slate-100 rounded px-4 py-4 font-bold outline-none focus:ring-4 focus:ring-alanpastt-amarillo uppercase">
+          </div>
+          <div>
+            <label class="block font-black uppercase text-xs mb-2">Correo electrónico</label>
+            <input id="tracking-email" type="email" required placeholder="correo@dominio.cl" class="w-full bg-slate-100 rounded px-4 py-4 font-bold outline-none focus:ring-4 focus:ring-alanpastt-amarillo">
+          </div>
+          <div class="flex items-end">
+            <button id="tracking-btn" type="submit" class="w-full bg-black text-alanpastt-amarillo py-4 rounded font-black uppercase tracking-widest hover:bg-alanpastt-amarillo hover:text-black transition-all">
+              Consultar
+            </button>
+          </div>
+        </form>
+
+        <div id="tracking-alert" class="hidden mt-6 p-4 rounded font-bold"></div>
+
+        <section id="tracking-result" class="hidden mt-8">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-1 bg-slate-100 rounded-2xl p-6">
+              <p class="text-xs font-black uppercase tracking-widest text-slate-500">Código</p>
+              <h3 id="result-code" class="text-2xl font-black text-black mt-1"></h3>
+
+              <p class="text-xs font-black uppercase tracking-widest text-slate-500 mt-6">Estado</p>
+              <div id="result-status" class="inline-flex mt-2 bg-alanpastt-amarillo text-black px-4 py-2 rounded font-black uppercase"></div>
+
+              <p class="text-xs font-black uppercase tracking-widest text-slate-500 mt-6">Fecha de ingreso</p>
+              <p id="result-date" class="font-bold mt-1"></p>
+            </div>
+
+            <div class="lg:col-span-2 space-y-6">
+              <div>
+                <h4 class="font-black uppercase tracking-widest text-sm text-slate-500 mb-2">Solicitud enviada</h4>
+                <div id="result-message" class="bg-slate-100 rounded-2xl p-5 whitespace-pre-line leading-relaxed"></div>
+              </div>
+
+              <div>
+                <h4 class="font-black uppercase tracking-widest text-sm text-slate-500 mb-2">Respuestas de Alanpastt</h4>
+                <div id="result-responses" class="space-y-3"></div>
+              </div>
+
+              <div>
+                <h4 class="font-black uppercase tracking-widest text-sm text-slate-500 mb-2">Archivos asociados</h4>
+                <div id="result-attachments" class="space-y-2"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-black text-slate-400 py-8 mt-12 text-center text-sm">
+    <strong class="text-alanpastt-amarillo">Alanpastt</strong><br>
+    ventas@alanpastt.cl · +56 9 3336 5549
+  </footer>
+
+  <script src="src/js/config.js"></script>
+  <script src="src/js/tracking.js"></script>
+</body>
+</html>

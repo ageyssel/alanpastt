@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.warn('La solicitud fue guardada, pero falló el correo:', fnError);
       }
 
-      msjExito.textContent = `¡Solicitud enviada con éxito! Tu código de seguimiento es ${data.tracking_code}. También lo enviamos a tu correo.`;
+      msjExito.innerHTML = `¡Solicitud enviada con éxito! Tu código de seguimiento es <strong>${data.tracking_code}</strong>. También lo enviamos a tu correo. <br><a href="seguimiento.html?codigo=${encodeURIComponent(data.tracking_code)}&email=${encodeURIComponent(data.email)}" class="underline font-black">Hacer seguimiento</a>`;
       msjExito.classList.remove('hidden');
       form.reset();
     } catch (error) {
