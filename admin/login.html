@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acceso Admin | Alanpastt</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../src/js/config.js"></script>
+  <link rel="stylesheet" href="assets/admin.css">
+</head>
+<body class="bg-slate-950 flex items-center justify-center p-6">
+  <main class="w-full max-w-md bg-white rounded-2xl p-8 admin-card">
+    <div class="text-center mb-8">
+      <img src="../public/images/logo.png" alt="Alanpastt" class="h-28 mx-auto object-contain">
+      <h1 class="text-3xl font-black text-slate-950 mt-4">Portal Administrativo</h1>
+      <p class="text-slate-500 font-bold">Ingresa para editar la web</p>
+    </div>
+
+    <div id="status" class="hidden mb-4"></div>
+
+    <form id="login-form" class="space-y-5">
+      <div>
+        <label for="email" class="block text-xs uppercase font-black text-slate-600 mb-2">Email</label>
+        <input id="email" type="email" required class="w-full rounded-xl bg-slate-100 px-4 py-4 font-bold outline-none focus:ring-4 focus:ring-yellow-300">
+      </div>
+      <div>
+        <label for="password" class="block text-xs uppercase font-black text-slate-600 mb-2">Contraseña</label>
+        <input id="password" type="password" required class="w-full rounded-xl bg-slate-100 px-4 py-4 font-bold outline-none focus:ring-4 focus:ring-yellow-300">
+      </div>
+      <button class="w-full bg-slate-950 text-yellow-300 rounded-xl py-4 font-black uppercase hover:bg-yellow-300 hover:text-slate-950 transition">
+        Entrar
+      </button>
+    </form>
+  </main>
+
+  <script src="assets/admin.js"></script>
+</body>
+</html>

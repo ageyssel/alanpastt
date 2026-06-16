@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contacto | Alanpastt Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../src/js/config.js"></script>
+  <link rel="stylesheet" href="assets/admin.css">
+</head>
+<body data-admin-page class="bg-slate-100 text-slate-900">
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-20">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+      <a href="dashboard.html" class="font-black text-xl">← Alanpastt Admin</a>
+      <button id="logout-btn" class="bg-slate-950 text-yellow-300 px-4 py-2 rounded-lg font-black">Salir</button>
+    </div>
+  </header>
+
+  <main class="max-w-3xl mx-auto px-4 py-10">
+    <h1 class="text-4xl font-black mb-2">Contacto</h1>
+    <p class="text-slate-500 font-bold mb-8">Edita correos, WhatsApp, mensaje prellenado y texto del footer.</p>
+    <div id="status" class="hidden mb-6"></div>
+
+    <form id="contact-form" class="admin-card bg-white rounded-2xl p-6 space-y-5">
+      <div>
+        <label class="block text-xs uppercase font-black text-slate-600 mb-2">Email ventas</label>
+        <input id="sales-email" type="email" required class="w-full rounded-xl bg-slate-100 px-4 py-4 font-bold">
+      </div>
+      <div>
+        <label class="block text-xs uppercase font-black text-slate-600 mb-2">Email contacto</label>
+        <input id="contact-email" type="email" required class="w-full rounded-xl bg-slate-100 px-4 py-4 font-bold">
+      </div>
+      <div>
+        <label class="block text-xs uppercase font-black text-slate-600 mb-2">WhatsApp en formato internacional sin +</label>
+        <input id="whatsapp-number" required placeholder="56933365549" class="w-full rounded-xl bg-slate-100 px-4 py-4 font-bold">
+      </div>
+      <div>
+        <label class="block text-xs uppercase font-black text-slate-600 mb-2">Mensaje automático WhatsApp</label>
+        <textarea id="whatsapp-message" required rows="3" class="w-full rounded-xl bg-slate-100 px-4 py-4 font-bold"></textarea>
+      </div>
+      <div>
+        <label class="block text-xs uppercase font-black text-slate-600 mb-2">Texto footer</label>
+        <input id="footer-text" required class="w-full rounded-xl bg-slate-100 px-4 py-4 font-bold">
+      </div>
+      <button class="bg-slate-950 text-yellow-300 px-6 py-4 rounded-xl font-black uppercase">Guardar contacto</button>
+    </form>
+  </main>
+
+  <script src="assets/admin.js"></script>
+</body>
+</html>
