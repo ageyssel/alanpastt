@@ -144,3 +144,19 @@ on storage.objects for all
 to authenticated
 using (bucket_id = 'quote-attachments' and public.is_admin())
 with check (bucket_id = 'quote-attachments' and public.is_admin());
+
+-- Fix estados permitidos para gestión de solicitudes
+alter table public.cotizaciones_entrantes
+drop constraint if exists cotizaciones_entrantes_estado_check;
+
+alter table public.cotizaciones_entrantes
+add constraint cotizaciones_entrantes_estado_check
+check (
+  estado in (
+    'Nueva',
+    'En revisión',
+    'Cotizando',
+    'Respondida',
+    'Cerrada'
+  )
+);
