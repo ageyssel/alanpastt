@@ -1,2 +1,27 @@
-body { min-height: 100vh; }
-.admin-card { border: 1px solid rgb(226 232 240); box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08); }
+body {
+  min-height: 100vh;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 300;
+}
+
+.admin-card {
+  border: 1px solid rgb(218 218 214);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+  border-radius: 6px !important;
+}
+
+h1, h2, h3, h4, .font-black {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 600 !important;
+}
+
+.rounded-2xl,
+.rounded-xl,
+.rounded-lg {
+  border-radius: 6px !important;
+}
+
+input, textarea, select {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 300 !important;
+}
