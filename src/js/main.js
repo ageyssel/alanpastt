@@ -24,6 +24,23 @@ function ensureMessage(form, id, className, text) {
   return node;
 }
 
+function getQuoteContext() {
+  const hidden = document.getElementById('quote-context');
+  const fromHidden = hidden?.value?.trim();
+  if (fromHidden) return fromHidden;
+
+  try {
+    const items = JSON.parse(localStorage.getItem('codimasQuoteItems') || '[]');
+    if (!Array.isArray(items) || items.length === 0) return '';
+    return [
+      'Productos agregados a la solicitud:',
+      ...items.map((item, index) => `${index + 1}. ${item.category || 'Categoría'} · ${item.name || 'Producto'} · Código ref. ${item.code || 'S/C'} · ${item.spec || ''}`)
+    ].join('\n');
+  } catch (_) {
+    return '';
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('form-cotizacion');
   const btnEnviar = document.getElementById('btn-enviar');
@@ -31,30 +48,33 @@ document.addEventListener('DOMContentLoaded', () => {
   const msjExito = ensureMessage(
     form,
     'mensaje-exito',
-    'hidden mt-6 bg-green-500 text-white font-black p-4 rounded text-center',
-    '¡Solicitud enviada con éxito! Revisa tu correo para ver el código de seguimiento.'
+    'hidden mt-6 bg-emerald-600 text-white font-black p-4 text-center',
+    'Solicitud enviada con éxito. Revisa tu correo para ver el código de seguimiento.'
   );
 
   const msjError = ensureMessage(
     form,
     'mensaje-error',
-    'hidden mt-6 bg-red-500 text-white font-black p-4 rounded text-center',
+    'hidden mt-6 bg-red-600 text-white font-black p-4 text-center',
     'Hubo un error al enviar. Intenta nuevamente.'
   );
 
   if (!form || !btnEnviar) return;
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
 
     const textoOriginal = btnEnviar.innerHTML;
-    btnEnviar.innerHTML = 'Enviando...';
+    btnEnviar.innerHTML = 'Enviando solicitud...';
     btnEnviar.disabled = true;
     btnEnviar.classList.add('opacity-75', 'cursor-not-allowed');
     msjExito.classList.add('hidden');
     msjError.classList.add('hidden');
 
     const trackingCode = generarCodigoSeguimiento();
+    const quoteContext = getQuoteContext();
+    const mensajeBase = document.getElementById('mensaje')?.value?.trim() || '';
+    const mensajeCompleto = quoteContext ? `${mensajeBase}\n\n${quoteContext}`.trim() : mensajeBase;
 
     const formData = {
       tracking_code: trackingCode,
@@ -62,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
       email: document.getElementById('email')?.value?.trim(),
       telefono: document.getElementById('telefono')?.value?.trim() || null,
       empresa: document.getElementById('empresa')?.value?.trim() || null,
-      mensaje: document.getElementById('mensaje')?.value?.trim(),
+      mensaje: mensajeCompleto,
       estado: 'Nueva',
     };
 
@@ -83,9 +103,12 @@ document.addEventListener('DOMContentLoaded', () => {
         console.warn('La solicitud fue guardada, pero falló el correo:', fnError);
       }
 
-      msjExito.innerHTML = `¡Solicitud enviada con éxito! Tu código de seguimiento es <strong>${data.tracking_code}</strong>. También lo enviamos a tu correo. <br><a href="seguimiento.html?codigo=${encodeURIComponent(data.tracking_code)}&email=${encodeURIComponent(data.email)}" class="underline font-black">Hacer seguimiento</a>`;
+      localStorage.removeItem('codimasQuoteItems');
+
+      msjExito.innerHTML = `Solicitud enviada correctamente. Tu código de seguimiento es <strong>${data.tracking_code}</strong>. <br><a href="seguimiento.html?codigo=${encodeURIComponent(data.tracking_code)}&email=${encodeURIComponent(data.email)}" class="underline font-black">Hacer seguimiento</a>`;
       msjExito.classList.remove('hidden');
       form.reset();
+      window.dispatchEvent(new Event('codimas:quote-cleared'));
     } catch (error) {
       console.error('Error al enviar solicitud:', error);
       msjError.classList.remove('hidden');
