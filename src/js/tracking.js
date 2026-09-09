@@ -123,3 +123,13 @@ form.addEventListener('submit', async (event) => {
 });
 
 readParams();
+
+document.addEventListener('DOMContentLoaded', () => {
+  const footerBottom = document.querySelector('.codimas-footer-bottom');
+  if (!footerBottom || footerBottom.querySelector('.codimas-focusone-credit')) return;
+
+  const credit = document.createElement('span');
+  credit.className = 'codimas-focusone-credit';
+  credit.textContent = 'Sitio diseñado por Focus One SpA';
+  footerBottom.appendChild(credit);
+});
