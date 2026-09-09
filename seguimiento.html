@@ -6,36 +6,44 @@
   <title>Seguimiento de Solicitud | Codimas SpA</title>
   <meta name="description" content="Consulta el estado de tu solicitud de cotización Codimas con tu código de seguimiento y correo electrónico.">
   <link rel="shortcut icon" href="public/images/codimas-icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="src/css/style.css">
+  <link rel="stylesheet" href="src/css/style.css?v=20260909-wuerth-2">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    tailwind.config = { theme: { extend: { colors: { codimas: { yellow: '#FFD200', blue: '#005BAA', black: '#0B0B0D', graphite: '#1F2937' }, alanpastt: { amarillo: '#FFD200', negro: '#0B0B0D', gris: '#1F2937', acento: '#005BAA' } } } } }
+    tailwind.config = { theme: { extend: { colors: { codimas: { yellow: '#FFD200', blue: '#005BAA', black: '#0B0B0D', graphite: '#1F2937' }, alanpastt: { amarillo: '#FFD200', negro: '#0B0B0D', gris: '#1F2937', acento: '#005BAA' } }, fontFamily: { heading: ['Archivo Condensed', 'Arial Narrow', 'Arial', 'sans-serif'], sans: ['Inter', 'Arial', 'sans-serif'] } } } }
   </script>
 </head>
-<body class="bg-slate-50 text-slate-900 min-h-screen font-sans antialiased">
+<body class="bg-white text-slate-900 min-h-screen antialiased">
 
-  <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
-    <div class="codimas-shell py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-      <a href="index.html" class="flex items-center gap-4">
-        <img src="public/images/codimas-logo.svg" class="h-16" alt="Codimas SpA">
-      </a>
-      <nav class="flex flex-wrap items-center gap-5 text-sm font-black uppercase tracking-wide">
-        <a href="index.html#categorias" class="hover:text-codimas-blue">Categorías</a>
-        <a href="cotizacion.html" class="codimas-btn codimas-btn-dark text-xs">Solicitar cotización</a>
-      </nav>
+  <header class="codimas-main-header">
+    <div class="codimas-topbar"><div class="codimas-shell h-9 flex items-center justify-between gap-6"><span>Seguimiento comercial</span><div class="flex items-center gap-5"><a href="cotizacion.html">Solicitar cotización</a><a href="mailto:ventas@codimas.cl">ventas@codimas.cl</a></div></div></div>
+    <div class="codimas-shell codimas-header-row">
+      <a href="index.html" class="codimas-logo-link"><img src="public/images/codimas-logo.svg" class="codimas-logo" alt="Codimas SpA"></a>
+      <div class="hidden lg:flex items-center h-[50px] border border-slate-200 bg-slate-50 px-5 font-bold text-slate-500">Consulta el estado de una solicitud registrada.</div>
+      <div class="codimas-actions"><a href="index.html#categorias" class="codimas-action-link optional">Productos</a><a href="cotizacion.html" class="codimas-btn codimas-btn-dark">Cotización</a></div>
     </div>
+    <div class="codimas-nav-wrap"><div class="codimas-shell"><nav class="codimas-nav"><a class="is-primary" href="index.html#categorias">Productos</a><a href="index.html#servicios">Servicios</a><a href="index.html#empresas">Empresas</a><a href="index.html#contacto">Contacto</a></nav></div></div>
   </header>
 
   <main>
-    <section class="codimas-technical-panel text-white">
-      <div class="codimas-shell py-16 md:py-24 grid lg:grid-cols-[1fr_.85fr] gap-12 items-end">
+    <section class="bg-white border-b border-slate-200">
+      <div class="codimas-shell py-4 text-sm font-bold text-slate-500"><a href="index.html" class="hover:text-codimas-blue">Inicio</a><span class="mx-2">/</span><span class="text-slate-900">Seguimiento</span></div>
+    </section>
+
+    <section class="bg-white">
+      <div class="codimas-shell grid lg:grid-cols-[.52fr_.48fr] gap-12 py-14 md:py-20 items-start">
         <div>
-          <p class="text-xs font-black uppercase tracking-[0.3em] text-codimas-yellow">Seguimiento comercial</p>
-          <h1 class="codimas-heading text-5xl md:text-7xl uppercase mt-5">Consulta tu solicitud.</h1>
-          <p class="text-slate-300 text-xl font-medium leading-relaxed mt-7 max-w-3xl">Ingresa el código recibido por correo y el email utilizado para conocer el estado de tu cotización.</p>
+          <p class="codimas-kicker">Estado de solicitud</p>
+          <h1 class="codimas-heading text-6xl md:text-8xl uppercase mt-6">Consulta tu cotización</h1>
+          <p class="codimas-copy mt-7">Ingresa el código recibido por correo y el email utilizado. El sistema mostrará estado, fecha de ingreso, mensaje y respuestas del equipo comercial.</p>
+          <div class="grid sm:grid-cols-3 gap-4 mt-10">
+            <div class="codimas-card p-5"><strong class="text-codimas-blue font-black">01</strong><p class="font-black mt-3">Código</p></div>
+            <div class="codimas-card p-5"><strong class="text-codimas-blue font-black">02</strong><p class="font-black mt-3">Correo</p></div>
+            <div class="codimas-card p-5"><strong class="text-codimas-blue font-black">03</strong><p class="font-black mt-3">Estado</p></div>
+          </div>
         </div>
-        <form id="tracking-form" class="bg-white text-black p-6 md:p-8 space-y-4">
+        <form id="tracking-form" class="codimas-panel p-6 md:p-8 space-y-5">
+          <div class="codimas-panel-header -m-6 md:-m-8 mb-6 md:mb-8"><h2 class="font-heading text-4xl uppercase font-black">Datos de seguimiento</h2></div>
           <div>
             <label class="block font-black uppercase text-xs mb-2">Código de seguimiento</label>
             <input id="tracking-code" type="text" required placeholder="COD-20260909-XXXXXX" class="codimas-input uppercase">
@@ -49,37 +57,24 @@
       </div>
     </section>
 
-    <section class="codimas-section">
+    <section class="codimas-section bg-codimas-gray-50 border-y border-slate-200">
       <div class="codimas-shell">
         <div id="tracking-alert" class="hidden mb-8 p-4 font-bold"></div>
-        <section id="tracking-result" class="hidden bg-white border border-slate-200 p-6 md:p-8">
-          <div class="grid grid-cols-1 lg:grid-cols-[.75fr_1.25fr] gap-8">
-            <aside class="bg-slate-50 border border-slate-200 p-6">
+        <section id="tracking-result" class="hidden codimas-panel">
+          <div class="codimas-panel-header"><h2 class="font-heading text-4xl uppercase font-black">Resultado de solicitud</h2></div>
+          <div class="p-6 md:p-8 grid grid-cols-1 lg:grid-cols-[.34fr_.66fr] gap-8">
+            <aside class="bg-white border border-slate-200 p-6">
               <p class="text-xs font-black uppercase tracking-widest text-slate-500">Código</p>
               <h2 id="result-code" class="text-2xl font-black text-black mt-1"></h2>
-
               <p class="text-xs font-black uppercase tracking-widest text-slate-500 mt-6">Estado</p>
               <div id="result-status" class="inline-flex mt-2 bg-codimas-yellow text-black px-4 py-2 font-black uppercase"></div>
-
               <p class="text-xs font-black uppercase tracking-widest text-slate-500 mt-6">Fecha de ingreso</p>
               <p id="result-date" class="font-bold mt-1"></p>
             </aside>
-
             <div class="space-y-8">
-              <div>
-                <h3 class="font-black uppercase tracking-widest text-sm text-slate-500 mb-3">Solicitud enviada</h3>
-                <div id="result-message" class="bg-slate-50 border border-slate-200 p-5 whitespace-pre-line leading-relaxed font-medium"></div>
-              </div>
-
-              <div>
-                <h3 class="font-black uppercase tracking-widest text-sm text-slate-500 mb-3">Respuestas de Codimas</h3>
-                <div id="result-responses" class="space-y-3"></div>
-              </div>
-
-              <div>
-                <h3 class="font-black uppercase tracking-widest text-sm text-slate-500 mb-3">Archivos asociados</h3>
-                <div id="result-attachments" class="space-y-2"></div>
-              </div>
+              <div><h3 class="font-black uppercase tracking-widest text-sm text-slate-500 mb-3">Solicitud enviada</h3><div id="result-message" class="bg-white border border-slate-200 p-5 whitespace-pre-line leading-relaxed font-medium"></div></div>
+              <div><h3 class="font-black uppercase tracking-widest text-sm text-slate-500 mb-3">Respuestas de Codimas</h3><div id="result-responses" class="space-y-3"></div></div>
+              <div><h3 class="font-black uppercase tracking-widest text-sm text-slate-500 mb-3">Archivos asociados</h3><div id="result-attachments" class="space-y-2"></div></div>
             </div>
           </div>
         </section>
@@ -87,15 +82,17 @@
     </section>
   </main>
 
-  <footer class="relative bg-black text-gray-400 py-12 border-t border-gray-900">
-    <div class="codimas-shell flex flex-col md:flex-row md:items-center md:justify-between gap-8">
-      <div><img src="public/images/codimas-logo.svg" alt="Codimas SpA" class="h-20 bg-white p-3"><p class="text-sm mt-4">Productos, suministros y soluciones.</p></div>
-      <div class="text-sm md:text-right"><p class="text-white font-black">ventas@codimas.cl</p><p>+56 9 3336 5549</p></div>
+  <footer class="codimas-footer">
+    <div class="codimas-shell py-14 codimas-footer-grid">
+      <div><img src="public/images/codimas-logo.svg" alt="Codimas SpA" class="h-20 bg-white p-3 mb-6"><p>Productos, suministros y soluciones.</p></div>
+      <div><h3>Comprar</h3><a href="index.html#categorias">Productos</a><a href="index.html#marcas">Marcas</a><a href="cotizacion.html">Cotización</a></div>
+      <div><h3>Empresas</h3><a href="index.html#empresas">Codimas Empresas</a><a href="index.html#servicios">Servicios</a><a href="seguimiento.html">Seguimiento</a></div>
+      <div><h3>Ayuda</h3><a href="index.html#contacto">Contacto</a><a href="mailto:ventas@codimas.cl">ventas@codimas.cl</a></div>
+      <div><h3>Legal</h3><p>Codimas SpA</p><a href="admin/login.html">Acceso equipo</a></div>
     </div>
-    <a href="admin/login.html" class="absolute left-4 bottom-4 md:left-8 md:bottom-6 text-[10px] uppercase tracking-widest text-gray-600 hover:text-codimas-yellow">Acceso Equipo</a>
   </footer>
 
-  <script src="src/js/config.js"></script>
-  <script src="src/js/tracking.js"></script>
+  <script src="src/js/config.js?v=20260909-wuerth-2"></script>
+  <script src="src/js/tracking.js?v=20260909-wuerth-2"></script>
 </body>
 </html>
