@@ -1,19 +1,24 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 260" role="img" aria-labelledby="title desc">
-  <title id="title">Codimas SpA</title>
-  <desc id="desc">Comercializadora, Distribuidora de Materiales y Servicios</desc>
-  <rect width="980" height="260" fill="#ffffff"/>
-  <g transform="translate(24 18)">
-    <path d="M108 0 216 62 216 184 108 246 0 184 0 62Z" fill="#0B0B0D"/>
-    <path d="M111 25 184 67 111 109 38 67Z" fill="#FFD200"/>
-    <path d="M38 82 103 120 103 198 38 160Z" fill="#ffffff"/>
-    <path d="M116 120 188 78 188 153 116 195Z" fill="#005BAA"/>
-    <path d="M60 94 104 120 60 146Z" fill="#FFD200"/>
-    <path d="M118 121 164 148 118 175Z" fill="#005BAA"/>
-  </g>
-  <g transform="translate(290 58)">
-    <text x="0" y="82" font-family="Arial Black, Arial, Helvetica, sans-serif" font-size="86" font-weight="900" fill="#0B0B0D" letter-spacing="-3">Codimas</text>
-    <text x="560" y="82" font-family="Arial Black, Arial, Helvetica, sans-serif" font-size="58" font-weight="900" fill="#005BAA">SpA</text>
-    <rect x="4" y="104" width="690" height="10" rx="5" fill="#FFD200"/>
-    <text x="0" y="158" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="700" fill="#0B0B0D">Comercializadora, Distribuidora de Materiales y Servicios</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 210" role="img" aria-labelledby="title desc">
+  <title id="title">CODIMAS SpA</title>
+  <desc id="desc">Productos, suministros y soluciones</desc>
+  <defs>
+    <style>
+      .word{font-family:'Archivo Condensed','Arial Narrow',Arial,Helvetica,sans-serif;font-weight:900;letter-spacing:-4px;}
+      .tag{font-family:'Inter',Arial,Helvetica,sans-serif;font-weight:800;letter-spacing:3.5px;}
+    </style>
+  </defs>
+  <g fill="none" fill-rule="evenodd">
+    <g transform="translate(14 18)">
+      <rect x="0" y="0" width="174" height="174" rx="0" fill="#0B0B0D"/>
+      <path d="M126 35H65c-25 0-43 18-43 43v18c0 25 18 43 43 43h61v-31H70c-10 0-17-7-17-17V83c0-10 7-17 17-17h56V35Z" fill="#FFD200"/>
+      <path d="M91 66h24c24 0 39 15 39 38s-15 38-39 38H91V66Zm24 48c7 0 11-4 11-10s-4-10-11-10h-2v20h2Z" fill="#005BAA"/>
+      <path d="M23 151h128v9H23z" fill="#FFD200"/>
+    </g>
+    <g transform="translate(222 49)">
+      <text class="word" x="0" y="78" font-size="91" fill="#0B0B0D">CODIMAS</text>
+      <text class="word" x="517" y="78" font-size="48" fill="#005BAA" letter-spacing="-1">SpA</text>
+      <rect x="3" y="100" width="558" height="8" fill="#FFD200"/>
+      <text class="tag" x="4" y="143" font-size="16" fill="#1F2937">PRODUCTOS · SUMINISTROS · SOLUCIONES</text>
+    </g>
   </g>
 </svg>
