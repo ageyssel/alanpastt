@@ -1,6 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="CODIMAS">
-  <rect width="256" height="256" fill="#0B0B0D"/>
-  <path d="M181 50H90c-37 0-63 27-63 64v28c0 37 26 64 63 64h91v-45H96c-15 0-25-10-25-25v-17c0-15 10-25 25-25h85V50Z" fill="#FFD200"/>
-  <path d="M118 94h34c35 0 57 22 57 57s-22 55-57 55h-34V94Zm34 70c11 0 18-6 18-16s-7-16-18-16h-5v32h5Z" fill="#005BAA"/>
-  <path d="M36 221h184v13H36z" fill="#FFD200"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 144 144" role="img" aria-label="CODIMAS">
+  <rect width="144" height="144" fill="#FFFFFF"/>
+  <path d="M12 14h92v24H40v68h64v24H12z" fill="#0B0B0D"/>
+  <path d="M86 14h28l18 12-18 12H86z" fill="#FFD200"/>
+  <path d="M86 106h28l18 12-18 12H86z" fill="#005BAA"/>
+  <path d="M64 48h22c23 0 37 14 37 32s-14 32-37 32H64zm22 43c8 0 13-4 13-11s-5-11-13-11h-1v22z" fill="#005BAA"/>
 </svg>
