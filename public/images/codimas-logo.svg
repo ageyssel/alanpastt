@@ -1,24 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 210" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 170" role="img" aria-labelledby="title desc">
   <title id="title">CODIMAS SpA</title>
   <desc id="desc">Productos, suministros y soluciones</desc>
-  <defs>
-    <style>
-      .word{font-family:'Archivo Condensed','Arial Narrow',Arial,Helvetica,sans-serif;font-weight:900;letter-spacing:-4px;}
-      .tag{font-family:'Inter',Arial,Helvetica,sans-serif;font-weight:800;letter-spacing:3.5px;}
-    </style>
-  </defs>
-  <g fill="none" fill-rule="evenodd">
-    <g transform="translate(14 18)">
-      <rect x="0" y="0" width="174" height="174" rx="0" fill="#0B0B0D"/>
-      <path d="M126 35H65c-25 0-43 18-43 43v18c0 25 18 43 43 43h61v-31H70c-10 0-17-7-17-17V83c0-10 7-17 17-17h56V35Z" fill="#FFD200"/>
-      <path d="M91 66h24c24 0 39 15 39 38s-15 38-39 38H91V66Zm24 48c7 0 11-4 11-10s-4-10-11-10h-2v20h2Z" fill="#005BAA"/>
-      <path d="M23 151h128v9H23z" fill="#FFD200"/>
-    </g>
-    <g transform="translate(222 49)">
-      <text class="word" x="0" y="78" font-size="91" fill="#0B0B0D">CODIMAS</text>
-      <text class="word" x="517" y="78" font-size="48" fill="#005BAA" letter-spacing="-1">SpA</text>
-      <rect x="3" y="100" width="558" height="8" fill="#FFD200"/>
-      <text class="tag" x="4" y="143" font-size="16" fill="#1F2937">PRODUCTOS · SUMINISTROS · SOLUCIONES</text>
-    </g>
+  <g transform="translate(10 18)">
+    <path d="M14 12h92v24H42v62h64v24H14z" fill="#0B0B0D"/>
+    <path d="M88 12h27l17 12-17 12H88z" fill="#FFD200"/>
+    <path d="M88 98h27l17 12-17 12H88z" fill="#005BAA"/>
+    <path d="M66 48h22c22 0 36 13 36 31s-14 31-36 31H66zm22 41c8 0 13-4 13-10s-5-10-13-10h-1v20z" fill="#005BAA"/>
+  </g>
+  <g transform="translate(172 28)">
+    <text x="0" y="67" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="78" font-weight="600" letter-spacing="1.2" fill="#0B0B0D">CODIMAS</text>
+    <text x="497" y="65" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="29" font-weight="600" letter-spacing="1" fill="#005BAA">SpA</text>
+    <rect x="1" y="84" width="548" height="5" fill="#FFD200"/>
+    <text x="1" y="116" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="14" font-weight="300" letter-spacing="2.8" fill="#53575D">PRODUCTOS · SUMINISTROS · SOLUCIONES</text>
   </g>
 </svg>
