@@ -150,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <div><h3>Ayuda</h3><a href="../seguimiento.html">Seguimiento</a><a href="../index.html#contacto">Contacto</a></div>
           <div><h3>Contacto</h3><a href="mailto:ventas@codimas.cl">ventas@codimas.cl</a><a href="tel:+56933365549">+56 9 3336 5549</a></div>
         </div>
-        <div class="codimas-footer-bottom"><span>© 2026 Codimas SpA.</span><span>Chile · Productos, suministros y soluciones.</span></div>
+        <div class="codimas-footer-bottom"><span>© 2026 Codimas SpA.</span><span>Chile · Productos, suministros y soluciones.</span><span class="codimas-focusone-credit">Sitio diseñado por Focus One SpA</span></div>
       </div>
     </footer>
   `;
