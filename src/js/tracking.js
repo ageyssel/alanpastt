@@ -9,7 +9,7 @@ const result = document.getElementById('tracking-result');
 
 function showAlert(message, type = 'error') {
   alertBox.textContent = message;
-  alertBox.className = `mt-6 p-4 rounded font-bold ${
+  alertBox.className = `mt-6 p-4 font-bold ${
     type === 'error' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'
   }`;
   alertBox.classList.remove('hidden');
@@ -48,23 +48,23 @@ function renderTracking(data) {
 
   document.getElementById('result-responses').innerHTML = responses.length
     ? responses.map(item => `
-        <article class="bg-slate-100 rounded-2xl p-5 border border-slate-200">
+        <article class="bg-slate-50 p-5 border border-slate-200">
           <div class="font-black text-black">${escapeHtml(item.subject)}</div>
           <div class="text-xs text-slate-500 mt-1 mb-3">${formatDate(item.created_at)}</div>
           <p class="whitespace-pre-line leading-relaxed">${escapeHtml(item.body)}</p>
         </article>
       `).join('')
-    : '<p class="bg-slate-100 rounded-xl p-4 text-slate-500 font-bold">Aún no hay respuestas registradas.</p>';
+    : '<p class="bg-slate-50 border border-slate-200 p-4 text-slate-500 font-bold">Aún no hay respuestas registradas.</p>';
 
   document.getElementById('result-attachments').innerHTML = attachments.length
     ? attachments.map(file => `
-        <div class="bg-slate-100 rounded-xl p-4 border border-slate-200">
+        <div class="bg-slate-50 p-4 border border-slate-200">
           <div class="font-black">${escapeHtml(file.file_name)}</div>
           <div class="text-xs text-slate-500">${formatDate(file.created_at)}</div>
-          <p class="text-xs text-slate-500 mt-2">Si necesitas descargar este archivo, solicita el enlace respondiendo al correo de Alanpastt.</p>
+          <p class="text-xs text-slate-500 mt-2">Si necesitas descargar este archivo, solicita el enlace respondiendo al correo de Codimas.</p>
         </div>
       `).join('')
-    : '<p class="bg-slate-100 rounded-xl p-4 text-slate-500 font-bold">Sin archivos visibles para esta solicitud.</p>';
+    : '<p class="bg-slate-50 border border-slate-200 p-4 text-slate-500 font-bold">Sin archivos visibles para esta solicitud.</p>';
 
   result.classList.remove('hidden');
 }
