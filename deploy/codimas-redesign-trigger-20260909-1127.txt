@@ -1,0 +1,2 @@
+Deploy trigger for Codimas Wuerth-inspired catalog/quotation redesign.
+Generated to force hosting providers connected to GitHub main to rebuild the latest version.
