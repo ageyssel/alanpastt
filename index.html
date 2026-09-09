@@ -3,220 +3,139 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Alanpastt | Soluciones de Goma para Seguridad y Construcción</title>
-  <meta name="description" content="Soluciones industriales en caucho para seguridad y construcción: pisos antideslizantes, gradas de goma y correas de transmisión.">
-
-  <link rel="shortcut icon" href="public/images/logo.png" type="image/x-icon">
+  <title>Codimas SpA | Comercializadora, Distribuidora de Materiales y Servicios</title>
+  <meta name="description" content="Codimas SpA: materiales y soluciones B2B para industria, construcción, ferretería, electricidad, revestimientos, pisos, logística y abastecimiento.">
+  <link rel="shortcut icon" href="public/images/codimas-icon.svg" type="image/svg+xml">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="src/js/config.js"></script>
-
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            alanpastt: {
-              amarillo: '#FACC15',
-              negro: '#000000',
-              gris: '#1F2937',
-              acento: '#EAB308'
-            }
+            codimas: { yellow: '#FFD200', blue: '#005BAA', black: '#0B0B0D', graphite: '#1F2937' },
+            alanpastt: { amarillo: '#FFD200', negro: '#0B0B0D', gris: '#1F2937', acento: '#005BAA' }
           }
         }
       }
-    };
+    }
   </script>
-
   <style>
     html { scroll-behavior: smooth; }
-    .bg-industrial {
-      background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1589939705384-5185138a04b9?q=80&w=2070&auto=format&fit=crop');
+    .hero-bg {
+      background:
+        radial-gradient(circle at 20% 20%, rgba(0,91,170,.18), transparent 34%),
+        radial-gradient(circle at 80% 15%, rgba(255,210,0,.20), transparent 28%),
+        linear-gradient(135deg, rgba(11,11,13,.94), rgba(31,41,55,.92)),
+        url('https://images.unsplash.com/photo-1581091226033-d5c48150dbaa?q=80&w=2070&auto=format&fit=crop');
       background-size: cover;
       background-position: center;
     }
     .float-wa { animation: pulse 2s infinite; }
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
-    }
-    .footer-logo-glow { filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.45)); }
+    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
   </style>
 </head>
-<body class="font-sans text-slate-800 bg-slate-50 antialiased">
-  <header id="main-header" class="fixed w-full top-0 z-50 bg-white shadow-xl h-48 border-b-4 border-alanpastt-amarillo transition-all duration-500 ease-in-out">
-    <div class="container mx-auto px-4 h-full flex justify-between items-center">
-      <a href="#inicio" class="flex items-center h-full py-2">
-        <img id="header-logo" src="public/images/logo.png" alt="Alanpastt Logo" class="h-40 w-auto object-contain object-left transition-all duration-500 ease-in-out">
+<body class="font-sans text-slate-900 bg-slate-50 antialiased">
+
+  <header id="main-header" class="fixed w-full top-0 z-50 bg-white/95 backdrop-blur shadow-xl border-b-4 border-codimas-yellow transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col lg:flex-row gap-4 lg:items-center lg:justify-between">
+      <a href="#inicio" class="flex items-center">
+        <img id="header-logo" src="public/images/codimas-logo.svg" alt="Codimas SpA" class="h-20 md:h-24 w-auto object-contain transition-all duration-300">
       </a>
-
-      <nav class="hidden lg:flex space-x-10 font-black uppercase tracking-tighter text-alanpastt-negro">
-        <a href="#inicio" class="hover:text-alanpastt-acento transition-colors">Inicio</a>
-        <a href="#productos" class="hover:text-alanpastt-acento transition-colors">Productos</a>
-<a href="#contacto" class="hover:text-alanpastt-acento transition-colors">Contacto</a>
+      <nav class="flex flex-wrap items-center gap-4 md:gap-8 font-black uppercase tracking-tight text-sm md:text-base text-codimas-black">
+        <a href="#inicio" class="hover:text-codimas-blue transition-colors">Inicio</a>
+        <a href="#categorias" class="hover:text-codimas-blue transition-colors">Categorías</a>
+        <a href="#contacto" class="hover:text-codimas-blue transition-colors">Contacto</a>
+        <a href="seguimiento.html" class="hover:text-codimas-blue transition-colors">Seguimiento</a>
       </nav>
-
-      <div class="hidden md:flex items-center space-x-4">
-        <a id="sales-email-header" href="mailto:ventas@alanpastt.cl" class="text-sm font-bold text-alanpastt-negro hidden xl:block hover:text-alanpastt-acento">ventas@alanpastt.cl</a>
-        <a href="#contacto" class="bg-alanpastt-negro text-alanpastt-amarillo px-6 py-3 rounded font-black hover:bg-alanpastt-amarillo hover:text-alanpastt-negro transition-all shadow-lg uppercase tracking-wide">
-          Cotizar Ahora
-        </a>
+      <div class="flex items-center gap-3">
+        <a href="mailto:ventas@codimas.cl" class="hidden xl:block text-sm font-bold text-slate-600 hover:text-codimas-blue">ventas@codimas.cl</a>
+        <a href="#contacto" class="bg-codimas-black text-codimas-yellow px-6 py-3 rounded-xl font-black hover:bg-codimas-yellow hover:text-black transition-all shadow-lg uppercase tracking-wide">Cotizar Ahora</a>
       </div>
     </div>
   </header>
 
-  <section id="inicio" class="relative min-h-screen flex items-center justify-center text-white bg-industrial pt-48">
-    <div class="container mx-auto px-4 relative z-10 text-center">
-      <div id="hero-badge" class="inline-block bg-alanpastt-amarillo text-alanpastt-negro px-4 py-1 mb-6 font-black uppercase tracking-widest text-sm">
-        Expertos en Soluciones de Caucho
+  <section id="inicio" class="hero-bg min-h-screen flex items-center pt-44 md:pt-40 text-white">
+    <div class="max-w-7xl mx-auto px-4 py-20 grid lg:grid-cols-2 gap-12 items-center">
+      <div>
+        <div class="inline-flex bg-codimas-yellow text-black px-4 py-2 mb-6 font-black uppercase tracking-[0.25em] text-xs">Soluciones que conectan tu industria</div>
+        <h1 class="text-5xl md:text-7xl font-black uppercase tracking-tighter leading-none">Materiales y <span class="text-codimas-yellow">soluciones</span><br>para tu negocio</h1>
+        <p class="text-xl md:text-2xl text-gray-200 mt-8 max-w-2xl leading-relaxed">Comercializadora y distribuidora B2B para construcción, industria, ferretería, electricidad, revestimientos, pisos, logística y abastecimiento.</p>
+        <div class="flex flex-col sm:flex-row gap-4 mt-10">
+          <a href="#categorias" class="bg-codimas-yellow text-black px-9 py-4 rounded-xl font-black text-lg hover:bg-white transition-all shadow-2xl uppercase text-center">Ver Categorías</a>
+          <a href="#contacto" class="border-2 border-white px-9 py-4 rounded-xl font-black text-lg hover:bg-white hover:text-black transition-all uppercase text-center">Solicitar Cotización</a>
+        </div>
       </div>
-      <h1 id="hero-title" class="text-5xl md:text-7xl font-black mb-6 uppercase tracking-tighter leading-none">
-        Goma para <span class="text-alanpastt-amarillo">Seguridad</span> <br>& Construcción
-      </h1>
-      <p id="hero-subtitle" class="text-xl md:text-2xl text-gray-200 mb-10 max-w-3xl mx-auto font-light">
-        Proveemos y realizamos trabajos con productos de alta resistencia: Pisos antideslizantes, gradas y correas industriales.
-      </p>
-      <div class="flex flex-col md:flex-row justify-center gap-4">
-        <a id="btn-catalog" href="#productos" class="bg-alanpastt-amarillo text-alanpastt-negro px-10 py-4 rounded font-black text-xl hover:bg-white transition-all shadow-2xl uppercase">
-          Ver Catálogo
-        </a>
-        <a id="hero-whatsapp" href="https://wa.me/56933365549?text=Hola%20Alanpastt,%20necesito%20información%20sobre%20sus%20productos%20y%20servicios." target="_blank" rel="noopener" class="bg-transparent border-2 border-white px-10 py-4 rounded font-black text-xl hover:bg-white hover:text-alanpastt-negro transition-all uppercase">
-          <span id="btn-expert">Hablar con un Experto</span>
-        </a>
+      <div class="bg-white/95 rounded-[2rem] p-8 md:p-10 shadow-2xl border border-white/20">
+        <img src="public/images/codimas-logo.svg" alt="Codimas SpA" class="w-full max-w-xl mx-auto">
+        <div class="grid grid-cols-3 gap-3 mt-8"><div class="h-3 bg-codimas-black rounded-full"></div><div class="h-3 bg-codimas-yellow rounded-full"></div><div class="h-3 bg-codimas-blue rounded-full"></div></div>
+        <p class="text-center text-slate-600 font-bold uppercase tracking-[0.25em] text-xs mt-8">Chile · Industria que construye futuro</p>
       </div>
     </div>
   </section>
 
-  <section id="productos" class="scroll-mt-32 py-24 bg-white">
-    <div class="container mx-auto px-4">
-      <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-4 border-l-8 border-alanpastt-amarillo pl-6">
+  <section class="py-16 bg-white border-y border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 grid md:grid-cols-4 gap-6 text-center">
+      <div class="p-6"><div id="category-count" class="text-4xl font-black text-codimas-blue">13</div><p class="font-black uppercase text-sm mt-2">Categorías</p></div>
+      <div class="p-6"><div class="text-4xl font-black text-codimas-blue">B2B</div><p class="font-black uppercase text-sm mt-2">Venta y abastecimiento</p></div>
+      <div class="p-6"><div class="text-4xl font-black text-codimas-blue">360°</div><p class="font-black uppercase text-sm mt-2">Materiales y servicios</p></div>
+      <div class="p-6"><div class="text-4xl font-black text-codimas-blue">CL</div><p class="font-black uppercase text-sm mt-2">Distribución nacional</p></div>
+    </div>
+  </section>
+
+  <section id="categorias" class="scroll-mt-32 py-24 bg-slate-50">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-4 border-l-8 border-codimas-yellow pl-6">
         <div>
-          <h2 id="products-title" class="text-5xl font-black text-alanpastt-negro uppercase tracking-tighter">Nuestros Productos</h2>
-          <p id="products-subtitle" class="text-slate-500 font-bold max-w-md mt-2 uppercase text-sm tracking-widest">Soluciones de caucho industrial</p>
+          <p class="text-codimas-blue font-black uppercase tracking-[0.25em] text-xs mb-3">Catálogo General 2026</p>
+          <h2 class="text-4xl md:text-6xl font-black text-black uppercase tracking-tighter">Categorías de productos</h2>
+          <p class="text-slate-500 font-bold max-w-2xl mt-3">Explora el portafolio Codimas por líneas de negocio y solicita cotización según tu necesidad.</p>
         </div>
       </div>
+      <div id="categories-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8"></div>
+    </div>
+  </section>
 
-      <div id="products-grid" class="grid grid-cols-1 md:grid-cols-3 gap-10">
-        <article class="group cursor-pointer">
-          <div class="relative overflow-hidden rounded-lg h-80 mb-6 shadow-xl border-b-8 border-alanpastt-amarillo">
-            <img src="public/images/piso_goma.jpg" alt="Pisos de Goma" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-          </div>
-          <h3 class="text-2xl font-black uppercase text-alanpastt-negro">Pisos Antideslizantes</h3>
-          <p class="text-slate-600 mt-2 mb-4">Máxima tracción para rampas y áreas de alto tráfico húmedo o seco.</p>
-        </article>
-        <article class="group cursor-pointer">
-          <div class="relative overflow-hidden rounded-lg h-80 mb-6 shadow-xl border-b-8 border-alanpastt-amarillo">
-            <img src="public/images/gradas.jpg" alt="Gradas de Goma" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-          </div>
-          <h3 class="text-2xl font-black uppercase text-alanpastt-negro">Gradas de Goma para Escaleras formato 1.20 y 1.50 Negras, Bicolor (negro/amarillo)</h3>
-          <p class="text-slate-600 mt-2 mb-4">Para otros formatos solicita cotización.</p>
-        </article>
-        <article class="group cursor-pointer">
-          <div class="relative overflow-hidden rounded-lg h-80 mb-6 shadow-xl border-b-8 border-alanpastt-amarillo">
-            <img src="public/images/correas.jpeg" alt="Correas Industriales" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-          </div>
-          <h3 class="text-2xl font-black uppercase text-alanpastt-negro">Correas de Transmisión</h3>
-          <p class="text-slate-600 mt-2 mb-4">Alta fricción y resistencia para maquinaria pesada y cortadoras de pavimento.</p>
-        </article>
+  <section id="contacto" class="scroll-mt-32 py-24 bg-codimas-black text-white">
+    <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-16">
+      <div>
+        <p class="text-codimas-yellow font-black uppercase tracking-[0.25em] text-xs mb-4">Contacto comercial</p>
+        <h2 class="text-5xl font-black uppercase tracking-tighter mb-8">Hablemos de tu <br><span class="text-codimas-yellow">requerimiento</span></h2>
+        <p class="text-xl text-gray-400 mb-12">Cotización, abastecimiento y soluciones a medida para empresas, obras, ferreterías e industria.</p>
+        <div class="space-y-6">
+          <div class="bg-white/5 border border-white/10 rounded-2xl p-5"><h4 class="font-black uppercase text-codimas-yellow">Ventas</h4><a href="mailto:ventas@codimas.cl" class="text-xl hover:text-codimas-yellow transition-colors">ventas@codimas.cl</a></div>
+          <div class="bg-white/5 border border-white/10 rounded-2xl p-5"><h4 class="font-black uppercase text-codimas-yellow">Seguimiento</h4><a href="seguimiento.html" class="text-xl hover:text-codimas-yellow transition-colors">Consultar solicitud con código</a></div>
+        </div>
+      </div>
+      <div class="bg-white p-8 md:p-12 rounded-3xl text-black shadow-2xl">
+        <form id="form-cotizacion" class="space-y-5">
+          <div><label class="block font-black uppercase text-xs mb-2">Nombre o Empresa</label><input type="text" id="nombre" required class="w-full px-4 py-4 bg-slate-100 border-none rounded-xl focus:ring-4 focus:ring-codimas-yellow transition-all font-bold"></div>
+          <div class="grid md:grid-cols-2 gap-5"><div><label class="block font-black uppercase text-xs mb-2">Email</label><input type="email" id="email" required class="w-full px-4 py-4 bg-slate-100 border-none rounded-xl focus:ring-4 focus:ring-codimas-yellow transition-all font-bold"></div><div><label class="block font-black uppercase text-xs mb-2">Teléfono</label><input type="tel" id="telefono" class="w-full px-4 py-4 bg-slate-100 border-none rounded-xl focus:ring-4 focus:ring-codimas-yellow transition-all font-bold"></div></div>
+          <div><label class="block font-black uppercase text-xs mb-2">Empresa / Rubro</label><input type="text" id="empresa" class="w-full px-4 py-4 bg-slate-100 border-none rounded-xl focus:ring-4 focus:ring-codimas-yellow transition-all font-bold"></div>
+          <div><label class="block font-black uppercase text-xs mb-2">Mensaje</label><textarea id="mensaje" rows="5" required class="w-full px-4 py-4 bg-slate-100 border-none rounded-xl focus:ring-4 focus:ring-codimas-yellow transition-all font-bold resize-none" placeholder="Indica producto, cantidad, medidas, comuna de entrega o tipo de servicio requerido."></textarea></div>
+          <button id="btn-enviar" type="submit" class="w-full bg-black text-codimas-yellow font-black py-5 rounded-xl hover:bg-codimas-yellow hover:text-black transition-all uppercase tracking-widest text-lg">Enviar Solicitud</button>
+        </form>
       </div>
     </div>
   </section>
 
-  <section id="contacto" class="scroll-mt-32 py-24 bg-alanpastt-negro text-white">
-    <div class="container mx-auto px-4">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
-        <div>
-          <h2 id="contact-title" class="text-5xl font-black uppercase tracking-tighter mb-8">Hablemos de tu <br><span class="text-alanpastt-amarillo">Proyecto</span></h2>
-          <p id="contact-subtitle" class="text-xl text-gray-400 mb-12">Asesoría técnica y soluciones a medida en caucho.</p>
-
-          <div class="space-y-8">
-            <div class="flex items-start space-x-4">
-              <div class="bg-alanpastt-amarillo p-3 rounded">
-                <svg class="w-6 h-6 text-alanpastt-negro" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-              </div>
-              <div>
-                <h4 class="font-black uppercase text-alanpastt-amarillo">Ventas</h4>
-                <a id="sales-email-contact" href="mailto:ventas@alanpastt.cl" class="text-xl hover:text-alanpastt-amarillo transition-colors block">ventas@alanpastt.cl</a>
-                <a id="contact-whatsapp" href="https://wa.me/56933365549" target="_blank" rel="noopener" class="text-lg text-gray-300 hover:text-[#25D366] transition-colors mt-1 inline-flex items-center">
-                  +56 9 3336 5549
-                </a>
-              </div>
-            </div>
-
-            <div class="flex items-start space-x-4">
-              <div class="bg-alanpastt-amarillo p-3 rounded">
-                <svg class="w-6 h-6 text-alanpastt-negro" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-              </div>
-              <div>
-                <h4 class="font-black uppercase text-alanpastt-amarillo">Contacto</h4>
-                <a id="contact-email" href="mailto:contacto@alanpastt.cl" class="text-xl hover:text-alanpastt-amarillo transition-colors">contacto@alanpastt.cl</a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-white p-8 md:p-12 rounded-xl text-alanpastt-negro">
-          <form id="form-cotizacion" class="space-y-6">
-            <div>
-              <label for="nombre" class="block font-black uppercase text-xs mb-2">Nombre o Empresa</label>
-              <input type="text" id="nombre" required class="w-full px-4 py-4 bg-slate-100 border-none rounded focus:ring-4 focus:ring-alanpastt-amarillo transition-all font-bold">
-            </div>
-            <div>
-              <label for="email" class="block font-black uppercase text-xs mb-2">Email</label>
-              <input type="email" id="email" required class="w-full px-4 py-4 bg-slate-100 border-none rounded focus:ring-4 focus:ring-alanpastt-amarillo transition-all font-bold">
-            </div>
-            <div>
-              <label for="telefono" class="block font-black uppercase text-xs mb-2">Teléfono / WhatsApp</label>
-              <input type="tel" id="telefono" class="w-full px-4 py-4 bg-slate-100 border-none rounded focus:ring-4 focus:ring-alanpastt-amarillo transition-all font-bold">
-            </div>
-            <div>
-              <label for="empresa" class="block font-black uppercase text-xs mb-2">Empresa</label>
-              <input type="text" id="empresa" class="w-full px-4 py-4 bg-slate-100 border-none rounded focus:ring-4 focus:ring-alanpastt-amarillo transition-all font-bold">
-            </div>
-            <div>
-              <label for="mensaje" class="block font-black uppercase text-xs mb-2">Mensaje</label>
-              <textarea id="mensaje" rows="4" required class="w-full px-4 py-4 bg-slate-100 border-none rounded focus:ring-4 focus:ring-alanpastt-amarillo transition-all font-bold resize-none"></textarea>
-            </div>
-            <button type="submit" id="btn-enviar" class="w-full bg-alanpastt-negro text-alanpastt-amarillo font-black py-5 rounded-lg hover:bg-alanpastt-amarillo hover:text-alanpastt-negro transition-all uppercase tracking-widest text-lg">
-              Enviar Solicitud
-            </button>
-          </form>
-        </div>
-      </div>
+  <footer class="relative bg-black text-gray-400 py-20 border-t border-gray-900">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col items-center text-center">
+      <img src="public/images/codimas-logo.svg" alt="Codimas SpA" class="h-28 md:h-36 bg-white rounded-2xl p-4 object-contain">
+      <p class="font-bold text-lg mt-10 mb-1 text-white uppercase tracking-widest">© 2026 Codimas SpA</p>
+      <p class="text-sm mb-10">Comercializadora, Distribuidora de Materiales y Servicios.</p>
+      <div class="border-t border-gray-800 pt-8 w-full max-w-sm"><p class="mb-2 uppercase tracking-widest text-[10px] text-gray-600">Desarrollo Digital</p><a href="https://focusframe.cl" target="_blank" class="text-codimas-yellow font-bold text-sm hover:text-white transition-colors tracking-tighter">FocusFrame Media SpA.</a></div>
     </div>
-  </section>
+    <a href="admin/login.html" class="absolute left-4 bottom-4 md:left-8 md:bottom-8 inline-flex items-center justify-center border border-gray-700 text-gray-500 hover:text-codimas-yellow hover:border-codimas-yellow px-4 py-2 rounded text-[10px] md:text-xs font-bold uppercase tracking-widest transition-colors">Acceso Equipo</a>
+  </footer>
 
-  <footer class="relative bg-alanpastt-negro text-gray-400 py-20 border-t border-gray-900">
-    <div class="container mx-auto px-4 flex flex-col items-center text-center">
-      <div class="mb-14">
-        <img src="public/images/logo.png" alt="Alanpastt Footer" class="h-48 md:h-64 object-contain footer-logo-glow transition-transform duration-500 hover:scale-105">
-      </div>
-      <p id="footer-year-brand" class="font-bold text-lg mb-1 text-white uppercase tracking-widest italic">&copy; 2026 Alanpastt</p>
-      <p id="footer-text" class="text-sm mb-12">Soluciones Industriales - Santiago, Chile.</p>
-      <div class="border-t border-gray-800 pt-8 w-full max-w-sm">
-        <p id="developer-label" class="mb-2 uppercase tracking-widest text-[10px] text-gray-600">Desarrollo Digital</p>
-        <a id="developer-link" href="https://focusframe.cl" target="_blank" rel="noopener" class="text-alanpastt-amarillo font-bold text-sm hover:text-white transition-colors tracking-tighter">
-          <span id="developer-name">FocusFrame Media SpA.</span>
-        </a>
-      </div>
-    </div>
-  
-        <a href="admin/login.html" class="absolute left-4 bottom-4 md:left-8 md:bottom-8 inline-flex items-center justify-center border border-gray-700 text-gray-500 hover:text-alanpastt-amarillo hover:border-alanpastt-amarillo px-4 py-2 rounded text-[10px] md:text-xs font-bold uppercase tracking-widest transition-colors">
-            Acceso Equipo
-        </a>
-
-    
-        <a href="seguimiento.html" class="absolute left-4 bottom-16 md:left-8 md:bottom-20 inline-flex items-center justify-center border border-gray-700 text-gray-500 hover:text-alanpastt-amarillo hover:border-alanpastt-amarillo px-4 py-2 rounded text-[10px] md:text-xs font-bold uppercase tracking-widest transition-colors">
-            Seguimiento
-        </a>
-    </footer>
-
-  <a id="floating-whatsapp" href="https://wa.me/56933365549?text=Hola%20Alanpastt,%20me%20gustaría%20solicitar%20una%20cotización." target="_blank" rel="noopener" class="fixed bottom-6 right-6 z-[100] bg-[#25D366] text-white p-4 rounded-full shadow-2xl float-wa hover:scale-110 transition-transform" aria-label="Contactar por WhatsApp">
+  <a href="https://wa.me/56933365549?text=Hola%20Codimas%20SpA,%20me%20gustaría%20solicitar%20una%20cotización." target="_blank" class="fixed bottom-6 right-6 z-[100] bg-[#25D366] text-white p-4 rounded-full shadow-2xl float-wa hover:scale-110 transition-transform" aria-label="WhatsApp Codimas SpA">
     <svg class="w-10 h-10" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.588-5.946 0-6.556 5.332-11.891 11.893-11.891 3.181 0 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.481 8.403 0 6.556-5.332 11.891-11.893 11.891-2.01 0-3.991-.511-5.758-1.483l-6.235 1.635zm5.136-4.524l.368.219c1.503.893 3.238 1.364 5.025 1.364 5.398 0 9.791-4.394 9.791-9.793 0-2.617-1.02-5.078-2.871-6.93s-4.313-2.871-6.931-2.871c-5.396 0-9.791 4.394-9.791 9.793 0 1.831.509 3.618 1.472 5.18l.24.388-1.047 3.824 3.921-1.027zm10.771-6.611c-.305-.152-1.805-.891-2.085-.993-.28-.103-.485-.152-.69.152-.204.304-.791.993-.969 1.196-.178.203-.356.229-.661.077-.305-.152-1.287-.474-2.451-1.512-.906-.808-1.517-1.806-1.695-2.11-.178-.304-.019-.468.133-.62.137-.136.305-.355.457-.533.153-.178.203-.304.305-.507.102-.203.051-.381-.026-.533-.076-.152-.69-1.66-.945-2.27-.248-.594-.5-.513-.69-.523-.178-.008-.382-.01-.585-.01-.203 0-.534.076-.814.381-.28.305-1.069 1.04-1.069 2.539 0 1.498 1.092 2.943 1.245 3.146.152.203 2.15 3.284 5.21 4.605.727.314 1.293.501 1.735.642.73.232 1.393.199 1.918.121.585-.087 1.805-.737 2.06-1.448.254-.71.254-1.319.178-1.448-.076-.129-.28-.203-.585-.355z"/></svg>
   </a>
 
-  <script src="src/js/public-content.js"></script>
+  <script src="src/js/config.js"></script>
+  <script src="src/js/catalog-data.js"></script>
+  <script src="src/js/home.js"></script>
   <script src="src/js/main.js"></script>
 </body>
 </html>
