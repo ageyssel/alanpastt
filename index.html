@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Codimas SpA | Comercializadora, Distribuidora de Materiales y Servicios</title>
-  <meta name="description" content="Codimas SpA: materiales y soluciones B2B para industria, construcción, ferretería, electricidad, revestimientos, pisos, logística y abastecimiento.">
+  <title>Codimas SpA | Productos, suministros y soluciones</title>
+  <meta name="description" content="Codimas SpA: comercializadora y distribuidora de productos, suministros y soluciones para personas, profesionales, empresas, obras e industria.">
   <link rel="shortcut icon" href="public/images/codimas-icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="src/css/style.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
@@ -13,124 +14,249 @@
       theme: {
         extend: {
           colors: {
-            codimas: { yellow: '#FFD200', blue: '#005BAA', black: '#0B0B0D', graphite: '#1F2937' },
+            codimas: {
+              yellow: '#FFD200',
+              blue: '#005BAA',
+              black: '#0B0B0D',
+              graphite: '#1F2937'
+            },
             alanpastt: { amarillo: '#FFD200', negro: '#0B0B0D', gris: '#1F2937', acento: '#005BAA' }
           }
         }
       }
     }
   </script>
-  <style>
-    html { scroll-behavior: smooth; }
-    .hero-bg {
-      background:
-        radial-gradient(circle at 20% 20%, rgba(0,91,170,.18), transparent 34%),
-        radial-gradient(circle at 80% 15%, rgba(255,210,0,.20), transparent 28%),
-        linear-gradient(135deg, rgba(11,11,13,.94), rgba(31,41,55,.92)),
-        url('https://images.unsplash.com/photo-1581091226033-d5c48150dbaa?q=80&w=2070&auto=format&fit=crop');
-      background-size: cover;
-      background-position: center;
-    }
-    .float-wa { animation: pulse 2s infinite; }
-    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-  </style>
 </head>
-<body class="font-sans text-slate-900 bg-slate-50 antialiased">
+<body class="font-sans text-slate-900 bg-white antialiased">
 
-  <header id="main-header" class="fixed w-full top-0 z-50 bg-white/95 backdrop-blur shadow-xl border-b-4 border-codimas-yellow transition-all duration-300">
-    <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col lg:flex-row gap-4 lg:items-center lg:justify-between">
-      <a href="#inicio" class="flex items-center">
-        <img id="header-logo" src="public/images/codimas-logo.svg" alt="Codimas SpA" class="h-20 md:h-24 w-auto object-contain transition-all duration-300">
-      </a>
-      <nav class="flex flex-wrap items-center gap-4 md:gap-8 font-black uppercase tracking-tight text-sm md:text-base text-codimas-black">
-        <a href="#inicio" class="hover:text-codimas-blue transition-colors">Inicio</a>
-        <a href="#categorias" class="hover:text-codimas-blue transition-colors">Categorías</a>
-        <a href="#contacto" class="hover:text-codimas-blue transition-colors">Contacto</a>
-        <a href="seguimiento.html" class="hover:text-codimas-blue transition-colors">Seguimiento</a>
-      </nav>
-      <div class="flex items-center gap-3">
-        <a href="mailto:ventas@codimas.cl" class="hidden xl:block text-sm font-bold text-slate-600 hover:text-codimas-blue">ventas@codimas.cl</a>
-        <a href="#contacto" class="bg-codimas-black text-codimas-yellow px-6 py-3 rounded-xl font-black hover:bg-codimas-yellow hover:text-black transition-all shadow-lg uppercase tracking-wide">Cotizar Ahora</a>
+  <header class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-slate-200">
+    <div class="codimas-shell">
+      <div class="py-3 flex items-center justify-between gap-5 border-b border-slate-100">
+        <a href="index.html" class="flex items-center shrink-0">
+          <img src="public/images/codimas-logo.svg" alt="Codimas SpA" class="h-14 md:h-16 w-auto">
+        </a>
+        <form id="catalog-search-form" class="hidden lg:block relative flex-1 max-w-2xl">
+          <label for="catalog-search-input" class="sr-only">Buscar productos, códigos o categorías</label>
+          <input id="catalog-search-input" type="search" class="codimas-input !py-3 !pl-5 !pr-12" placeholder="Buscar por producto, SKU, marca, código o categoría">
+          <button class="absolute right-2 top-1/2 -translate-y-1/2 bg-codimas-black text-white px-4 py-2 text-xs font-black uppercase tracking-widest" type="submit">Buscar</button>
+          <div id="catalog-search-results" class="hidden absolute left-0 right-0 top-[calc(100%+8px)] bg-white border border-slate-200 shadow-2xl z-50 max-h-[420px] overflow-auto"></div>
+        </form>
+        <div class="hidden xl:flex flex-col text-right text-xs font-bold text-slate-500">
+          <span class="uppercase tracking-[0.2em]">Cotizaciones y proyectos</span>
+          <a href="mailto:ventas@codimas.cl" class="text-codimas-black hover:text-codimas-blue text-sm">ventas@codimas.cl</a>
+        </div>
+        <a href="cotizacion.html" class="codimas-btn codimas-btn-dark text-xs shrink-0">Solicitar cotización</a>
       </div>
+      <nav class="py-3 flex items-center gap-5 md:gap-8 overflow-x-auto text-[12px] md:text-sm font-black uppercase tracking-wide whitespace-nowrap">
+        <a href="#productos" class="hover:text-codimas-blue">Productos</a>
+        <a href="#categorias" class="hover:text-codimas-blue">Categorías</a>
+        <a href="#empresas" class="hover:text-codimas-blue">Empresas</a>
+        <a href="#servicios" class="hover:text-codimas-blue">Servicios</a>
+        <a href="#marcas" class="hover:text-codimas-blue">Marcas</a>
+        <a href="#contacto" class="hover:text-codimas-blue">Contacto</a>
+        <a href="seguimiento.html" class="hover:text-codimas-blue">Seguimiento</a>
+      </nav>
     </div>
   </header>
 
-  <section id="inicio" class="hero-bg min-h-screen flex items-center pt-44 md:pt-40 text-white">
-    <div class="max-w-7xl mx-auto px-4 py-20 grid lg:grid-cols-2 gap-12 items-center">
-      <div>
-        <div class="inline-flex bg-codimas-yellow text-black px-4 py-2 mb-6 font-black uppercase tracking-[0.25em] text-xs">Soluciones que conectan tu industria</div>
-        <h1 class="text-5xl md:text-7xl font-black uppercase tracking-tighter leading-none">Materiales y <span class="text-codimas-yellow">soluciones</span><br>para tu negocio</h1>
-        <p class="text-xl md:text-2xl text-gray-200 mt-8 max-w-2xl leading-relaxed">Comercializadora y distribuidora B2B para construcción, industria, ferretería, electricidad, revestimientos, pisos, logística y abastecimiento.</p>
-        <div class="flex flex-col sm:flex-row gap-4 mt-10">
-          <a href="#categorias" class="bg-codimas-yellow text-black px-9 py-4 rounded-xl font-black text-lg hover:bg-white transition-all shadow-2xl uppercase text-center">Ver Categorías</a>
-          <a href="#contacto" class="border-2 border-white px-9 py-4 rounded-xl font-black text-lg hover:bg-white hover:text-black transition-all uppercase text-center">Solicitar Cotización</a>
-        </div>
-      </div>
-      <div class="bg-white/95 rounded-[2rem] p-8 md:p-10 shadow-2xl border border-white/20">
-        <img src="public/images/codimas-logo.svg" alt="Codimas SpA" class="w-full max-w-xl mx-auto">
-        <div class="grid grid-cols-3 gap-3 mt-8"><div class="h-3 bg-codimas-black rounded-full"></div><div class="h-3 bg-codimas-yellow rounded-full"></div><div class="h-3 bg-codimas-blue rounded-full"></div></div>
-        <p class="text-center text-slate-600 font-bold uppercase tracking-[0.25em] text-xs mt-8">Chile · Industria que construye futuro</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="py-16 bg-white border-y border-slate-200">
-    <div class="max-w-7xl mx-auto px-4 grid md:grid-cols-4 gap-6 text-center">
-      <div class="p-6"><div id="category-count" class="text-4xl font-black text-codimas-blue">13</div><p class="font-black uppercase text-sm mt-2">Categorías</p></div>
-      <div class="p-6"><div class="text-4xl font-black text-codimas-blue">B2B</div><p class="font-black uppercase text-sm mt-2">Venta y abastecimiento</p></div>
-      <div class="p-6"><div class="text-4xl font-black text-codimas-blue">360°</div><p class="font-black uppercase text-sm mt-2">Materiales y servicios</p></div>
-      <div class="p-6"><div class="text-4xl font-black text-codimas-blue">CL</div><p class="font-black uppercase text-sm mt-2">Distribución nacional</p></div>
-    </div>
-  </section>
-
-  <section id="categorias" class="scroll-mt-32 py-24 bg-slate-50">
-    <div class="max-w-7xl mx-auto px-4">
-      <div class="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-4 border-l-8 border-codimas-yellow pl-6">
+  <main>
+    <section id="inicio" class="relative overflow-hidden bg-white codimas-hero-grid">
+      <div class="codimas-shell grid lg:grid-cols-[1.05fr_.95fr] gap-12 items-center min-h-[calc(100vh-118px)] py-14 md:py-20">
         <div>
-          <p class="text-codimas-blue font-black uppercase tracking-[0.25em] text-xs mb-3">Catálogo General 2026</p>
-          <h2 class="text-4xl md:text-6xl font-black text-black uppercase tracking-tighter">Categorías de productos</h2>
-          <p class="text-slate-500 font-bold max-w-2xl mt-3">Explora el portafolio Codimas por líneas de negocio y solicita cotización según tu necesidad.</p>
+          <p class="codimas-label">Distribución profesional</p>
+          <h1 class="codimas-heading text-5xl md:text-7xl xl:text-8xl mt-7 uppercase text-codimas-black">Productos y suministros para construir, instalar y mantener.</h1>
+          <p class="text-xl md:text-2xl text-slate-600 font-medium leading-relaxed mt-8 max-w-3xl">Cotiza materiales técnicos para electricidad, ferretería, construcción, telecomunicaciones, seguridad, pisos, caucho y servicios asociados.</p>
+          <div class="flex flex-col sm:flex-row gap-4 mt-10">
+            <a href="#categorias" class="codimas-btn codimas-btn-primary">Ver productos</a>
+            <a href="cotizacion.html" class="codimas-btn codimas-btn-outline">Cotizar proyecto</a>
+          </div>
+          <div class="grid grid-cols-3 gap-6 mt-12 max-w-2xl border-t border-slate-200 pt-8">
+            <div><strong id="category-count" class="text-4xl font-black text-codimas-blue">13</strong><p class="text-xs font-black uppercase tracking-wide text-slate-500 mt-2">Categorías</p></div>
+            <div><strong class="text-4xl font-black text-codimas-blue">B2B</strong><p class="text-xs font-black uppercase tracking-wide text-slate-500 mt-2">Cotización por volumen</p></div>
+            <div><strong class="text-4xl font-black text-codimas-blue">CL</strong><p class="text-xs font-black uppercase tracking-wide text-slate-500 mt-2">Abastecimiento nacional</p></div>
+          </div>
+        </div>
+        <div class="codimas-technical-panel text-white p-7 md:p-10 lg:p-12 relative">
+          <div class="absolute top-0 left-0 w-2 h-full bg-codimas-yellow"></div>
+          <div class="bg-white p-5 md:p-8 mb-10">
+            <img src="public/images/codimas-logo.svg" alt="Codimas SpA" class="w-full max-w-xl mx-auto">
+          </div>
+          <p class="text-xs font-black uppercase tracking-[0.32em] text-codimas-yellow">Soluciones que conectan tu industria</p>
+          <h2 class="text-4xl md:text-5xl font-black leading-none mt-5">Catálogo amplio. Atención por requerimiento.</h2>
+          <p class="text-slate-300 font-medium leading-relaxed mt-5">Sin pago online ni carrito de compra: cada solicitud se revisa para responder con disponibilidad, condiciones y precio según volumen, comuna y requerimiento técnico.</p>
+          <div class="grid sm:grid-cols-2 gap-3 mt-8">
+            <div class="border border-white/10 bg-white/5 p-4 font-black">Compra por unidad o volumen</div>
+            <div class="border border-white/10 bg-white/5 p-4 font-black">Cotización con código de seguimiento</div>
+          </div>
         </div>
       </div>
-      <div id="categories-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8"></div>
-    </div>
-  </section>
+    </section>
 
-  <section id="contacto" class="scroll-mt-32 py-24 bg-codimas-black text-white">
-    <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-16">
-      <div>
-        <p class="text-codimas-yellow font-black uppercase tracking-[0.25em] text-xs mb-4">Contacto comercial</p>
-        <h2 class="text-5xl font-black uppercase tracking-tighter mb-8">Hablemos de tu <br><span class="text-codimas-yellow">requerimiento</span></h2>
-        <p class="text-xl text-gray-400 mb-12">Cotización, abastecimiento y soluciones a medida para empresas, obras, ferreterías e industria.</p>
-        <div class="space-y-6">
-          <div class="bg-white/5 border border-white/10 rounded-2xl p-5"><h4 class="font-black uppercase text-codimas-yellow">Ventas</h4><a href="mailto:ventas@codimas.cl" class="text-xl hover:text-codimas-yellow transition-colors">ventas@codimas.cl</a></div>
-          <div class="bg-white/5 border border-white/10 rounded-2xl p-5"><h4 class="font-black uppercase text-codimas-yellow">Seguimiento</h4><a href="seguimiento.html" class="text-xl hover:text-codimas-yellow transition-colors">Consultar solicitud con código</a></div>
+    <section id="productos" class="codimas-section bg-slate-50 border-y border-slate-200">
+      <div class="codimas-shell">
+        <div class="grid lg:grid-cols-[.75fr_1.25fr] gap-12 items-start">
+          <div>
+            <p class="codimas-label">Arquitectura de catálogo</p>
+            <h2 class="codimas-heading text-4xl md:text-6xl mt-5">Grandes mundos de productos.</h2>
+            <p class="text-slate-500 font-semibold leading-relaxed mt-6">Una estructura pensada para crecer sin convertir el sitio en una tienda saturada. El foco es encontrar rápido la línea correcta y solicitar cotización.</p>
+          </div>
+          <div id="product-worlds-grid" class="grid md:grid-cols-3 gap-5"></div>
         </div>
       </div>
-      <div class="bg-white p-8 md:p-12 rounded-3xl text-black shadow-2xl">
-        <form id="form-cotizacion" class="space-y-5">
-          <div><label class="block font-black uppercase text-xs mb-2">Nombre o Empresa</label><input type="text" id="nombre" required class="w-full px-4 py-4 bg-slate-100 border-none rounded-xl focus:ring-4 focus:ring-codimas-yellow transition-all font-bold"></div>
-          <div class="grid md:grid-cols-2 gap-5"><div><label class="block font-black uppercase text-xs mb-2">Email</label><input type="email" id="email" required class="w-full px-4 py-4 bg-slate-100 border-none rounded-xl focus:ring-4 focus:ring-codimas-yellow transition-all font-bold"></div><div><label class="block font-black uppercase text-xs mb-2">Teléfono</label><input type="tel" id="telefono" class="w-full px-4 py-4 bg-slate-100 border-none rounded-xl focus:ring-4 focus:ring-codimas-yellow transition-all font-bold"></div></div>
-          <div><label class="block font-black uppercase text-xs mb-2">Empresa / Rubro</label><input type="text" id="empresa" class="w-full px-4 py-4 bg-slate-100 border-none rounded-xl focus:ring-4 focus:ring-codimas-yellow transition-all font-bold"></div>
-          <div><label class="block font-black uppercase text-xs mb-2">Mensaje</label><textarea id="mensaje" rows="5" required class="w-full px-4 py-4 bg-slate-100 border-none rounded-xl focus:ring-4 focus:ring-codimas-yellow transition-all font-bold resize-none" placeholder="Indica producto, cantidad, medidas, comuna de entrega o tipo de servicio requerido."></textarea></div>
-          <button id="btn-enviar" type="submit" class="w-full bg-black text-codimas-yellow font-black py-5 rounded-xl hover:bg-codimas-yellow hover:text-black transition-all uppercase tracking-widest text-lg">Enviar Solicitud</button>
+    </section>
+
+    <section id="categorias" class="codimas-section bg-white scroll-mt-32">
+      <div class="codimas-shell">
+        <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 mb-12">
+          <div class="max-w-4xl">
+            <p class="codimas-label">Catálogo General 2026</p>
+            <h2 class="codimas-heading text-4xl md:text-6xl mt-5">Categorías disponibles para cotizar.</h2>
+          </div>
+          <a href="cotizacion.html" class="codimas-btn codimas-btn-outline">Enviar listado</a>
+        </div>
+        <div id="categories-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5"></div>
+      </div>
+    </section>
+
+    <section class="codimas-section bg-codimas-black text-white">
+      <div class="codimas-shell grid lg:grid-cols-2 gap-14 items-center">
+        <div>
+          <p class="text-xs font-black uppercase tracking-[0.28em] text-codimas-yellow">Proceso de cotización</p>
+          <h2 class="codimas-heading text-4xl md:text-6xl mt-5">Cotiza sin perder información técnica.</h2>
+          <p class="text-slate-300 text-lg font-medium leading-relaxed mt-6">El flujo está pensado para compradores particulares, maestros, empresas, constructoras, contratistas y departamentos de compra.</p>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div class="border border-white/10 bg-white/5 p-6"><span class="text-codimas-yellow font-black">01</span><h3 class="font-black text-xl mt-3">Busca o navega</h3><p class="text-slate-400 mt-2">Encuentra la categoría, producto o código de referencia.</p></div>
+          <div class="border border-white/10 bg-white/5 p-6"><span class="text-codimas-yellow font-black">02</span><h3 class="font-black text-xl mt-3">Agrega a solicitud</h3><p class="text-slate-400 mt-2">Arma una lista para cotizar, sin pago online.</p></div>
+          <div class="border border-white/10 bg-white/5 p-6"><span class="text-codimas-yellow font-black">03</span><h3 class="font-black text-xl mt-3">Envía datos</h3><p class="text-slate-400 mt-2">Indica cantidades, medidas, comuna y condiciones.</p></div>
+          <div class="border border-white/10 bg-white/5 p-6"><span class="text-codimas-yellow font-black">04</span><h3 class="font-black text-xl mt-3">Recibe seguimiento</h3><p class="text-slate-400 mt-2">Obtén un código para consultar el estado.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="codimas-section bg-slate-50">
+      <div class="codimas-shell">
+        <div class="max-w-4xl mb-12">
+          <p class="codimas-label">Selección editorial</p>
+          <h2 class="codimas-heading text-4xl md:text-6xl mt-5">Productos de referencia.</h2>
+          <p class="text-slate-500 font-semibold leading-relaxed mt-6">Tarjetas orientadas a cotización: imagen, categoría, marca, nombre, código de referencia y característica principal.</p>
+        </div>
+        <div id="featured-products-grid" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5"></div>
+      </div>
+    </section>
+
+    <section id="empresas" class="codimas-section bg-white scroll-mt-32">
+      <div class="codimas-shell grid lg:grid-cols-[.9fr_1.1fr] gap-12 items-center">
+        <div>
+          <p class="codimas-label">Codimas Empresas</p>
+          <h2 class="codimas-heading text-4xl md:text-6xl mt-5">Abastecimiento para compras técnicas y proyectos.</h2>
+          <p class="text-slate-600 text-lg font-medium leading-relaxed mt-6">Atención especializada para cotizaciones por volumen, listados de productos, obras, reposición, compras recurrentes y requerimientos con especificaciones.</p>
+          <a href="cotizacion.html?tipo=empresa" class="codimas-btn codimas-btn-dark mt-8">Cotizar como empresa</a>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div class="bg-slate-50 border border-slate-200 p-6"><h3 class="text-xl font-black">Cotización por volumen</h3><p class="text-slate-500 font-semibold mt-3">Envía cantidades o listados para evaluación comercial.</p></div>
+          <div class="bg-slate-50 border border-slate-200 p-6"><h3 class="text-xl font-black">Abastecimiento recurrente</h3><p class="text-slate-500 font-semibold mt-3">Compras periódicas para operación, bodega o mantención.</p></div>
+          <div class="bg-slate-50 border border-slate-200 p-6"><h3 class="text-xl font-black">Proyectos y obras</h3><p class="text-slate-500 font-semibold mt-3">Materiales según etapa, especialidad y ubicación.</p></div>
+          <div class="bg-slate-50 border border-slate-200 p-6"><h3 class="text-xl font-black">Condiciones comerciales</h3><p class="text-slate-500 font-semibold mt-3">Evaluación según cliente, frecuencia, volumen y despacho.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="servicios" class="codimas-section bg-slate-50 border-y border-slate-200 scroll-mt-32">
+      <div class="codimas-shell">
+        <div class="grid lg:grid-cols-[.8fr_1.2fr] gap-12">
+          <div>
+            <p class="codimas-label">Servicios asociados</p>
+            <h2 class="codimas-heading text-4xl md:text-6xl mt-5">Productos para tu proyecto. Profesionales para ejecutarlo.</h2>
+            <p class="text-slate-500 font-semibold leading-relaxed mt-6">Los servicios se presentan separados del catálogo para mantener claridad entre suministro, instalación y ejecución.</p>
+          </div>
+          <div id="services-grid" class="grid md:grid-cols-2 gap-5"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="marcas" class="codimas-section bg-white scroll-mt-32">
+      <div class="codimas-shell">
+        <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 mb-10">
+          <div>
+            <p class="codimas-label">Marcas y disponibilidad</p>
+            <h2 class="codimas-heading text-4xl md:text-6xl mt-5">Trabajamos por requerimiento técnico.</h2>
+          </div>
+          <p class="text-slate-500 font-semibold max-w-xl">La marca final, disponibilidad y alternativa equivalente se confirman al momento de cotizar.</p>
+        </div>
+        <div id="brands-grid" class="grid grid-cols-2 md:grid-cols-5 gap-3"></div>
+      </div>
+    </section>
+
+    <section class="bg-slate-950 text-white">
+      <div class="codimas-shell grid lg:grid-cols-2 gap-0 items-stretch">
+        <div class="py-20 lg:pr-16">
+          <p class="text-xs font-black uppercase tracking-[0.28em] text-codimas-yellow">Aplicación</p>
+          <h2 class="codimas-heading text-4xl md:text-6xl mt-5">Materiales, personas e industria en movimiento.</h2>
+          <p class="text-slate-300 text-lg font-medium leading-relaxed mt-6">La experiencia se orienta a resolver requerimientos reales: instalación, construcción, mantención y abastecimiento técnico.</p>
+        </div>
+        <div class="min-h-[420px] bg-[linear-gradient(135deg,rgba(255,210,0,.9),rgba(0,91,170,.9)),url('public/images/codimas-category.svg')] bg-center bg-no-repeat flex items-end p-8">
+          <div class="bg-black/85 p-7 max-w-md">
+            <p class="text-codimas-yellow font-black uppercase tracking-[0.22em] text-xs">Sistema Codimas</p>
+            <h3 class="text-3xl font-black mt-4">Cotización, seguimiento y atención comercial.</h3>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contacto" class="codimas-section bg-white scroll-mt-32">
+      <div class="codimas-shell grid lg:grid-cols-[.85fr_1.15fr] gap-12">
+        <div>
+          <p class="codimas-label">Solicita cotización</p>
+          <h2 class="codimas-heading text-4xl md:text-6xl mt-5">Describe tu requerimiento.</h2>
+          <p class="text-slate-600 text-lg font-medium leading-relaxed mt-6">Indica producto, cantidad, medidas, comuna de entrega y si corresponde a compra particular, empresa, obra o servicio.</p>
+          <div class="mt-8 space-y-4">
+            <a href="seguimiento.html" class="flex justify-between items-center border-b border-slate-200 py-4 font-black hover:text-codimas-blue"><span>Ya tengo un código de seguimiento</span><span>→</span></a>
+            <a href="mailto:ventas@codimas.cl" class="flex justify-between items-center border-b border-slate-200 py-4 font-black hover:text-codimas-blue"><span>ventas@codimas.cl</span><span>→</span></a>
+          </div>
+        </div>
+        <form id="form-cotizacion" class="bg-slate-50 border border-slate-200 p-6 md:p-8 space-y-5">
+          <div class="grid md:grid-cols-2 gap-5">
+            <div><label class="block font-black uppercase text-xs mb-2">Nombre</label><input type="text" id="nombre" required class="codimas-input"></div>
+            <div><label class="block font-black uppercase text-xs mb-2">Empresa / Rubro</label><input type="text" id="empresa" class="codimas-input"></div>
+          </div>
+          <div class="grid md:grid-cols-2 gap-5">
+            <div><label class="block font-black uppercase text-xs mb-2">Email</label><input type="email" id="email" required class="codimas-input"></div>
+            <div><label class="block font-black uppercase text-xs mb-2">Teléfono</label><input type="tel" id="telefono" class="codimas-input"></div>
+          </div>
+          <div><label class="block font-black uppercase text-xs mb-2">Detalle de cotización</label><textarea id="mensaje" rows="6" required class="codimas-input resize-none" placeholder="Ejemplo: cable 2.5 mm, 10 rollos, despacho a Santiago. También puedes indicar códigos o adjuntar luego por correo."></textarea></div>
+          <button id="btn-enviar" type="submit" class="codimas-btn codimas-btn-dark w-full">Enviar solicitud</button>
+          <p class="text-xs text-slate-500 font-semibold leading-relaxed">Al enviar, recibirás un código de seguimiento para consultar el estado de tu solicitud.</p>
         </form>
       </div>
-    </div>
-  </section>
+    </section>
+  </main>
 
-  <footer class="relative bg-black text-gray-400 py-20 border-t border-gray-900">
-    <div class="max-w-7xl mx-auto px-4 flex flex-col items-center text-center">
-      <img src="public/images/codimas-logo.svg" alt="Codimas SpA" class="h-28 md:h-36 bg-white rounded-2xl p-4 object-contain">
-      <p class="font-bold text-lg mt-10 mb-1 text-white uppercase tracking-widest">© 2026 Codimas SpA</p>
-      <p class="text-sm mb-10">Comercializadora, Distribuidora de Materiales y Servicios.</p>
-      <div class="border-t border-gray-800 pt-8 w-full max-w-sm"><p class="mb-2 uppercase tracking-widest text-[10px] text-gray-600">Desarrollo Digital</p><a href="https://focusframe.cl" target="_blank" class="text-codimas-yellow font-bold text-sm hover:text-white transition-colors tracking-tighter">FocusFrame Media SpA.</a></div>
+  <footer class="relative bg-black text-gray-400 py-16 border-t border-gray-900">
+    <div class="codimas-shell grid md:grid-cols-[1.2fr_.8fr_.8fr] gap-10">
+      <div>
+        <img src="public/images/codimas-logo.svg" alt="Codimas SpA" class="h-24 bg-white p-4">
+        <p class="font-semibold mt-6 max-w-lg">Comercializadora, Distribuidora de Materiales y Servicios. Productos, suministros y soluciones para personas, profesionales y empresas.</p>
+      </div>
+      <div>
+        <h3 class="text-white font-black uppercase tracking-widest text-sm mb-4">Navegación</h3>
+        <div class="space-y-2 text-sm font-bold"><a class="block hover:text-codimas-yellow" href="#categorias">Categorías</a><a class="block hover:text-codimas-yellow" href="#empresas">Empresas</a><a class="block hover:text-codimas-yellow" href="#servicios">Servicios</a><a class="block hover:text-codimas-yellow" href="seguimiento.html">Seguimiento</a></div>
+      </div>
+      <div>
+        <h3 class="text-white font-black uppercase tracking-widest text-sm mb-4">Cotización</h3>
+        <a href="cotizacion.html" class="text-codimas-yellow font-black hover:text-white">Solicitar cotización</a>
+        <p class="text-sm mt-3">ventas@codimas.cl<br>+56 9 3336 5549</p>
+      </div>
     </div>
-    <a href="admin/login.html" class="absolute left-4 bottom-4 md:left-8 md:bottom-8 inline-flex items-center justify-center border border-gray-700 text-gray-500 hover:text-codimas-yellow hover:border-codimas-yellow px-4 py-2 rounded text-[10px] md:text-xs font-bold uppercase tracking-widest transition-colors">Acceso Equipo</a>
+    <div class="codimas-shell mt-12 pt-8 border-t border-white/10 text-xs flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
+      <p>© 2026 Codimas SpA. Chile | Industria que construye futuro.</p>
+      <a href="https://focusframe.cl" target="_blank" class="text-codimas-yellow font-bold hover:text-white">FocusFrame Media SpA.</a>
+    </div>
+    <a href="admin/login.html" class="absolute left-4 bottom-4 md:left-8 md:bottom-6 text-[10px] uppercase tracking-widest text-gray-600 hover:text-codimas-yellow">Acceso Equipo</a>
   </footer>
 
-  <a href="https://wa.me/56933365549?text=Hola%20Codimas%20SpA,%20me%20gustaría%20solicitar%20una%20cotización." target="_blank" class="fixed bottom-6 right-6 z-[100] bg-[#25D366] text-white p-4 rounded-full shadow-2xl float-wa hover:scale-110 transition-transform" aria-label="WhatsApp Codimas SpA">
-    <svg class="w-10 h-10" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.588-5.946 0-6.556 5.332-11.891 11.893-11.891 3.181 0 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.481 8.403 0 6.556-5.332 11.891-11.893 11.891-2.01 0-3.991-.511-5.758-1.483l-6.235 1.635zm5.136-4.524l.368.219c1.503.893 3.238 1.364 5.025 1.364 5.398 0 9.791-4.394 9.791-9.793 0-2.617-1.02-5.078-2.871-6.93s-4.313-2.871-6.931-2.871c-5.396 0-9.791 4.394-9.791 9.793 0 1.831.509 3.618 1.472 5.18l.24.388-1.047 3.824 3.921-1.027zm10.771-6.611c-.305-.152-1.805-.891-2.085-.993-.28-.103-.485-.152-.69.152-.204.304-.791.993-.969 1.196-.178.203-.356.229-.661.077-.305-.152-1.287-.474-2.451-1.512-.906-.808-1.517-1.806-1.695-2.11-.178-.304-.019-.468.133-.62.137-.136.305-.355.457-.533.153-.178.203-.304.305-.507.102-.203.051-.381-.026-.533-.076-.152-.69-1.66-.945-2.27-.248-.594-.5-.513-.69-.523-.178-.008-.382-.01-.585-.01-.203 0-.534.076-.814.381-.28.305-1.069 1.04-1.069 2.539 0 1.498 1.092 2.943 1.245 3.146.152.203 2.15 3.284 5.21 4.605.727.314 1.293.501 1.735.642.73.232 1.393.199 1.918.121.585-.087 1.805-.737 2.06-1.448.254-.71.254-1.319.178-1.448-.076-.129-.28-.203-.585-.355z"/></svg>
+  <a href="https://wa.me/56933365549?text=Hola%20Codimas%20SpA,%20necesito%20solicitar%20una%20cotización." target="_blank" class="fixed bottom-6 right-6 z-[100] bg-[#25D366] text-white p-4 rounded-full shadow-2xl codimas-float-wa hover:scale-110 transition-transform" aria-label="WhatsApp Codimas SpA">
+    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.588-5.946C.156 5.335 5.488 0 12.049 0c3.181 0 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.481 8.403 0 6.556-5.332 11.891-11.893 11.891-2.01 0-3.991-.511-5.758-1.483L.057 24zm5.136-4.524l.368.219c1.503.893 3.238 1.364 5.025 1.364 5.398 0 9.791-4.394 9.791-9.793 0-2.617-1.02-5.078-2.871-6.93s-4.313-2.871-6.931-2.871c-5.396 0-9.791 4.394-9.791 9.793 0 1.831.509 3.618 1.472 5.18l.24.388-1.047 3.824 3.921-1.027zm10.771-6.611c-.305-.152-1.805-.891-2.085-.993-.28-.103-.485-.152-.69.152-.204.304-.791.993-.969 1.196-.178.203-.356.229-.661.077-.305-.152-1.287-.474-2.451-1.512-.906-.808-1.517-1.806-1.695-2.11-.178-.304-.019-.468.133-.62.137-.136.305-.355.457-.533.153-.178.203-.304.305-.507.102-.203.051-.381-.026-.533-.076-.152-.69-1.66-.945-2.27-.248-.594-.5-.513-.69-.523-.178-.008-.382-.01-.585-.01-.203 0-.534.076-.814.381-.28.305-1.069 1.04-1.069 2.539 0 1.498 1.092 2.943 1.245 3.146.153.203 2.15 3.281 5.21 4.601.728.314 1.296.501 1.738.641.73.232 1.394.199 1.918.121.585-.087 1.805-.737 2.06-1.449.254-.711.254-1.32.178-1.449-.076-.127-.28-.203-.585-.355z"/></svg>
   </a>
 
   <script src="src/js/config.js"></script>
