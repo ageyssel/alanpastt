@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 170" role="img" aria-label="CODIMAS SpA">
+  <g transform="translate(10 18)" fill="#0B0B0D">
+    <path d="M14 12h92v24H42v62h64v24H14z"/>
+    <path d="M88 12h27l17 12-17 12H88z"/>
+    <path d="M88 98h27l17 12-17 12H88z"/>
+    <path d="M66 48h22c22 0 36 13 36 31s-14 31-36 31H66zm22 41c8 0 13-4 13-10s-5-10-13-10h-1v20z"/>
+  </g>
+  <g transform="translate(172 28)" fill="#0B0B0D">
+    <text x="0" y="67" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="78" font-weight="600" letter-spacing="1.2">CODIMAS</text>
+    <text x="497" y="65" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="29" font-weight="600">SpA</text>
+    <rect x="1" y="84" width="548" height="5"/>
+    <text x="1" y="116" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="14" font-weight="300" letter-spacing="2.8">PRODUCTOS · SUMINISTROS · SOLUCIONES</text>
+  </g>
+</svg>
