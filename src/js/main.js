@@ -9,7 +9,7 @@ function generarCodigoSeguimiento() {
   const m = String(fecha.getMonth() + 1).padStart(2, '0');
   const d = String(fecha.getDate()).padStart(2, '0');
   const random = Math.random().toString(36).slice(2, 8).toUpperCase();
-  return `ALP-${y}${m}${d}-${random}`;
+  return `COD-${y}${m}${d}-${random}`;
 }
 
 function ensureMessage(form, id, className, text) {
@@ -75,7 +75,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (error) throw error;
 
-      // Envía correo de confirmación al cliente y aviso interno a ventas.
       const { error: fnError } = await supabaseClient.functions.invoke('quote-email', {
         body: { type: 'confirmation', quote: data },
       });
