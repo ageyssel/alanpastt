@@ -34,34 +34,36 @@ function escapeHtml(value = '') {
 }
 
 function emailLayout(title: string, content: string) {
-  const logoUrl = Deno.env.get('LOGO_URL') || `${Deno.env.get('SITE_URL')}/public/images/logo.png`;
+  const siteUrl = Deno.env.get('SITE_URL') || 'https://www.codimas.cl';
+  const logoUrl = Deno.env.get('LOGO_URL') || `${siteUrl}/public/images/codimas-logo.svg`;
+
   return `
   <!doctype html>
   <html lang="es">
-  <body style="margin:0;background:#f5f5f5;font-family:Arial,Helvetica,sans-serif;color:#111827;">
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f5f5f5;padding:24px 0;">
+  <body style="margin:0;background:#f3f4f6;font-family:Arial,Helvetica,sans-serif;color:#111827;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f3f4f6;padding:24px 0;">
       <tr>
         <td align="center">
-          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:680px;background:#ffffff;border-radius:18px;overflow:hidden;border:1px solid #e5e7eb;">
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:700px;background:#ffffff;border:1px solid #e5e7eb;">
             <tr>
-              <td style="background:#000000;border-bottom:6px solid #FACC15;padding:28px;text-align:center;">
-                <img src="${logoUrl}" alt="Alanpastt" style="max-width:220px;height:auto;display:inline-block;">
+              <td style="background:#0B0B0D;border-bottom:6px solid #FFD200;padding:28px;text-align:center;">
+                <img src="${logoUrl}" alt="Codimas SpA" style="max-width:250px;height:auto;display:inline-block;background:#ffffff;padding:12px;">
               </td>
             </tr>
             <tr>
-              <td style="padding:32px;">
-                <div style="display:inline-block;background:#FACC15;color:#000000;font-weight:900;text-transform:uppercase;letter-spacing:2px;font-size:12px;padding:8px 12px;margin-bottom:18px;">
-                  Alanpastt
+              <td style="padding:34px;">
+                <div style="display:inline-block;color:#005BAA;font-weight:900;text-transform:uppercase;letter-spacing:2.4px;font-size:12px;margin-bottom:18px;">
+                  CODIMAS SpA · Solicitud comercial
                 </div>
-                <h1 style="margin:0 0 18px;font-size:28px;line-height:1.1;color:#000000;text-transform:uppercase;font-weight:900;">${title}</h1>
+                <h1 style="margin:0 0 18px;font-size:30px;line-height:1.05;color:#0B0B0D;text-transform:uppercase;font-weight:900;letter-spacing:-1px;">${title}</h1>
                 ${content}
               </td>
             </tr>
             <tr>
-              <td style="background:#000000;color:#9ca3af;padding:24px;text-align:center;font-size:12px;">
-                <strong style="color:#FACC15;">Alanpastt</strong><br>
-                Soluciones de goma para seguridad y construcción<br>
-                <span style="color:#ffffff;">ventas@alanpastt.cl · +56 9 3336 5549</span>
+              <td style="background:#0B0B0D;color:#9ca3af;padding:24px;text-align:center;font-size:12px;line-height:1.7;">
+                <strong style="color:#FFD200;">Codimas SpA</strong><br>
+                Comercializadora, Distribuidora de Materiales y Servicios<br>
+                <span style="color:#ffffff;">ventas@codimas.cl · +56 9 3336 5549</span>
               </td>
             </tr>
           </table>
@@ -74,7 +76,7 @@ function emailLayout(title: string, content: string) {
 
 async function sendEmail(to: string | string[], subject: string, html: string) {
   const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
-  const FROM_EMAIL = Deno.env.get('FROM_EMAIL') || 'Alanpastt <cotizaciones@alanpastt.cl>';
+  const FROM_EMAIL = Deno.env.get('FROM_EMAIL') || 'Codimas SpA <cotizaciones@codimas.cl>';
 
   if (!RESEND_API_KEY) {
     throw new Error('Falta RESEND_API_KEY en Supabase secrets');
@@ -121,8 +123,8 @@ Deno.serve(async (req) => {
 
   const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
   const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || JSON.parse(Deno.env.get('SUPABASE_SECRET_KEYS') || '{}')?.default;
-  const SALES_EMAIL = Deno.env.get('SALES_EMAIL') || 'ventas@alanpastt.cl';
-  const SITE_URL = Deno.env.get('SITE_URL') || 'https://www.alanpastt.cl';
+  const SALES_EMAIL = Deno.env.get('SALES_EMAIL') || 'ventas@codimas.cl';
+  const SITE_URL = Deno.env.get('SITE_URL') || 'https://www.codimas.cl';
 
   if (!SERVICE_ROLE_KEY) return jsonResponse({ error: 'Falta service role key en secrets' }, 500);
 
@@ -149,25 +151,31 @@ Deno.serve(async (req) => {
 
       if (error || !dbQuote) return jsonResponse({ error: 'Solicitud no encontrada' }, 404);
 
+      const trackingUrl = `${SITE_URL}/seguimiento.html?codigo=${encodeURIComponent(dbQuote.tracking_code)}&email=${encodeURIComponent(dbQuote.email)}`;
+
       const clientHtml = emailLayout('Solicitud recibida', `
         <p style="font-size:16px;line-height:1.7;margin:0 0 18px;">Hola <strong>${escapeHtml(dbQuote.nombre)}</strong>, recibimos correctamente tu solicitud de cotización.</p>
-        <div style="background:#111827;color:#ffffff;border-left:8px solid #FACC15;padding:18px;border-radius:12px;margin:22px 0;">
-          <div style="font-size:12px;color:#FACC15;text-transform:uppercase;font-weight:900;letter-spacing:1px;">Código de seguimiento</div>
+        <div style="background:#0B0B0D;color:#ffffff;border-left:8px solid #FFD200;padding:18px;margin:22px 0;">
+          <div style="font-size:12px;color:#FFD200;text-transform:uppercase;font-weight:900;letter-spacing:1px;">Código de seguimiento</div>
           <div style="font-size:28px;font-weight:900;margin-top:6px;">${escapeHtml(dbQuote.tracking_code)}</div>
         </div>
-        <p style="font-size:15px;line-height:1.7;margin:0 0 12px;">Puedes hacer seguimiento respondiendo este correo, escribiendo a <strong>${SALES_EMAIL}</strong> o al WhatsApp <strong>+56 9 3336 5549</strong>, indicando tu código.</p>
-        <p style="font-size:15px;line-height:1.7;margin:0;">Nuestro equipo revisará tu requerimiento y te contactará a la brevedad.</p>
+        <p style="font-size:15px;line-height:1.7;margin:0 0 14px;">Puedes hacer seguimiento desde este enlace:</p>
+        <p style="margin:0 0 22px;"><a href="${trackingUrl}" style="background:#FFD200;color:#0B0B0D;text-decoration:none;font-weight:900;padding:14px 18px;display:inline-block;text-transform:uppercase;">Ver seguimiento</a></p>
+        <p style="font-size:15px;line-height:1.7;margin:0 0 12px;">También puedes escribir a <strong>${SALES_EMAIL}</strong> o al WhatsApp <strong>+56 9 3336 5549</strong>, indicando tu código.</p>
+        <p style="font-size:15px;line-height:1.7;margin:0;">Nuestro equipo revisará el requerimiento y te contactará a la brevedad.</p>
       `);
 
       const adminHtml = emailLayout('Nueva solicitud de cotización', `
-        <p style="font-size:16px;line-height:1.7;margin:0 0 18px;">Ingresó una nueva solicitud desde el sitio web.</p>
+        <p style="font-size:16px;line-height:1.7;margin:0 0 18px;">Ingresó una nueva solicitud desde el sitio web de Codimas.</p>
         <table width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;font-size:14px;">
           <tr><td style="padding:10px;border-bottom:1px solid #e5e7eb;font-weight:900;">Código</td><td style="padding:10px;border-bottom:1px solid #e5e7eb;">${escapeHtml(dbQuote.tracking_code)}</td></tr>
           <tr><td style="padding:10px;border-bottom:1px solid #e5e7eb;font-weight:900;">Nombre</td><td style="padding:10px;border-bottom:1px solid #e5e7eb;">${escapeHtml(dbQuote.nombre)}</td></tr>
+          <tr><td style="padding:10px;border-bottom:1px solid #e5e7eb;font-weight:900;">Empresa</td><td style="padding:10px;border-bottom:1px solid #e5e7eb;">${escapeHtml(dbQuote.empresa || 'No indicada')}</td></tr>
           <tr><td style="padding:10px;border-bottom:1px solid #e5e7eb;font-weight:900;">Email</td><td style="padding:10px;border-bottom:1px solid #e5e7eb;">${escapeHtml(dbQuote.email)}</td></tr>
-          <tr><td style="padding:10px;border-bottom:1px solid #e5e7eb;font-weight:900;">Mensaje</td><td style="padding:10px;border-bottom:1px solid #e5e7eb;">${escapeHtml(dbQuote.mensaje)}</td></tr>
+          <tr><td style="padding:10px;border-bottom:1px solid #e5e7eb;font-weight:900;">Teléfono</td><td style="padding:10px;border-bottom:1px solid #e5e7eb;">${escapeHtml(dbQuote.telefono || 'No indicado')}</td></tr>
+          <tr><td style="padding:10px;border-bottom:1px solid #e5e7eb;font-weight:900;vertical-align:top;">Mensaje</td><td style="padding:10px;border-bottom:1px solid #e5e7eb;white-space:pre-line;">${escapeHtml(dbQuote.mensaje)}</td></tr>
         </table>
-        <p style="margin-top:22px;"><a href="${SITE_URL}/admin/solicitudes.html" style="background:#FACC15;color:#000000;text-decoration:none;font-weight:900;padding:14px 18px;border-radius:10px;display:inline-block;text-transform:uppercase;">Gestionar solicitud</a></p>
+        <p style="margin-top:22px;"><a href="${SITE_URL}/admin/solicitudes.html" style="background:#FFD200;color:#0B0B0D;text-decoration:none;font-weight:900;padding:14px 18px;display:inline-block;text-transform:uppercase;">Gestionar solicitud</a></p>
       `);
 
       await sendEmail(dbQuote.email, `Recibimos tu solicitud ${dbQuote.tracking_code}`, clientHtml);
@@ -209,13 +217,13 @@ Deno.serve(async (req) => {
             .createSignedUrl(file.file_path, 60 * 60 * 24 * 7);
           if (signed?.signedUrl) {
             validAttachmentIds.push(file.id);
-            links.push(`<li style="margin-bottom:8px;"><a href="${signed.signedUrl}" style="color:#000000;font-weight:900;">${escapeHtml(file.file_name)}</a></li>`);
+            links.push(`<li style="margin-bottom:8px;"><a href="${signed.signedUrl}" style="color:#005BAA;font-weight:900;">${escapeHtml(file.file_name)}</a></li>`);
           }
         }
 
         if (links.length) {
           attachmentsHtml = `
-            <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;padding:18px;margin-top:22px;">
+            <div style="background:#f9fafb;border:1px solid #e5e7eb;padding:18px;margin-top:22px;">
               <div style="font-size:13px;color:#111827;text-transform:uppercase;font-weight:900;letter-spacing:1px;margin-bottom:10px;">Archivos adjuntos</div>
               <ul style="margin:0;padding-left:20px;">${links.join('')}</ul>
               <p style="font-size:12px;color:#6b7280;margin:14px 0 0;">Los enlaces estarán disponibles por 7 días.</p>
@@ -227,8 +235,8 @@ Deno.serve(async (req) => {
         <p style="font-size:15px;line-height:1.7;margin:0 0 16px;">Hola <strong>${escapeHtml(quote.nombre)}</strong>,</p>
         <div style="font-size:15px;line-height:1.7;color:#111827;white-space:pre-line;">${escapeHtml(body)}</div>
         ${attachmentsHtml}
-        <div style="background:#111827;color:#ffffff;border-left:8px solid #FACC15;padding:16px;border-radius:12px;margin-top:24px;">
-          <div style="font-size:12px;color:#FACC15;text-transform:uppercase;font-weight:900;letter-spacing:1px;">Código de seguimiento</div>
+        <div style="background:#0B0B0D;color:#ffffff;border-left:8px solid #FFD200;padding:16px;margin-top:24px;">
+          <div style="font-size:12px;color:#FFD200;text-transform:uppercase;font-weight:900;letter-spacing:1px;">Código de seguimiento</div>
           <div style="font-size:22px;font-weight:900;margin-top:4px;">${escapeHtml(quote.tracking_code)}</div>
         </div>
       `);
