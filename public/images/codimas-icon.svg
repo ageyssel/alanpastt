@@ -1,9 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
-  <rect width="256" height="256" rx="48" fill="#ffffff"/>
-  <path d="M128 18 232 78 232 178 128 238 24 178 24 78Z" fill="#0B0B0D"/>
-  <path d="M130 43 200 83 130 123 60 83Z" fill="#FFD200"/>
-  <path d="M60 97 120 132 120 203 60 168Z" fill="#ffffff"/>
-  <path d="M136 132 205 92 205 164 136 204Z" fill="#005BAA"/>
-  <path d="M80 111 121 133 80 157Z" fill="#FFD200"/>
-  <path d="M140 134 184 160 140 186Z" fill="#005BAA"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="CODIMAS">
+  <rect width="256" height="256" fill="#0B0B0D"/>
+  <path d="M181 50H90c-37 0-63 27-63 64v28c0 37 26 64 63 64h91v-45H96c-15 0-25-10-25-25v-17c0-15 10-25 25-25h85V50Z" fill="#FFD200"/>
+  <path d="M118 94h34c35 0 57 22 57 57s-22 55-57 55h-34V94Zm34 70c11 0 18-6 18-16s-7-16-18-16h-5v32h5Z" fill="#005BAA"/>
+  <path d="M36 221h184v13H36z" fill="#FFD200"/>
 </svg>
