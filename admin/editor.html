@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editor del Sitio | Codimas Admin</title>
+  <link rel="shortcut icon" href="../public/images/codimas-icon.svg" type="image/svg+xml">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../src/js/config.js"></script>
+  <script src="../src/js/catalog-data.js"></script>
+  <script src="../src/js/cms-defaults.js"></script>
+  <link rel="stylesheet" href="assets/admin.css?v=20260916-cms-1">
+</head>
+<body data-admin-page class="cms-admin-body">
+  <header class="cms-admin-topbar">
+    <div class="cms-admin-brand">
+      <img src="../public/images/codimas-logo.svg" alt="Codimas SpA">
+      <div><strong>Portal Administrativo</strong><span>Editor completo del sitio</span></div>
+    </div>
+    <div class="cms-admin-user">
+      <span id="user-email"></span>
+      <a href="../index.html" target="_blank" class="cms-btn cms-btn-light">Ver sitio</a>
+      <button id="logout-btn" class="cms-btn cms-btn-dark">Salir</button>
+    </div>
+  </header>
+
+  <div class="cms-admin-shell">
+    <aside class="cms-sidebar">
+      <a href="dashboard.html" class="cms-sidebar-back">← Panel principal</a>
+      <nav>
+        <button class="cms-nav-item is-active" data-tab="general">Marca y navegación</button>
+        <button class="cms-nav-item" data-tab="inicio">Página de inicio</button>
+        <button class="cms-nav-item" data-tab="cotizacion">Página cotización</button>
+        <button class="cms-nav-item" data-tab="seguimiento">Página seguimiento</button>
+        <button class="cms-nav-item" data-tab="catalogo">Catálogo y categorías</button>
+        <button class="cms-nav-item" data-tab="servicios">Servicios y marcas</button>
+        <button class="cms-nav-item" data-tab="contacto">Contacto</button>
+        <button class="cms-nav-item" data-tab="respaldo">Respaldo / avanzado</button>
+      </nav>
+      <div class="cms-sidebar-note">
+        <strong>Edición en vivo</strong>
+        <p>Los cambios guardados se reflejan en la web pública sin modificar código.</p>
+      </div>
+    </aside>
+
+    <main class="cms-main">
+      <div class="cms-main-head">
+        <div><p class="cms-kicker">Codimas CMS</p><h1>Administración completa del sitio</h1><p>Edita textos, imágenes, categorías, productos, servicios, marcas y datos comerciales desde un solo lugar.</p></div>
+        <div class="cms-main-actions"><button id="save-all" class="cms-btn cms-btn-primary">Guardar cambios</button></div>
+      </div>
+
+      <div id="status" class="cms-status is-hidden"></div>
+
+      <section class="cms-tab is-active" data-panel="general">
+        <div class="cms-section-head"><div><p class="cms-kicker">Identidad</p><h2>Marca, logo y navegación</h2></div></div>
+        <div id="editor-global" class="cms-form-grid"></div>
+        <div class="cms-section-divider"></div>
+        <div class="cms-section-head"><div><p class="cms-kicker">Menús</p><h2>Textos de navegación</h2></div></div>
+        <div id="editor-navigation" class="cms-form-grid"></div>
+      </section>
+
+      <section class="cms-tab" data-panel="inicio">
+        <div class="cms-section-head"><div><p class="cms-kicker">Contenido</p><h2>Página de inicio</h2><p>Todos los textos e imágenes principales del home.</p></div></div>
+        <div id="editor-home"></div>
+      </section>
+
+      <section class="cms-tab" data-panel="cotizacion">
+        <div class="cms-section-head"><div><p class="cms-kicker">Contenido</p><h2>Página de cotización</h2></div></div>
+        <div id="editor-quote" class="cms-form-grid"></div>
+      </section>
+
+      <section class="cms-tab" data-panel="seguimiento">
+        <div class="cms-section-head"><div><p class="cms-kicker">Contenido</p><h2>Página de seguimiento</h2></div></div>
+        <div id="editor-tracking" class="cms-form-grid"></div>
+      </section>
+
+      <section class="cms-tab" data-panel="catalogo">
+        <div class="cms-section-head"><div><p class="cms-kicker">Catálogo</p><h2>Categorías y productos</h2><p>Administra títulos, imágenes, subcategorías y productos de referencia.</p></div><button id="add-category" class="cms-btn cms-btn-dark">Nueva categoría</button></div>
+        <div class="cms-catalog-layout">
+          <div id="categories-admin-list" class="cms-list-panel"></div>
+          <div class="cms-editor-card">
+            <input type="hidden" id="category-index" value="">
+            <div class="cms-form-grid two-cols">
+              <label class="cms-field"><span>Número</span><input id="category-number" type="text" placeholder="01"></label>
+              <label class="cms-field"><span>Slug / URL</span><input id="category-slug" type="text" placeholder="conductores-electricos"></label>
+              <label class="cms-field span-2"><span>Título</span><input id="category-title" type="text"></label>
+              <label class="cms-field"><span>Mundo / rubro</span><input id="category-world" type="text"></label>
+              <label class="cms-field"><span>Imagen</span><div class="cms-media-field"><input id="category-image" type="url" placeholder="URL de imagen"><button type="button" class="cms-upload-btn" data-target="category-image">Subir</button><input type="file" class="cms-file-input" data-target="category-image" accept="image/png,image/jpeg,image/webp,image/gif"></div></label>
+              <label class="cms-field span-2"><span>Descripción corta</span><textarea id="category-short" rows="2"></textarea></label>
+              <label class="cms-field span-2"><span>Descripción completa</span><textarea id="category-description" rows="4"></textarea></label>
+              <label class="cms-field span-2"><span>Indicaciones para cotizar</span><textarea id="category-quote-hint" rows="3"></textarea></label>
+              <label class="cms-field"><span>Subcategorías (una por línea)</span><textarea id="category-subcategories" rows="7"></textarea></label>
+              <label class="cms-field"><span>Aplicaciones (una por línea)</span><textarea id="category-applications" rows="7"></textarea></label>
+            </div>
+            <div class="cms-subhead"><div><h3>Productos de referencia</h3><p>Estos productos aparecen dentro de la categoría y en la portada.</p></div><button id="add-category-product" type="button" class="cms-btn cms-btn-light">Agregar producto</button></div>
+            <div id="category-products-editor" class="cms-product-editor-list"></div>
+            <div class="cms-card-actions"><button id="save-category" type="button" class="cms-btn cms-btn-primary">Guardar categoría</button><button id="delete-category" type="button" class="cms-btn cms-btn-danger">Eliminar</button></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="cms-tab" data-panel="servicios">
+        <div class="cms-section-head"><div><p class="cms-kicker">Oferta comercial</p><h2>Servicios y marcas</h2></div></div>
+        <div class="cms-catalog-layout">
+          <div><div class="cms-subhead"><h3>Servicios</h3><button id="add-service" class="cms-btn cms-btn-light">Nuevo servicio</button></div><div id="services-admin-list" class="cms-list-panel"></div></div>
+          <div class="cms-editor-card">
+            <input type="hidden" id="service-index" value="">
+            <label class="cms-field"><span>Título del servicio</span><input id="service-title" type="text"></label>
+            <label class="cms-field"><span>Descripción</span><textarea id="service-text" rows="5"></textarea></label>
+            <label class="cms-field"><span>Imagen opcional</span><div class="cms-media-field"><input id="service-image" type="url"><button type="button" class="cms-upload-btn" data-target="service-image">Subir</button><input type="file" class="cms-file-input" data-target="service-image" accept="image/png,image/jpeg,image/webp,image/gif"></div></label>
+            <div class="cms-card-actions"><button id="save-service" class="cms-btn cms-btn-primary">Guardar servicio</button><button id="delete-service" class="cms-btn cms-btn-danger">Eliminar</button></div>
+          </div>
+        </div>
+        <div class="cms-section-divider"></div>
+        <div class="cms-section-head"><div><p class="cms-kicker">Marcas</p><h2>Marcas y alternativas</h2><p>Una marca por línea.</p></div></div>
+        <label class="cms-field"><span>Listado de marcas</span><textarea id="brands-editor" rows="10"></textarea></label>
+      </section>
+
+      <section class="cms-tab" data-panel="contacto">
+        <div class="cms-section-head"><div><p class="cms-kicker">Datos comerciales</p><h2>Contacto y canales</h2></div></div>
+        <div class="cms-form-grid two-cols">
+          <label class="cms-field"><span>Email de ventas</span><input id="contact-sales-email" type="email"></label>
+          <label class="cms-field"><span>Email de contacto</span><input id="contact-email" type="email"></label>
+          <label class="cms-field"><span>WhatsApp / teléfono (solo números)</span><input id="contact-whatsapp" type="text"></label>
+          <label class="cms-field"><span>Texto del footer</span><input id="contact-footer" type="text"></label>
+          <label class="cms-field span-2"><span>Mensaje predeterminado de WhatsApp</span><textarea id="contact-whatsapp-message" rows="4"></textarea></label>
+        </div>
+      </section>
+
+      <section class="cms-tab" data-panel="respaldo">
+        <div class="cms-section-head"><div><p class="cms-kicker">Avanzado</p><h2>Respaldo del contenido</h2><p>Puedes copiar o restaurar el modelo completo del sitio en formato JSON.</p></div></div>
+        <label class="cms-field"><span>Contenido completo</span><textarea id="raw-json" rows="26" spellcheck="false" class="cms-code"></textarea></label>
+        <div class="cms-card-actions"><button id="apply-json" class="cms-btn cms-btn-dark">Aplicar JSON al editor</button><button id="reset-defaults" class="cms-btn cms-btn-danger">Restaurar valores por defecto</button></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="assets/cms-editor.js?v=20260916-cms-1"></script>
+</body>
+</html>
