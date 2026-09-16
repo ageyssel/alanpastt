@@ -1,0 +1,37 @@
+name: Validate static site
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate JavaScript syntax
+        shell: bash
+        run: |
+          set -e
+          find src/js admin/assets -type f -name '*.js' -print0 | while IFS= read -r -d '' file; do
+            echo "Checking $file"
+            node --check "$file"
+          done
+      - name: Validate required CMS files
+        shell: bash
+        run: |
+          set -e
+          test -f admin/editor.html
+          test -f admin/assets/cms-core.js
+          test -f admin/assets/cms-catalog.js
+          test -f src/js/cms-defaults.js
+          test -f src/js/cms-runtime.js
+          test -f categorias/categoria.html
+          grep -q 'admin/login.html' index.html
+          grep -q 'cms-runtime.js' index.html
+          grep -q 'cms-runtime.js' cotizacion.html
+          grep -q 'cms-runtime.js' seguimiento.html
