@@ -1,192 +1,32 @@
-(function () {
-  'use strict';
-
-  function isObject(value) {
-    return value && typeof value === 'object' && !Array.isArray(value);
-  }
-
-  function deepMerge(base, override) {
-    if (!isObject(base)) return override === undefined ? base : override;
-    const output = { ...base };
-    if (!isObject(override)) return output;
-    Object.keys(override).forEach((key) => {
-      if (Array.isArray(override[key])) output[key] = override[key];
-      else if (isObject(override[key]) && isObject(base[key])) output[key] = deepMerge(base[key], override[key]);
-      else if (override[key] !== undefined && override[key] !== null) output[key] = override[key];
-    });
-    return output;
-  }
-
-  function qs(selector, root = document) { return root.querySelector(selector); }
-  function qsa(selector, root = document) { return Array.from(root.querySelectorAll(selector)); }
-  function setText(selector, value, root = document) { const el = qs(selector, root); if (el && value !== undefined) el.textContent = value; }
-  function setHTML(selector, value, root = document) { const el = qs(selector, root); if (el && value !== undefined) el.innerHTML = value; }
-  function setHref(selector, value, root = document) { const el = qs(selector, root); if (el && value) el.setAttribute('href', value); }
-  function setImage(selector, value, root = document) { const el = qs(selector, root); if (el && value) el.setAttribute('src', value); }
-  function setBackground(selector, value, root = document) { const el = qs(selector, root); if (el && value) el.style.backgroundImage = `url("${String(value).replaceAll('"', '\\"')}")`; }
-
-  function applyGlobal(site, root = document) {
-    const g = site.global || {};
-    qsa('.codimas-logo', root).forEach((img) => { if (g.logo_url) img.src = g.logo_url; });
-    qsa('.codimas-footer-logo', root).forEach((img) => { if (g.logo_negative_url) img.src = g.logo_negative_url; });
-
-    const favicon = qs('link[rel*="icon"]', root);
-    if (favicon && g.favicon_url) favicon.href = g.favicon_url;
-
-    qsa('a[href^="mailto:"]', root).forEach((link) => {
-      if (g.sales_email) {
-        link.href = `mailto:${g.sales_email}`;
-        if ((link.textContent || '').includes('@')) link.textContent = g.sales_email;
-      }
-    });
-    qsa('a[href^="tel:"]', root).forEach((link) => {
-      if (g.phone) {
-        link.href = `tel:${g.phone.replace(/[^+\d]/g, '')}`;
-        if ((link.textContent || '').trim().startsWith('+')) link.textContent = g.phone;
-      }
-    });
-
-    const footerBottom = qs('.codimas-footer-bottom', root);
-    if (footerBottom && g.developer_credit) {
-      let credit = footerBottom.querySelector('.codimas-focusone-credit');
-      if (!credit) {
-        credit = document.createElement('span');
-        credit.className = 'codimas-focusone-credit';
-        footerBottom.appendChild(credit);
-      }
-      credit.textContent = g.developer_credit;
-    }
-  }
-
-  function applyHome(site) {
-    const home = site.home || {};
-    const hero = home.hero || {};
-    setText('.codimas-hero-copy .codimas-eyebrow', hero.eyebrow);
-    setHTML('.codimas-hero-title', hero.title_html);
-    setText('.codimas-hero-copy .codimas-copy', hero.subtitle);
-    setBackground('.codimas-hero-image', hero.image_url);
-    const heroButtons = qsa('.codimas-hero-copy .codimas-hero-actions a');
-    if (heroButtons[0]) { heroButtons[0].textContent = hero.primary_text || heroButtons[0].textContent; if (hero.primary_href) heroButtons[0].href = hero.primary_href; }
-    if (heroButtons[1]) { heroButtons[1].textContent = hero.secondary_text || heroButtons[1].textContent; if (hero.secondary_href) heroButtons[1].href = hero.secondary_href; }
-
-    qsa('.codimas-benefit-mini').forEach((item, index) => {
-      const benefit = home.benefits?.[index];
-      if (!benefit) return;
-      setText('strong', benefit.title, item);
-      setText('span', benefit.text, item);
-    });
-
-    const sections = qsa('.codimas-section-head');
-    const categoriesHead = sections[0];
-    if (categoriesHead) { setText('.codimas-eyebrow', home.categories?.eyebrow, categoriesHead); setHTML('.codimas-section-title', home.categories?.title_html, categoriesHead); }
-    const productsHead = sections[1];
-    if (productsHead) { setText('.codimas-eyebrow', home.products?.eyebrow, productsHead); setHTML('.codimas-section-title', home.products?.title_html, productsHead); }
-
-    qsa('.codimas-promo').forEach((promoNode, index) => {
-      const promo = home.promos?.[index];
-      if (!promo) return;
-      const image = promoNode.querySelector('img'); if (image && promo.image_url) image.src = promo.image_url;
-      setText('.codimas-eyebrow', promo.eyebrow, promoNode);
-      setHTML('h3', promo.title_html, promoNode);
-      const paragraphs = qsa('.codimas-promo-copy > p', promoNode); if (paragraphs[1] && promo.text !== undefined) paragraphs[1].textContent = promo.text;
-      const button = promoNode.querySelector('.codimas-btn'); if (button) { if (promo.button_text) button.textContent = promo.button_text; if (promo.button_href) button.href = promo.button_href; }
-    });
-
-    qsa('.codimas-trust-item').forEach((item, index) => {
-      const trust = home.trust?.[index];
-      if (!trust) return;
-      setText('strong', trust.title, item); setText('span', trust.text, item);
-    });
-
-    const enterprise = qs('.codimas-enterprise-cta');
-    if (enterprise && home.enterprise) {
-      const image = enterprise.querySelector('img'); if (image && home.enterprise.image_url) image.src = home.enterprise.image_url;
-      setText('.codimas-eyebrow', home.enterprise.eyebrow, enterprise);
-      setHTML('h2', home.enterprise.title_html, enterprise);
-      setText('.codimas-copy', home.enterprise.text, enterprise);
-      const buttons = qsa('.codimas-btn', enterprise);
-      if (buttons[0]) { if (home.enterprise.primary_text) buttons[0].textContent = home.enterprise.primary_text; if (home.enterprise.primary_href) buttons[0].href = home.enterprise.primary_href; }
-      if (buttons[1]) { if (home.enterprise.secondary_text) buttons[1].textContent = home.enterprise.secondary_text; if (home.enterprise.secondary_href) buttons[1].href = home.enterprise.secondary_href; }
-    }
-
-    const services = qs('#servicios');
-    if (services && home.services) { setText('.codimas-eyebrow', home.services.eyebrow, services); setHTML('.codimas-section-title', home.services.title_html, services); }
-    const brands = qs('#marcas');
-    if (brands && home.brands) { setText('.codimas-eyebrow', home.brands.eyebrow, brands); setHTML('.codimas-section-title', home.brands.title_html, brands); setText('.codimas-copy', home.brands.text, brands); }
-    const contact = qs('#contacto');
-    if (contact && home.contact) {
-      setText('.codimas-eyebrow', home.contact.eyebrow, contact);
-      setText('.codimas-section-title', home.contact.title, contact);
-      const buttons = qsa('.codimas-btn', contact);
-      if (buttons[0] && home.contact.primary_text) buttons[0].textContent = home.contact.primary_text;
-      if (buttons[1] && home.contact.secondary_text) buttons[1].textContent = home.contact.secondary_text;
-    }
-  }
-
-  function applyQuote(site) {
-    const quote = site.quote || {};
-    const hero = qs('.codimas-page-hero');
-    if (hero) {
-      setText('.codimas-eyebrow', quote.hero_eyebrow, hero);
-      setHTML('h1', quote.hero_title_html, hero);
-      setText('.codimas-copy', quote.hero_text, hero);
-      setBackground('.codimas-page-hero-media', quote.hero_image_url, hero);
-    }
-    const items = qs('.codimas-quote-layout aside .codimas-panel');
-    if (items) setText('h2', quote.items_title, items);
-    const formPanel = qs('.codimas-quote-layout > section.codimas-panel');
-    if (formPanel) { setText('.codimas-eyebrow', quote.form_eyebrow, formPanel); setHTML('.codimas-section-title', quote.form_title_html, formPanel); }
-    const submit = qs('#btn-enviar'); if (submit && quote.submit_text) submit.textContent = quote.submit_text;
-  }
-
-  function applyTracking(site) {
-    const tracking = site.tracking || {};
-    const hero = qs('.codimas-page-hero');
-    if (hero) {
-      setText('.codimas-eyebrow', tracking.hero_eyebrow, hero);
-      setHTML('h1', tracking.hero_title_html, hero);
-      setText('.codimas-copy', tracking.hero_text, hero);
-      setBackground('.codimas-page-hero-media', tracking.hero_image_url, hero);
-    }
-    const searchPanel = qs('.tracking-layout aside.codimas-panel');
-    if (searchPanel) { setText('.codimas-eyebrow', tracking.search_eyebrow, searchPanel); setHTML('.codimas-section-title', tracking.search_title_html, searchPanel); }
-    const button = qs('#tracking-btn'); if (button && tracking.button_text) button.textContent = tracking.button_text;
-  }
-
-  async function loadSite() {
-    const defaults = window.CODIMAS_CMS_DEFAULTS ? window.CODIMAS_CMS_DEFAULTS() : {};
-    const client = window.alanpasttSupabase;
-    let site = defaults;
-
-    if (client) {
-      try {
-        const { data, error } = await client.from('site_content').select('value').eq('key', 'cms_site').maybeSingle();
-        if (!error && data?.value) site = deepMerge(defaults, data.value);
-
-        const { data: contact } = await client.from('contact_settings').select('*').eq('id', 1).maybeSingle();
-        if (contact) {
-          site.global = site.global || {};
-          site.global.sales_email = contact.sales_email || site.global.sales_email;
-          site.global.phone = contact.whatsapp_number ? `+${contact.whatsapp_number}` : site.global.phone;
-          site.global.whatsapp = contact.whatsapp_number || site.global.whatsapp;
-        }
-      } catch (error) {
-        console.warn('CMS público: usando contenido local por error de carga.', error);
-      }
-    }
-
-    window.CODIMAS_CMS = site;
-    applyGlobal(site);
-
-    const path = (location.pathname || '').toLowerCase();
-    if (path.endsWith('/cotizacion.html') || path.endsWith('cotizacion.html')) applyQuote(site);
-    else if (path.endsWith('/seguimiento.html') || path.endsWith('seguimiento.html')) applyTracking(site);
-    else if (!path.includes('/categorias/') && !path.includes('/admin/')) applyHome(site);
-
-    window.dispatchEvent(new CustomEvent('codimas:cms-ready', { detail: site }));
-    return site;
-  }
-
-  window.CODIMAS_CMS_API = { deepMerge, applyGlobal, applyHome, applyQuote, applyTracking };
-  window.CODIMAS_CMS_READY = loadSite();
+(function(){
+'use strict';
+const isObj=v=>v&&typeof v==='object'&&!Array.isArray(v);
+function merge(a,b){if(!isObj(a))return b===undefined?a:b;const o={...a};if(!isObj(b))return o;Object.keys(b).forEach(k=>{if(Array.isArray(b[k]))o[k]=b[k];else if(isObj(b[k])&&isObj(a[k]))o[k]=merge(a[k],b[k]);else if(b[k]!==undefined&&b[k]!==null)o[k]=b[k]});return o}
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const text=(s,v,r=document)=>{const e=$(s,r);if(e&&v!==undefined)e.textContent=v};
+const html=(s,v,r=document)=>{const e=$(s,r);if(e&&v!==undefined)e.innerHTML=v};
+const bg=(s,v,r=document)=>{const e=$(s,r);if(e&&v)e.style.backgroundImage=`url("${String(v).replaceAll('"','\\"')}")`};
+function applyGlobal(site,root=document){
+ const g=site.global||{},n=site.navigation||{};
+ $$('.codimas-logo',root).forEach(i=>{if(g.logo_url)i.src=g.logo_url});
+ $$('.codimas-footer-logo',root).forEach(i=>{if(g.logo_negative_url)i.src=g.logo_negative_url});
+ const fav=$('link[rel*="icon"]',root);if(fav&&g.favicon_url)fav.href=g.favicon_url;
+ const top=root.querySelector('.codimas-topbar');if(top){const span=top.querySelector('.hide-mobile');if(span&&g.topbar_left)span.textContent=g.topbar_left;const company=top.querySelector('a[href*="#empresas"]');if(company&&g.topbar_company)company.textContent=g.topbar_company;const contact=top.querySelector('a[href*="#contacto"]');if(contact&&g.topbar_contact)contact.textContent=g.topbar_contact}
+ $$('a[href^="mailto:"]',root).forEach(a=>{if(g.sales_email){a.href=`mailto:${g.sales_email}`;if((a.textContent||'').includes('@'))a.textContent=g.sales_email}});
+ $$('a[href^="tel:"]',root).forEach(a=>{if(g.phone){a.href=`tel:${g.phone.replace(/[^+\d]/g,'')}`;if((a.textContent||'').trim().startsWith('+'))a.textContent=g.phone}});
+ const nav=$('.codimas-navrow',root);if(nav){const map=[['button',n.products],['a[href*="#categorias"]',n.categories],['a[href*="#empresas"]',n.companies],['a[href*="#servicios"]',n.services],['a[href*="#marcas"]',n.brands],['a[href*="#contacto"]',n.contact]];map.forEach(([s,v])=>{const e=$(s,nav);if(e&&v)e.textContent=v})}
+ const footer=$('.codimas-footer',root);if(footer){const first=$('.codimas-footer-grid > div:first-child',footer);if(first){const ps=$$('p',first);if(ps[0]&&g.legal_name)ps[0].textContent=g.legal_name;if(ps[1]&&g.tagline)ps[1].textContent=g.tagline;if(ps.length===1&&g.tagline)ps[0].textContent=g.tagline}const bottom=$('.codimas-footer-bottom',footer);if(bottom){const spans=$$('span',bottom);if(spans[1]&&g.footer_country)spans[1].textContent=g.footer_country;let credit=$('.codimas-focusone-credit',bottom);if(!credit){credit=document.createElement('span');credit.className='codimas-focusone-credit';bottom.appendChild(credit)}credit.textContent=g.developer_credit||'Sitio diseñado por Focus One SpA'}}
+ const adminLinks=$$('a[href*="admin/login.html"]',root);adminLinks.forEach(a=>{if((a.textContent||'').trim())a.textContent='Administración'});
+}
+function applyHome(site){const h=site.home||{},hero=h.hero||{};text('.codimas-hero-copy .codimas-eyebrow',hero.eyebrow);html('.codimas-hero-title',hero.title_html);text('.codimas-hero-copy .codimas-copy',hero.subtitle);bg('.codimas-hero-image',hero.image_url);const hb=$$('.codimas-hero-copy .codimas-hero-actions a');if(hb[0]){if(hero.primary_text)hb[0].textContent=hero.primary_text;if(hero.primary_href)hb[0].href=hero.primary_href}if(hb[1]){if(hero.secondary_text)hb[1].textContent=hero.secondary_text;if(hero.secondary_href)hb[1].href=hero.secondary_href}
+ $$('.codimas-benefit-mini').forEach((e,i)=>{const x=h.benefits?.[i];if(x){text('strong',x.title,e);text('span',x.text,e)}});
+ const heads=$$('.codimas-section-head');if(heads[0]){text('.codimas-eyebrow',h.categories?.eyebrow,heads[0]);html('.codimas-section-title',h.categories?.title_html,heads[0])}if(heads[1]){text('.codimas-eyebrow',h.products?.eyebrow,heads[1]);html('.codimas-section-title',h.products?.title_html,heads[1])}
+ $$('.codimas-promo').forEach((node,i)=>{const p=h.promos?.[i];if(!p)return;const im=$('img',node);if(im&&p.image_url)im.src=p.image_url;text('.codimas-eyebrow',p.eyebrow,node);html('h3',p.title_html,node);const ps=$$('.codimas-promo-copy > p',node);if(ps[1]&&p.text!==undefined)ps[1].textContent=p.text;const b=$('.codimas-btn',node);if(b){if(p.button_text)b.textContent=p.button_text;if(p.button_href)b.href=p.button_href}});
+ $$('.codimas-trust-item').forEach((e,i)=>{const x=h.trust?.[i];if(x){text('strong',x.title,e);text('span',x.text,e)}});
+ const ent=$('.codimas-enterprise-cta');if(ent&&h.enterprise){const im=$('img',ent);if(im&&h.enterprise.image_url)im.src=h.enterprise.image_url;text('.codimas-eyebrow',h.enterprise.eyebrow,ent);html('h2',h.enterprise.title_html,ent);text('.codimas-copy',h.enterprise.text,ent);const bs=$$('.codimas-btn',ent);if(bs[0]){if(h.enterprise.primary_text)bs[0].textContent=h.enterprise.primary_text;if(h.enterprise.primary_href)bs[0].href=h.enterprise.primary_href}if(bs[1]){if(h.enterprise.secondary_text)bs[1].textContent=h.enterprise.secondary_text;if(h.enterprise.secondary_href)bs[1].href=h.enterprise.secondary_href}}
+ const sv=$('#servicios');if(sv&&h.services){text('.codimas-eyebrow',h.services.eyebrow,sv);html('.codimas-section-title',h.services.title_html,sv)}const br=$('#marcas');if(br&&h.brands){text('.codimas-eyebrow',h.brands.eyebrow,br);html('.codimas-section-title',h.brands.title_html,br);text('.codimas-copy',h.brands.text,br)}const ct=$('#contacto');if(ct&&h.contact){text('.codimas-eyebrow',h.contact.eyebrow,ct);text('.codimas-section-title',h.contact.title,ct);const bs=$$('.codimas-btn',ct);if(bs[0]&&h.contact.primary_text)bs[0].textContent=h.contact.primary_text;if(bs[1]&&h.contact.secondary_text)bs[1].textContent=h.contact.secondary_text}}
+function applyQuote(site){const q=site.quote||{},hero=$('.codimas-page-hero');if(hero){text('.codimas-eyebrow',q.hero_eyebrow,hero);html('h1',q.hero_title_html,hero);text('.codimas-copy',q.hero_text,hero);bg('.codimas-page-hero-media',q.hero_image_url,hero)}const items=$('.codimas-quote-layout aside .codimas-panel');if(items)text('h2',q.items_title,items);const fp=$('.codimas-quote-layout > section.codimas-panel');if(fp){text('.codimas-eyebrow',q.form_eyebrow,fp);html('.codimas-section-title',q.form_title_html,fp)}const submit=$('#btn-enviar');if(submit&&q.submit_text)submit.textContent=q.submit_text}
+function applyTracking(site){const t=site.tracking||{},hero=$('.codimas-page-hero');if(hero){text('.codimas-eyebrow',t.hero_eyebrow,hero);html('h1',t.hero_title_html,hero);text('.codimas-copy',t.hero_text,hero);bg('.codimas-page-hero-media',t.hero_image_url,hero)}const sp=$('.tracking-layout aside.codimas-panel');if(sp){text('.codimas-eyebrow',t.search_eyebrow,sp);html('.codimas-section-title',t.search_title_html,sp)}const b=$('#tracking-btn');if(b&&t.button_text)b.textContent=t.button_text}
+async function load(){const defaults=window.CODIMAS_CMS_DEFAULTS?window.CODIMAS_CMS_DEFAULTS():{},client=window.alanpasttSupabase;let site=defaults;if(client){try{const {data,error}=await client.from('site_content').select('value').eq('key','cms_site').maybeSingle();if(!error&&data?.value)site=merge(defaults,data.value);const {data:c}=await client.from('contact_settings').select('*').eq('id',1).maybeSingle();if(c){site.global=site.global||{};site.global.sales_email=c.sales_email||site.global.sales_email;site.global.phone=c.whatsapp_number?`+${c.whatsapp_number}`:site.global.phone;site.global.whatsapp=c.whatsapp_number||site.global.whatsapp}}catch(e){console.warn('CMS público: usando contenido local.',e)}}window.CODIMAS_CMS=site;applyGlobal(site);const p=(location.pathname||'').toLowerCase();if(p.endsWith('cotizacion.html'))applyQuote(site);else if(p.endsWith('seguimiento.html'))applyTracking(site);else if(!p.includes('/categorias/')&&!p.includes('/admin/'))applyHome(site);window.dispatchEvent(new CustomEvent('codimas:cms-ready',{detail:site}));return site}
+window.CODIMAS_CMS_API={deepMerge:merge,applyGlobal,applyHome,applyQuote,applyTracking};window.CODIMAS_CMS_READY=load();
 })();
