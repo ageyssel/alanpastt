@@ -10,7 +10,18 @@
 </head>
 <body data-category="">
   <div id="category-root"></div>
-  <script>document.body.dataset.category=new URLSearchParams(location.search).get('slug')||'';</script>
+  <script>
+    document.body.dataset.category=new URLSearchParams(location.search).get('slug')||'';
+    const root=document.getElementById('category-root');
+    const fixDynamicCategory=()=>{
+      root.querySelectorAll('img').forEach(img=>{const src=img.getAttribute('src')||'';if(src.startsWith('public/'))img.setAttribute('src','../'+src)});
+      document.querySelectorAll('link[rel*="icon"]').forEach(link=>{const href=link.getAttribute('href')||'';if(href.startsWith('public/'))link.setAttribute('href','../'+href)});
+      root.querySelectorAll('.codimas-feature-category').forEach(a=>{const href=a.getAttribute('href')||'';if(/^[^/?#]+\.html$/.test(href)&&href!=='categoria.html'){a.href='categoria.html?slug='+encodeURIComponent(href.replace(/\.html$/,''))}});
+      const h1=root.querySelector('h1');if(h1)document.title=`${h1.textContent.trim()} | Codimas SpA`;
+      const desc=root.querySelector('.codimas-page-hero-copy .codimas-copy');const meta=document.querySelector('meta[name="description"]');if(desc&&meta)meta.setAttribute('content',desc.textContent.trim());
+    };
+    new MutationObserver(fixDynamicCategory).observe(root,{childList:true,subtree:true});
+  </script>
   <script src="../src/js/catalog-data.js"></script>
   <script src="../src/js/category-page.js?v=20260916-cms-1"></script>
 </body>
