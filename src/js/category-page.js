@@ -1,3 +1,11 @@
+async function ensureCategoryCMS(){
+  const load=(src)=>new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=src;s.onload=resolve;s.onerror=reject;document.head.appendChild(s)});
+  if(!window.supabase) await load('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2');
+  if(!window.ALANPASTT_CONFIG) await load('../src/js/config.js');
+  if(!window.CODIMAS_CMS_DEFAULTS) await load('../src/js/cms-defaults.js');
+  if(!window.CODIMAS_CMS_READY) await load('../src/js/cms-runtime.js');
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   if (!document.querySelector('link[href*="style.css"]')) {
     const link = document.createElement('link');
@@ -5,6 +13,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     link.href = '../src/css/style.css?v=20260916-cms-1';
     document.head.appendChild(link);
   }
+
+  try { await ensureCategoryCMS(); } catch (error) { console.warn('No se pudo cargar CMS en categoría, usando contenido local.', error); }
 
   const slug = document.body.dataset.category;
   const fallbackCatalog = window.CODIMAS_CATALOG;
@@ -45,7 +55,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   root.innerHTML = `
     <header class="codimas-main-header">
-      <div class="codimas-topbar"><div class="codimas-shell"><div class="codimas-topbar-links"><span class="hide-mobile">${global.topbar_left || 'Productos para profesionales y empresas'}</span><a href="../index.html#empresas">${global.topbar_company || 'Venta empresas'}</a></div><div class="codimas-topbar-links"><a href="../seguimiento.html">Seguimiento</a><a class="hide-mobile" href="mailto:${global.sales_email || 'ventas@codimas.cl'}">${global.sales_email || 'ventas@codimas.cl'}</a></div></div></div>
+      <div class="codimas-topbar"><div class="codimas-shell"><div class="codimas-topbar-links"><span class="hide-mobile">${global.topbar_left || 'Productos para profesionales y empresas'}</span><a href="../index.html#empresas">${global.topbar_company || 'Venta empresas'}</a></div><div class="codimas-topbar-links"><a href="../seguimiento.html">Seguimiento</a><a class="hide-mobile" href="mailto:${global.sales_email || 'ventas@codimas.cl'}">${global.sales_email || 'ventas@codimas.cl'}</a><a href="../admin/login.html">Administración</a></div></div></div>
       <div class="codimas-shell codimas-header-main" style="grid-template-columns:minmax(180px,250px) 1fr auto"><a href="../index.html"><img src="${global.logo_url || '../public/images/codimas-logo.svg'}" alt="Codimas SpA" class="codimas-logo"></a><div></div><div class="codimas-header-actions"><a class="codimas-header-action optional" href="../index.html#categorias">Categorías</a><a class="codimas-btn codimas-btn-dark" href="../cotizacion.html?categoria=${encodeURIComponent(category.title)}">Solicitar cotización</a></div></div>
       <div class="codimas-navbar"><div class="codimas-shell codimas-navrow"><a href="../index.html#categorias">Productos</a><a href="../index.html#empresas">Empresas</a><a href="../index.html#servicios">Servicios</a><a href="../index.html#marcas">Marcas</a><a href="../index.html#contacto">Contacto</a></div></div>
     </header>
