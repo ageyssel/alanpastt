@@ -29,6 +29,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     'pisos-soluciones-exteriores': 'public/images/piso_goma.jpg'
   };
 
+  const categoryHref = (category) => `categorias/categoria.html?slug=${encodeURIComponent(category.slug)}`;
   const getCategory = (slug) => catalog.categories.find((item) => item.slug === slug);
   const getImage = (itemOrSlug) => {
     const item = typeof itemOrSlug === 'string' ? getCategory(itemOrSlug) : itemOrSlug;
@@ -36,22 +37,28 @@ document.addEventListener('DOMContentLoaded', async () => {
     return item?.image_url || defaultImages[slug] || 'public/images/codimas-category.svg';
   };
 
+  const megaGrid = document.querySelector('#mega-menu .codimas-mega-grid');
+  if (megaGrid) {
+    const groups = [...new Set(catalog.categories.map((item) => item.world).filter(Boolean))].slice(0, 4);
+    megaGrid.innerHTML = `
+      <div><p class="codimas-mega-title">Catálogo Codimas</p><p>Encuentra la línea correcta y solicita una cotización con cantidades, medidas, códigos o especificaciones.</p><a href="cotizacion.html" class="codimas-btn codimas-btn-primary">Enviar requerimiento</a></div>
+      ${groups.map((world) => `<div><h3>${world}</h3>${catalog.categories.filter(c => c.world === world).slice(0, 7).map(c => `<a href="${categoryHref(c)}">${c.title}</a>`).join('')}</div>`).join('')}
+    `;
+  }
+
   const rail = document.getElementById('category-rail');
   if (rail) {
     rail.innerHTML = catalog.categories.slice(0, 8).map((category) => `
-      <a href="categorias/${category.slug}.html" class="codimas-category-pill">
+      <a href="${categoryHref(category)}" class="codimas-category-pill">
         <span class="codimas-category-pill-media" style="background-image:url('${getImage(category)}')"></span>
         <strong>${category.title}</strong>
       </a>`).join('');
   }
 
-  const preferred = ['conductores-electricos', 'fijaciones-sujeciones', 'herramientas-equipos-seguridad', 'pisos-soluciones-exteriores'];
   const categoriesGrid = document.getElementById('categories-grid');
   if (categoriesGrid) {
-    const selected = preferred.map(getCategory).filter(Boolean);
-    const source = selected.length >= 4 ? selected : catalog.categories.slice(0, 4);
-    categoriesGrid.innerHTML = source.map((category) => `
-      <a href="categorias/${category.slug}.html" class="codimas-feature-category">
+    categoriesGrid.innerHTML = catalog.categories.map((category) => `
+      <a href="${categoryHref(category)}" class="codimas-feature-category">
         <img src="${getImage(category)}" alt="${category.title}" loading="lazy">
         <div class="codimas-feature-category-copy"><h3>${category.title}</h3><span>Explorar categoría →</span></div>
       </a>`).join('');
@@ -61,17 +68,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (featuredGrid) {
     const featured = catalog.categories.flatMap((category) =>
       (category.featuredProducts || []).slice(0, 1).map((product) => ({ ...product, category: category.title, slug: category.slug, image_url: product.image_url || category.image_url }))
-    ).slice(0, 6);
-
+    ).slice(0, 8);
     featuredGrid.innerHTML = featured.map((product) => `
       <article class="codimas-product-card">
         <div class="codimas-product-image"><img src="${product.image_url || getImage(product.slug)}" alt="${product.name}" loading="lazy"></div>
-        <div class="codimas-product-meta">
-          <div class="category">${product.category}</div>
-          <h3>${product.name}</h3>
-          <p>${product.spec || ''}</p>
-          <div class="code">Código ref. ${product.code || 'S/C'}</div>
-        </div>
+        <div class="codimas-product-meta"><div class="category">${product.category}</div><h3>${product.name}</h3><p>${product.spec || ''}</p><div class="code">Código ref. ${product.code || 'S/C'}</div></div>
         <button class="quote-add-btn codimas-btn codimas-btn-dark" data-name="${product.name}" data-code="${product.code || ''}" data-category="${product.category}" data-spec="${product.spec || ''}">Agregar a cotización</button>
       </article>`).join('');
   }
@@ -81,10 +82,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     servicesGrid.innerHTML = catalog.services.map((service, index) => `
       <article class="codimas-service-card">
         ${service.image_url ? `<img src="${service.image_url}" alt="${service.title}" style="width:100%;aspect-ratio:16/9;object-fit:cover;margin-bottom:18px">` : ''}
-        <span class="num">${String(index + 1).padStart(2, '0')}</span>
-        <h3>${service.title}</h3>
-        <p>${service.text || ''}</p>
-        <a href="cotizacion.html?servicio=${encodeURIComponent(service.title)}">Solicitar cotización →</a>
+        <span class="num">${String(index + 1).padStart(2, '0')}</span><h3>${service.title}</h3><p>${service.text || ''}</p><a href="cotizacion.html?servicio=${encodeURIComponent(service.title)}">Solicitar cotización →</a>
       </article>`).join('');
   }
 
@@ -102,53 +100,31 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   function wireSearch(formId, inputId, resultsId) {
-    const form = document.getElementById(formId);
-    const input = document.getElementById(inputId);
-    const results = document.getElementById(resultsId);
+    const form = document.getElementById(formId), input = document.getElementById(inputId), results = document.getElementById(resultsId);
     if (!form || !input || !results) return;
-
     function render(query) {
       const clean = query.trim();
       if (!clean) { results.innerHTML = ''; results.classList.add('hidden'); return; }
       const matches = searchCatalog(clean).slice(0, 8);
       results.classList.remove('hidden');
-      results.innerHTML = matches.length
-        ? matches.map((category) => `<a href="categorias/${category.slug}.html"><strong style="display:block;font-size:13px;font-weight:600">${category.title}</strong><span style="display:block;margin-top:4px;color:#6c7076;font-size:12px">${category.short || ''}</span></a>`).join('')
-        : `<div style="padding:16px;font-size:13px;color:#6c7076">No encontramos coincidencias. Puedes describir el requerimiento en una solicitud de cotización.</div>`;
+      results.innerHTML = matches.length ? matches.map((category) => `<a href="${categoryHref(category)}"><strong style="display:block;font-size:13px;font-weight:600">${category.title}</strong><span style="display:block;margin-top:4px;color:#6c7076;font-size:12px">${category.short || ''}</span></a>`).join('') : `<div style="padding:16px;font-size:13px;color:#6c7076">No encontramos coincidencias. Puedes describir el requerimiento en una solicitud de cotización.</div>`;
     }
-
     input.addEventListener('input', (event) => render(event.target.value));
-    form.addEventListener('submit', (event) => {
-      event.preventDefault();
-      const query = input.value.trim();
-      const first = searchCatalog(query)[0];
-      window.location.href = first ? `categorias/${first.slug}.html` : `cotizacion.html?busqueda=${encodeURIComponent(query)}`;
-    });
+    form.addEventListener('submit', (event) => { event.preventDefault(); const query = input.value.trim(); const first = searchCatalog(query)[0]; window.location.href = first ? categoryHref(first) : `cotizacion.html?busqueda=${encodeURIComponent(query)}`; });
   }
 
   wireSearch('catalog-search-form', 'catalog-search-input', 'catalog-search-results');
   wireSearch('catalog-search-form-mobile', 'catalog-search-input-mobile', 'catalog-search-results-mobile');
 
-  const megaToggle = document.getElementById('mega-toggle');
-  const megaMenu = document.getElementById('mega-menu');
-  megaToggle?.addEventListener('click', () => {
-    const open = megaMenu?.classList.toggle('is-open');
-    megaToggle.setAttribute('aria-expanded', String(Boolean(open)));
-  });
+  const megaToggle = document.getElementById('mega-toggle'), megaMenu = document.getElementById('mega-menu');
+  megaToggle?.addEventListener('click', () => { const open = megaMenu?.classList.toggle('is-open'); megaToggle.setAttribute('aria-expanded', String(Boolean(open))); });
 
   document.addEventListener('click', (event) => {
     const target = event.target;
-    if (megaMenu && megaToggle && !megaMenu.contains(target) && !megaToggle.contains(target)) {
-      megaMenu.classList.remove('is-open');
-      megaToggle.setAttribute('aria-expanded', 'false');
-    }
+    if (megaMenu && megaToggle && !megaMenu.contains(target) && !megaToggle.contains(target)) { megaMenu.classList.remove('is-open'); megaToggle.setAttribute('aria-expanded', 'false'); }
     const button = target.closest?.('.quote-add-btn');
     if (!button) return;
     const item = { name: button.dataset.name, code: button.dataset.code, category: button.dataset.category, spec: button.dataset.spec };
-    const list = utils.addQuoteItem(item);
-    button.textContent = `Agregado (${list.length})`;
-    button.classList.remove('codimas-btn-dark');
-    button.classList.add('codimas-btn-primary');
-    setTimeout(() => { window.location.href = 'cotizacion.html'; }, 380);
+    const list = utils.addQuoteItem(item); button.textContent = `Agregado (${list.length})`; button.classList.remove('codimas-btn-dark'); button.classList.add('codimas-btn-primary'); setTimeout(() => { window.location.href = 'cotizacion.html'; }, 380);
   });
 });
