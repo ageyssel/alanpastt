@@ -3,37 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Acceso Admin | Alanpastt</title>
+  <title>Acceso Administración | Codimas SpA</title>
+  <link rel="shortcut icon" href="../public/images/codimas-icon.svg" type="image/svg+xml">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../src/js/config.js"></script>
-  <link rel="stylesheet" href="assets/admin.css">
+  <link rel="stylesheet" href="assets/admin.css?v=20260916-cms-1">
 </head>
-<body class="bg-slate-950 flex items-center justify-center p-6">
-  <main class="w-full max-w-md bg-white rounded-2xl p-8 admin-card">
-    <div class="text-center mb-8">
-      <img src="../public/images/logo.png" alt="Alanpastt" class="h-28 mx-auto object-contain">
-      <h1 class="text-3xl font-black text-slate-950 mt-4">Portal Administrativo</h1>
-      <p class="text-slate-500 font-bold">Ingresa para editar la web</p>
+<body class="cms-admin-body" style="display:grid;place-items:center;padding:24px;background:#111214">
+  <main style="width:min(100%,460px);background:#fff;border:1px solid #2d3035;padding:34px;border-radius:5px;box-shadow:0 24px 70px rgba(0,0,0,.28)">
+    <div style="text-align:center;margin-bottom:28px">
+      <img src="../public/images/codimas-logo.svg" alt="Codimas SpA" style="width:230px;max-width:80%;margin:0 auto 24px">
+      <p class="cms-kicker">Portal administrativo</p>
+      <h1 style="font-size:34px;letter-spacing:-.04em;margin:8px 0 10px;font-weight:300!important">Acceso al <strong style="font-weight:600">CMS Codimas</strong></h1>
+      <p style="color:#6c7076;font-size:13px;line-height:1.5;margin:0">Administra contenido, imágenes, catálogo, solicitudes y configuración del sitio.</p>
     </div>
 
-    <div id="status" class="hidden mb-4"></div>
+    <div id="status" class="cms-status is-hidden"></div>
 
-    <form id="login-form" class="space-y-5">
-      <div>
-        <label for="email" class="block text-xs uppercase font-black text-slate-600 mb-2">Email</label>
-        <input id="email" type="email" required class="w-full rounded-xl bg-slate-100 px-4 py-4 font-bold outline-none focus:ring-4 focus:ring-yellow-300">
-      </div>
-      <div>
-        <label for="password" class="block text-xs uppercase font-black text-slate-600 mb-2">Contraseña</label>
-        <input id="password" type="password" required class="w-full rounded-xl bg-slate-100 px-4 py-4 font-bold outline-none focus:ring-4 focus:ring-yellow-300">
-      </div>
-      <button class="w-full bg-slate-950 text-yellow-300 rounded-xl py-4 font-black uppercase hover:bg-yellow-300 hover:text-slate-950 transition">
-        Entrar
-      </button>
+    <form id="login-form" style="display:grid;gap:16px">
+      <label class="cms-field"><span>Email</span><input id="email" type="email" autocomplete="username" required placeholder="correo@dominio.cl"></label>
+      <label class="cms-field"><span>Contraseña</span><input id="password" type="password" autocomplete="current-password" required placeholder="••••••••"></label>
+      <button class="cms-btn cms-btn-primary" style="width:100%;min-height:48px;margin-top:4px">Entrar al portal</button>
     </form>
-  </main>
 
-  <script src="assets/admin.js"></script>
+    <div style="display:flex;justify-content:space-between;gap:14px;margin-top:24px;padding-top:18px;border-top:1px solid #e3e3df;font-size:11px;color:#7b7e83">
+      <a href="../index.html">← Volver al sitio</a><span>Codimas SpA</span>
+    </div>
+  </main>
+  <script src="assets/admin.js?v=20260916-cms-1"></script>
 </body>
 </html>
