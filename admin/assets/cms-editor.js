@@ -34,11 +34,16 @@
   window.addEventListener('codimas:admin-core-ready',renderCategoryPageEditor);
 
   const core=document.createElement('script');
-  core.src='assets/cms-core.js?v=20260916-cms-3';
+  core.src='assets/cms-core.js?v=20260921-media-1';
   core.onload=()=>{
     if(window.CODIMAS_ADMIN)renderCategoryPageEditor();
     const catalog=document.createElement('script');
-    catalog.src='assets/cms-catalog.js?v=20260916-cms-3';
+    catalog.src='assets/cms-catalog.js?v=20260921-media-1';
+    catalog.onload=()=>{
+      const media=document.createElement('script');
+      media.src='assets/cms-media.js?v=20260921-media-1';
+      document.body.appendChild(media);
+    };
     document.body.appendChild(catalog);
   };
   document.body.appendChild(core);
