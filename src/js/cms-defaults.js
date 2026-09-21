@@ -3,6 +3,27 @@
   const clone = (value) => JSON.parse(JSON.stringify(value));
   function buildDefaults() {
     const catalog = window.CODIMAS_CATALOG || { categories: [], services: [], brands: [], company: {} };
+    const categoryImages = {
+      'conductores-electricos': 'https://images.unsplash.com/photo-1621905251918-48416bd8575a?auto=format&fit=crop&w=1500&q=85',
+      'modulos-placas-citofonia': 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1500&q=85',
+      'cajas-gabinetes-protecciones': 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1500&q=85',
+      'canalizacion-bandejas-portaconductores': 'https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&w=1500&q=85',
+      'enchufes-iluminacion': 'https://images.unsplash.com/photo-1524484485831-a92ffc0de03f?auto=format&fit=crop&w=1500&q=85',
+      'fijaciones-sujeciones': 'https://images.unsplash.com/photo-1504148455328-c376907d081c?auto=format&fit=crop&w=1500&q=85',
+      'herramientas-equipos-seguridad': 'https://images.unsplash.com/photo-1530124566582-a618bc2615dc?auto=format&fit=crop&w=1500&q=85',
+      'embalaje-suministros': 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1500&q=85',
+      'sellantes-adhesivos-pinturas-aerosoles': 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1500&q=85',
+      'mallas-cercos-alambres': 'https://images.unsplash.com/photo-1508450859948-4e04fabaa4ea?auto=format&fit=crop&w=1500&q=85',
+      'gasfiteria-fitting-jardineria': 'https://images.unsplash.com/photo-1585704032915-c3400ca199e7?auto=format&fit=crop&w=1500&q=85',
+      'revestimientos-muros-fachadas': 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1500&q=85',
+      'pisos-soluciones-exteriores': 'public/images/piso_goma.jpg'
+    };
+    const normalizedCategories = clone(catalog.categories || []).map((category) => ({
+      ...category,
+      image_url: category.image_url || categoryImages[category.slug] || 'public/images/codimas-category.svg',
+      featuredProducts: (category.featuredProducts || []).map((product) => ({ ...product, image_url: product.image_url || '' }))
+    }));
+    const normalizedServices = clone(catalog.services || []).map((service) => ({ ...service, image_url: service.image_url || '' }));
     return {
       global: {
         logo_url: 'public/images/codimas-logo.svg',
@@ -70,7 +91,7 @@
       tracking: {
         breadcrumb_home: 'Inicio', breadcrumb_current: 'Seguimiento', hero_eyebrow: 'Seguimiento comercial', hero_title_html: 'Consulta el <strong>estado de tu solicitud.</strong>', hero_text: 'Ingresa el código recibido por correo y el email utilizado para revisar avances, respuestas y archivos asociados.', hero_image_url: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1500&q=85', search_eyebrow: 'Buscar solicitud', search_title_html: 'Código + <strong>correo.</strong>', code_label: 'Código de seguimiento', code_placeholder: 'COD-20260916-XXXXXX', email_label: 'Correo electrónico', email_placeholder: 'correo@dominio.cl', button_text: 'Consultar estado', result_eyebrow: 'Resultado', result_title_html: 'Detalle de <strong>solicitud.</strong>', result_code: 'Código', result_status: 'Estado', result_date: 'Fecha de ingreso', request_label: 'Solicitud enviada', responses_label: 'Respuestas de Codimas', attachments_label: 'Archivos asociados'
       },
-      catalog: { categories: clone(catalog.categories || []), services: clone(catalog.services || []), brands: clone(catalog.brands || []) }
+      catalog: { categories: normalizedCategories, services: normalizedServices, brands: clone(catalog.brands || []) }
     };
   }
   window.CODIMAS_CMS_DEFAULTS = buildDefaults;
