@@ -34,14 +34,14 @@
   window.addEventListener('codimas:admin-core-ready',renderCategoryPageEditor);
 
   const core=document.createElement('script');
-  core.src='assets/cms-core.js?v=20260921-media-1';
+  core.src='assets/cms-core.js?v=20260921-media-2';
   core.onload=()=>{
     if(window.CODIMAS_ADMIN)renderCategoryPageEditor();
     const catalog=document.createElement('script');
-    catalog.src='assets/cms-catalog.js?v=20260921-media-1';
+    catalog.src='assets/cms-catalog.js?v=20260921-media-2';
     catalog.onload=()=>{
       const media=document.createElement('script');
-      media.src='assets/cms-media.js?v=20260921-media-1';
+      media.src='assets/cms-media.js?v=20260921-media-2';
       document.body.appendChild(media);
     };
     document.body.appendChild(catalog);
