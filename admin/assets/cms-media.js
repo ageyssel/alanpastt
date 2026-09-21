@@ -39,7 +39,7 @@ function render(){
         <div class="cms-media-actions">
           <button type="button" class="cms-btn cms-btn-primary" data-media-upload="${esc(item.path)}" data-target-id="${id}">Cambiar imagen</button>
           <button type="button" class="cms-btn cms-btn-light" data-media-publish="${esc(item.path)}">Publicar URL</button>
-          <input type="file" class="cms-media-file" data-media-file="${esc(item.path)}" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml,image/avif,.svg,.avif">
+          <input type="file" class="cms-media-file" data-media-file="${esc(item.path)}" accept="image/png,image/jpeg,image/webp,image/gif">
         </div>
         <small class="cms-media-path">${esc(item.path)}</small>
       </div>
