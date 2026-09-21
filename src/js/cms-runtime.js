@@ -33,6 +33,25 @@
     if (element && value) element.style.backgroundImage = `url("${String(value).replaceAll('"', '\\"')}")`;
   }
 
+  function getPathValue(obj, path) {
+    return String(path || '').split('.').reduce((value, key) => value?.[key], obj);
+  }
+
+  function applyMediaBindings(site, root = document) {
+    $('[data-cms-media]', root).forEach((element) => {
+      const value = getPathValue(site, element.dataset.cmsMedia);
+      if (value) element.setAttribute('src', assetUrl(value));
+    });
+    $('[data-cms-background]', root).forEach((element) => {
+      const value = getPathValue(site, element.dataset.cmsBackground);
+      if (value) element.style.backgroundImage = `url("${String(assetUrl(value)).replaceAll('"', '\\\"')}")`;
+    });
+    $('[data-cms-favicon]', root).forEach((element) => {
+      const value = getPathValue(site, element.dataset.cmsFavicon);
+      if (value) element.setAttribute('href', assetUrl(value));
+    });
+  }
+
   function applyGlobal(site, root = document) {
     const global = site.global || {};
     const navigation = site.navigation || {};
@@ -394,6 +413,7 @@
 
     window.CODIMAS_CMS = site;
     applyGlobal(site);
+    applyMediaBindings(site);
 
     const path = (location.pathname || '').toLowerCase();
     if (path.endsWith('cotizacion.html')) applyQuote(site);
@@ -404,6 +424,6 @@
     return site;
   }
 
-  window.CODIMAS_CMS_API = { deepMerge, applyGlobal, applyHome, applyQuote, applyTracking };
+  window.CODIMAS_CMS_API = { deepMerge, applyGlobal, applyMediaBindings, applyHome, applyQuote, applyTracking };
   window.CODIMAS_CMS_READY = loadSite();
 })();
