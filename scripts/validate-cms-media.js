@@ -64,7 +64,7 @@ assert(core.includes("select('value').eq('key','cms_site').maybeSingle()"), 'CMS
 assert(core.includes('codimas:cms-saved'), 'CMS save confirmation event is missing');
 
 const categoryPage = fs.readFileSync('src/js/category-page.js', 'utf8');
-['resolveAsset', 'site?.category_page', 'product.image_url', 'category.image_url', 'categoria.html?slug='].forEach((needle) => {
+['resolveAsset', 'site?.category_page', 'product.image_url', 'imageFor(category)', 'categoria.html?slug='].forEach((needle) => {
   assert(categoryPage.includes(needle), `Category page CMS integration missing: ${needle}`);
 });
 
