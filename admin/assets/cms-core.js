@@ -2,6 +2,7 @@
 'use strict';
 const cfg=window.ALANPASTT_CONFIG||{};
 const sb=window.supabase.createClient(cfg.supabaseUrl||cfg.SUPABASE_URL,cfg.supabaseAnonKey||cfg.SUPABASE_ANON_KEY);
+const publicSb=window.supabase.createClient(cfg.supabaseUrl||cfg.SUPABASE_URL,cfg.supabaseAnonKey||cfg.SUPABASE_ANON_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
 const bucket=cfg.storageBucket||'alanpastt-assets';
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
 const clone=v=>JSON.parse(JSON.stringify(v));
@@ -25,9 +26,83 @@ function syncRaw(){const el=$('#raw-json');if(el&&window.CODIMAS_ADMIN?.site)el.
 async function auth(){const {data}=await sb.auth.getSession();if(!data.session){location.href='login.html';return null}const {data:profile}=await sb.from('admin_profiles').select('role').eq('user_id',data.session.user.id).maybeSingle();if(!profile||profile.role!=='admin'){await sb.auth.signOut();location.href='login.html';return null}$('#user-email').textContent=data.session.user.email||'';return data.session}
 async function loadContact(){const {data}=await sb.from('contact_settings').select('*').eq('id',1).maybeSingle();window.CODIMAS_ADMIN.contact=data||{id:1,sales_email:window.CODIMAS_ADMIN.site.global.sales_email||'',contact_email:'',whatsapp_number:window.CODIMAS_ADMIN.site.global.whatsapp||'',whatsapp_message:'',footer_text:window.CODIMAS_ADMIN.site.global.tagline||''};const c=window.CODIMAS_ADMIN.contact;$('#contact-sales-email').value=c.sales_email||'';$('#contact-email').value=c.contact_email||'';$('#contact-whatsapp').value=c.whatsapp_number||'';$('#contact-whatsapp-message').value=c.whatsapp_message||'';$('#contact-footer').value=c.footer_text||''}
 function collectContact(){const c={id:1,sales_email:$('#contact-sales-email').value.trim(),contact_email:$('#contact-email').value.trim(),whatsapp_number:$('#contact-whatsapp').value.replace(/\D/g,''),whatsapp_message:$('#contact-whatsapp-message').value.trim(),footer_text:$('#contact-footer').value.trim()};window.CODIMAS_ADMIN.contact=c;const s=window.CODIMAS_ADMIN.site;s.global.sales_email=c.sales_email||s.global.sales_email;s.global.whatsapp=c.whatsapp_number||s.global.whatsapp;if(c.whatsapp_number)s.global.phone=`+${c.whatsapp_number}`}
-async function saveAll(){collectContact();if($('#brands-editor'))window.CODIMAS_ADMIN.site.catalog.brands=$('#brands-editor').value.split('\n').map(v=>v.trim()).filter(Boolean);status('Guardando cambios...');const {error:e1}=await sb.from('site_content').upsert([{key:'cms_site',value:window.CODIMAS_ADMIN.site}],{onConflict:'key'});if(e1){status(`No se pudo guardar: ${e1.message}`,'error');throw e1}const {error:e2}=await sb.from('contact_settings').upsert([window.CODIMAS_ADMIN.contact],{onConflict:'id'});if(e2){status(`Contenido guardado, pero falló contacto: ${e2.message}`,'error');throw e2}const {data:check,error:e3}=await sb.from('site_content').select('value').eq('key','cms_site').maybeSingle();if(e3||!check?.value){const err=e3||new Error('Supabase no devolvió el contenido guardado.');status('El cambio se envió, pero no pudo verificarse.','error');throw err}const expected=JSON.stringify(canonical(window.CODIMAS_ADMIN.site));const actual=JSON.stringify(canonical(check.value));if(expected!==actual){const err=new Error('El contenido guardado no coincide con el editor.');status('Supabase respondió, pero la verificación detectó diferencias.','error');throw err}syncRaw();status('Cambios publicados y verificados correctamente.','success');window.dispatchEvent(new CustomEvent('codimas:cms-saved',{detail:check.value}));return true}
+async function saveAll(){
+  collectContact();
+  if($('#brands-editor'))window.CODIMAS_ADMIN.site.catalog.brands=$('#brands-editor').value.split('\n').map(v=>v.trim()).filter(Boolean);
+  status('Guardando cambios...');
+  const {error:e1}=await sb.from('site_content').upsert([{key:'cms_site',value:window.CODIMAS_ADMIN.site}],{onConflict:'key'});
+  if(e1){status(`No se pudo guardar: ${e1.message}`,'error');throw e1}
+  const {error:e2}=await sb.from('contact_settings').upsert([window.CODIMAS_ADMIN.contact],{onConflict:'id'});
+  if(e2){status(`Contenido guardado, pero falló contacto: ${e2.message}`,'error');throw e2}
+  const {data:check,error:e3}=await sb.from('site_content').select('value').eq('key','cms_site').maybeSingle();
+  if(e3||!check?.value){const err=e3||new Error('Supabase no devolvió el contenido guardado.');status('El cambio se envió, pero no pudo verificarse.','error');throw err}
+  const expected=JSON.stringify(canonical(window.CODIMAS_ADMIN.site));
+  const actual=JSON.stringify(canonical(check.value));
+  if(expected!==actual){const err=new Error('El contenido guardado no coincide con el editor.');status('Supabase respondió, pero la verificación detectó diferencias.','error');throw err}
+  const {data:publicCheck,error:e4}=await publicSb.from('site_content').select('value').eq('key','cms_site').maybeSingle();
+  if(e4||!publicCheck?.value){const err=e4||new Error('El sitio público no puede leer el CMS.');status('Guardado correcto, pero la lectura pública del CMS falló. Revisa RLS.', 'error');throw err}
+  const publicActual=JSON.stringify(canonical(publicCheck.value));
+  if(publicActual!==expected){const err=new Error('La lectura pública no coincide con lo guardado.');status('El CMS se guardó, pero la versión pública todavía no coincide.', 'error');throw err}
+  syncRaw();
+  status('Cambios publicados y verificados también como visitante público.','success');
+  window.dispatchEvent(new CustomEvent('codimas:cms-saved',{detail:publicCheck.value}));
+  return true
+}
+function mediaPaths(value,path='',out=[]){
+  if(Array.isArray(value)){value.forEach((item,i)=>mediaPaths(item,path?`${path}.${i}`:String(i),out));return out}
+  if(value&&typeof value==='object'){Object.entries(value).forEach(([key,val])=>{const next=path?`${path}.${key}`:key;if(/^(image_url|hero_image_url|logo_url|logo_negative_url|favicon_url)$/.test(key))out.push({path:next,value:val||''});else mediaPaths(val,next,out)});}
+  return out
+}
+async function verifyImage(url,timeout=8000){
+  if(!url)return {ok:true,empty:true};
+  return await new Promise((resolve)=>{
+    const img=new Image(),timer=setTimeout(()=>resolve({ok:false,error:'timeout'}),timeout);
+    img.onload=()=>{clearTimeout(timer);resolve({ok:true})};
+    img.onerror=()=>{clearTimeout(timer);resolve({ok:false,error:'load'})};
+    img.src=url+(url.includes('?')?'&':'?')+'cmscheck='+Date.now();
+  })
+}
+async function runDiagnostics(){
+  const button=$('#run-diagnostics'),panel=$('#diagnostics-result');
+  if(button)button.disabled=true;
+  if(panel){panel.className='cms-diagnostics is-running';panel.textContent='Validando CMS, Storage e imágenes...'}
+  try{
+    const {data:adminRead,error:aerr}=await sb.from('site_content').select('value').eq('key','cms_site').maybeSingle();
+    if(aerr||!adminRead?.value)throw aerr||new Error('No se puede leer cms_site como administrador.');
+    const {data:publicRead,error:perr}=await publicSb.from('site_content').select('value').eq('key','cms_site').maybeSingle();
+    if(perr||!publicRead?.value)throw perr||new Error('RLS impide leer cms_site como visitante.');
+    const media=mediaPaths(window.CODIMAS_ADMIN.site);
+    const required=['global.logo_url','global.logo_negative_url','global.favicon_url','home.hero.image_url','home.promos.0.image_url','home.promos.1.image_url','home.enterprise.image_url','quote.hero_image_url','tracking.hero_image_url'];
+    const paths=new Set(media.map(item=>item.path));
+    const missing=required.filter(path=>!paths.has(path));
+    if(missing.length)throw new Error('Faltan campos de imagen: '+missing.join(', '));
+    const testBytes=Uint8Array.from(atob('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Y9Zf7sAAAAASUVORK5CYII='),c=>c.charCodeAt(0));
+    const testPath=`cms/diagnostics/${Date.now()}-test.png`;
+    const up=await sb.storage.from(bucket).upload(testPath,new Blob([testBytes],{type:'image/png'}),{upsert:false,cacheControl:'60'});
+    if(up.error)throw new Error('Storage no permite subir imágenes: '+up.error.message);
+    const publicUrl=sb.storage.from(bucket).getPublicUrl(testPath).data.publicUrl;
+    const storageImage=await verifyImage(publicUrl,6000);
+    await sb.storage.from(bucket).remove([testPath]);
+    if(!storageImage.ok)throw new Error('La imagen de prueba se subió, pero no es accesible públicamente.');
+    const nonEmpty=media.filter(item=>item.value);
+    const sample=nonEmpty.slice(0,Math.min(nonEmpty.length,12));
+    const checks=await Promise.all(sample.map(item=>verifyImage(item.value)));
+    const failed=sample.filter((_,i)=>!checks[i].ok);
+    if(panel){
+      panel.className='cms-diagnostics is-success';
+      panel.innerHTML=`<strong>Validación completa aprobada.</strong><span>${media.length} campos de imagen editables · lectura pública OK · escritura/lectura de Storage OK · ${sample.length} imágenes verificadas${failed.length?` · ${failed.length} URL externas no respondieron al test de carga`:''}.</span>`;
+    }
+    status('Validación del CMS completada correctamente.','success');
+    return {mediaCount:media.length,failedImages:failed.map(item=>item.path)}
+  }catch(error){
+    console.error(error);
+    if(panel){panel.className='cms-diagnostics is-error';panel.innerHTML=`<strong>La validación detectó un problema.</strong><span>${esc(error.message||'Error desconocido')}</span>`}
+    status(`Validación fallida: ${error.message||'error desconocido'}`,'error');
+    throw error
+  }finally{if(button)button.disabled=false}
+}
 function renderMainEditors(){const s=window.CODIMAS_ADMIN.site;renderObj($('#editor-global'),s.global,'global');renderObj($('#editor-navigation'),s.navigation,'navigation');renderObj($('#editor-home'),s.home,'home');renderObj($('#editor-quote'),s.quote,'quote');renderObj($('#editor-tracking'),s.tracking,'tracking');syncRaw()}
 function tabs(){$$('.cms-nav-item').forEach(b=>b.addEventListener('click',()=>{const t=b.dataset.tab;$$('.cms-nav-item').forEach(x=>x.classList.toggle('is-active',x===b));$$('.cms-tab').forEach(p=>p.classList.toggle('is-active',p.dataset.panel===t));history.replaceState(null,'',`#${t}`)}));const t=location.hash.replace('#','');if(t)$(`.cms-nav-item[data-tab="${t}"]`)?.click()}
-async function init(){if(window.__CODIMAS_CORE_INIT__)return;window.__CODIMAS_CORE_INIT__=true;if(!await auth())return;const defaults=window.CODIMAS_CMS_DEFAULTS();const {data,error}=await sb.from('site_content').select('value').eq('key','cms_site').maybeSingle();if(error){status(`No se pudo cargar: ${error.message}`,'error');return}const site=normalizeSite(data?.value?merge(defaults,data.value):defaults,defaults);window.CODIMAS_ADMIN={site,contact:null,sb,bucket,clone,escapeHTML:esc,status,upload,bindUploads,syncRaw,saveAll,renderMainEditors};if(!data?.value){const seeded=await sb.from('site_content').upsert([{key:'cms_site',value:site}],{onConflict:'key'});if(seeded.error)console.warn(seeded.error)}renderMainEditors();await loadContact();tabs();$('#save-all').addEventListener('click',()=>saveAll().catch(console.error));$('#apply-json').addEventListener('click',async()=>{try{window.CODIMAS_ADMIN.site=JSON.parse($('#raw-json').value);await saveAll();location.reload()}catch(e){if(!(e&&e.message&&e.message.includes('No se pudo')))status('JSON inválido o no se pudo guardar.','error')}});$('#reset-defaults').addEventListener('click',async()=>{if(!confirm('¿Restaurar todos los contenidos a los valores por defecto?'))return;window.CODIMAS_ADMIN.site=window.CODIMAS_CMS_DEFAULTS();renderMainEditors();try{await saveAll();location.reload()}catch(e){console.error(e)}});$('#logout-btn').addEventListener('click',async()=>{await sb.auth.signOut();location.href='login.html'});window.dispatchEvent(new Event('codimas:admin-core-ready'))}
+async function init(){if(window.__CODIMAS_CORE_INIT__)return;window.__CODIMAS_CORE_INIT__=true;if(!await auth())return;const defaults=window.CODIMAS_CMS_DEFAULTS();const {data,error}=await sb.from('site_content').select('value').eq('key','cms_site').maybeSingle();if(error){status(`No se pudo cargar: ${error.message}`,'error');return}const site=normalizeSite(data?.value?merge(defaults,data.value):defaults,defaults);window.CODIMAS_ADMIN={site,contact:null,sb,publicSb,bucket,clone,escapeHTML:esc,status,upload,bindUploads,syncRaw,saveAll,runDiagnostics,renderMainEditors};if(!data?.value){const seeded=await sb.from('site_content').upsert([{key:'cms_site',value:site}],{onConflict:'key'});if(seeded.error)console.warn(seeded.error)}renderMainEditors();await loadContact();tabs();$('#save-all').addEventListener('click',()=>saveAll().catch(console.error));$('#run-diagnostics')?.addEventListener('click',()=>runDiagnostics().catch(()=>{}));$('#apply-json').addEventListener('click',async()=>{try{window.CODIMAS_ADMIN.site=JSON.parse($('#raw-json').value);await saveAll();location.reload()}catch(e){if(!(e&&e.message&&e.message.includes('No se pudo')))status('JSON inválido o no se pudo guardar.','error')}});$('#reset-defaults').addEventListener('click',async()=>{if(!confirm('¿Restaurar todos los contenidos a los valores por defecto?'))return;window.CODIMAS_ADMIN.site=window.CODIMAS_CMS_DEFAULTS();renderMainEditors();try{await saveAll();location.reload()}catch(e){console.error(e)}});$('#logout-btn').addEventListener('click',async()=>{await sb.auth.signOut();location.href='login.html'});window.dispatchEvent(new Event('codimas:admin-core-ready'))}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
