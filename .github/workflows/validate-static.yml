@@ -21,6 +21,8 @@ jobs:
             echo "Checking $file"
             node --check "$file"
           done
+      - name: Validate CMS media and persistence contracts
+        run: node scripts/validate-cms-media.js
       - name: Validate required CMS files
         shell: bash
         run: |
@@ -28,6 +30,7 @@ jobs:
           test -f admin/editor.html
           test -f admin/assets/cms-core.js
           test -f admin/assets/cms-catalog.js
+          test -f admin/assets/cms-media.js
           test -f src/js/cms-defaults.js
           test -f src/js/cms-runtime.js
           test -f categorias/categoria.html
