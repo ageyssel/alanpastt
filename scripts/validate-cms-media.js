@@ -16,10 +16,9 @@ const sandbox = {
         slug: 'test-category',
         title: 'Categoría prueba',
         world: 'Prueba',
-        image_url: 'https://example.com/category.jpg',
-        featuredProducts: [{ name: 'Producto prueba', image_url: 'https://example.com/product.jpg' }]
+        featuredProducts: [{ name: 'Producto prueba' }]
       }],
-      services: [{ title: 'Servicio prueba', text: 'Texto', image_url: 'https://example.com/service.jpg' }],
+      services: [{ title: 'Servicio prueba', text: 'Texto' }],
       brands: ['Marca prueba']
     }
   },
@@ -62,6 +61,7 @@ const mediaManager = fs.readFileSync('admin/assets/cms-media.js', 'utf8');
 const core = fs.readFileSync('admin/assets/cms-core.js', 'utf8');
 assert(core.includes("select('value').eq('key','cms_site').maybeSingle()"), 'CMS save verification readback is missing');
 assert(core.includes('codimas:cms-saved'), 'CMS save confirmation event is missing');
+assert(core.includes('normalizeSite'), 'Existing CMS records are not normalized to the complete media model');
 
 const categoryPage = fs.readFileSync('src/js/category-page.js', 'utf8');
 ['resolveAsset', 'site?.category_page', 'product.image_url', 'imageFor(category)', 'categoria.html?slug='].forEach((needle) => {
