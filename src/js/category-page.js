@@ -9,7 +9,7 @@ async function ensureCategoryCMS() {
   if (!window.supabase) await load('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2');
   if (!window.ALANPASTT_CONFIG) await load('../src/js/config.js');
   if (!window.CODIMAS_CMS_DEFAULTS) await load('../src/js/cms-defaults.js?v=20260923-audit-final-1');
-  if (!window.CODIMAS_CMS_READY) await load('../src/js/cms-runtime.js?v=20260923-audit-final-1');
+  if (!window.CODIMAS_CMS_READY) await load('../src/js/cms-runtime.js?v=20260923-publicfix-1');
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
