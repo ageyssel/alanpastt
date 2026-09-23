@@ -118,7 +118,7 @@ async function verifyImage(url,timeout=8000){
     const img=new Image(),timer=setTimeout(()=>resolve({ok:false,error:'timeout'}),timeout);
     img.onload=()=>{clearTimeout(timer);resolve({ok:true})};
     img.onerror=()=>{clearTimeout(timer);resolve({ok:false,error:'load'})};
-    img.src=url+(url.includes('?')?'&':'?')+'cmscheck='+Date.now();
+    img.src=/^(data:|blob:)/i.test(url)?url:url+(url.includes('?')?'&':'?')+'cmscheck='+Date.now();
   })
 }
 async function runDiagnostics(){
@@ -134,6 +134,31 @@ async function runDiagnostics(){
     ]);
     if(perr||!publicRead?.value)throw perr||new Error('RLS impide leer cms_site como visitante.');
     if(pcerr||!publicContact)throw pcerr||new Error('RLS impide leer contact_settings como visitante.');
+    await assertAdminSession();
+    const {error:siteWriteError}=await sb.from('site_content').update({value:adminRead.value}).eq('key','cms_site');
+    if(siteWriteError)throw new Error('No se puede escribir site_content: '+siteWriteError.message);
+    const {error:contactWriteError}=await sb.from('contact_settings').update({
+      sales_email:publicContact.sales_email,
+      contact_email:publicContact.contact_email,
+      whatsapp_number:publicContact.whatsapp_number,
+      whatsapp_message:publicContact.whatsapp_message,
+      footer_text:publicContact.footer_text
+    }).eq('id',1);
+    if(contactWriteError)throw new Error('No se puede escribir contact_settings: '+contactWriteError.message);
+    const {error:quotesError}=await sb.from('cotizaciones_entrantes').select('id,tracking_code,estado,internal_notes,last_response_at').limit(1);
+    if(quotesError)throw new Error('Módulo solicitudes no está operativo: '+quotesError.message);
+    const [{error:attachmentsError},{error:responsesError}]=await Promise.all([
+      sb.from('quote_attachments').select('id,quote_id,file_name,file_path').limit(1),
+      sb.from('quote_responses').select('id,quote_id,subject,sent_to').limit(1)
+    ]);
+    if(attachmentsError)throw new Error('Módulo de adjuntos no está operativo: '+attachmentsError.message);
+    if(responsesError)throw new Error('Módulo de respuestas no está operativo: '+responsesError.message);
+    const {data:trackingHealth,error:trackingError}=await publicSb.rpc('get_quote_tracking',{
+      p_tracking_code:'COD-HEALTHCHECK-NOTFOUND',
+      p_email:'healthcheck@codimas.cl'
+    });
+    if(trackingError)throw new Error('Seguimiento público no está operativo: '+trackingError.message);
+    if(!trackingHealth||trackingHealth.found!==false)throw new Error('Seguimiento público devolvió una respuesta inesperada.');
     const media=mediaPaths(window.CODIMAS_ADMIN.site);
     const required=['global.logo_url','global.logo_negative_url','global.favicon_url','home.hero.image_url','home.promos.0.image_url','home.promos.1.image_url','home.enterprise.image_url','quote.hero_image_url','tracking.hero_image_url'];
     const paths=new Set(media.map(item=>item.path));
@@ -153,7 +178,7 @@ async function runDiagnostics(){
     const failed=sample.filter((_,i)=>!checks[i].ok);
     if(panel){
       panel.className='cms-diagnostics is-success';
-      panel.innerHTML=`<strong>Validación completa aprobada.</strong><span>${media.length} campos de imagen editables · lectura pública OK · escritura/lectura de Storage OK · ${sample.length} imágenes verificadas${failed.length?` · ${failed.length} URL externas no respondieron al test de carga`:''}.</span>`;
+      panel.innerHTML=`<strong>Validación completa aprobada.</strong><span>Autenticación admin OK · CMS lectura/escritura OK · contacto público OK · solicitudes/adjuntos/respuestas OK · seguimiento público OK · Storage lectura/escritura OK · ${media.length} campos de imagen editables · ${sample.length} imágenes verificadas${failed.length?` · ${failed.length} URL externas no respondieron al test de carga`:''}.</span>`;
     }
     status('Validación del CMS completada correctamente.','success');
     return {mediaCount:media.length,failedImages:failed.map(item=>item.path)}
