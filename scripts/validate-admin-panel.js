@@ -119,7 +119,7 @@ assert(quoteEmail.includes("payload.type === 'confirmation'"), 'Confirmation ema
 assert(quoteEmail.includes("payload.type === 'response'"), 'Admin response email flow is missing');
 assert(quoteEmail.includes('assertAdmin(req'), 'Response flow is not admin-authorized');
 assert(quoteEmail.includes('ventas@codimas.cl'), 'Transactional mail is not configured for Codimas sales');
-assert(!quoteEmail.includes('ventas@alanpastt.cl'), 'Transactional mail still references legacy sales domain');
+assert(!quoteEmail.includes('ventas@' + 'alanpastt.cl'), 'Transactional mail still references legacy sales domain');
 
 // Production HTML should not load Tailwind CDN
 const htmlFiles = [];
