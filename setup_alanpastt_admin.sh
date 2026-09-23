@@ -93,10 +93,10 @@ create table if not exists public.products (
 
 create table if not exists public.contact_settings (
   id int primary key default 1,
-  sales_email text not null default 'ventas@alanpastt.cl',
-  contact_email text not null default 'contacto@alanpastt.cl',
+  sales_email text not null default 'ventas@codimas.cl',
+  contact_email text not null default 'contacto@codimas.cl',
   whatsapp_number text not null default '56933365549',
-  whatsapp_message text not null default 'Hola Alanpastt, me gustaría solicitar una cotización.',
+  whatsapp_message text not null default 'Hola Codimas, me gustaría solicitar una cotización.',
   footer_text text not null default 'Soluciones Industriales - Santiago, Chile.',
   updated_at timestamptz not null default now(),
   constraint contact_settings_singleton check (id = 1)
@@ -324,10 +324,10 @@ on conflict (key) do update set value = excluded.value;
 insert into public.contact_settings (id, sales_email, contact_email, whatsapp_number, whatsapp_message, footer_text)
 values (
   1,
-  'ventas@alanpastt.cl',
-  'contacto@alanpastt.cl',
+  'ventas@codimas.cl',
+  'contacto@codimas.cl',
   '56933365549',
-  'Hola Alanpastt, me gustaría solicitar una cotización.',
+  'Hola Codimas, me gustaría solicitar una cotización.',
   'Soluciones Industriales - Santiago, Chile.'
 )
 on conflict (id) do update set
@@ -536,7 +536,7 @@ cat > src/js/public-content.js <<'JS'
 
   function buildWhatsAppUrl(number, message) {
     const cleanNumber = String(number || '').replace(/\D/g, '');
-    const encodedMessage = encodeURIComponent(message || 'Hola Alanpastt, me gustaría solicitar una cotización.');
+    const encodedMessage = encodeURIComponent(message || 'Hola Codimas, me gustaría solicitar una cotización.');
     return cleanNumber ? `https://wa.me/${cleanNumber}?text=${encodedMessage}` : '#contacto';
   }
 
@@ -687,7 +687,7 @@ cat > index.html <<'HTML'
       </nav>
 
       <div class="hidden md:flex items-center space-x-4">
-        <a id="sales-email-header" href="mailto:ventas@alanpastt.cl" class="text-sm font-bold text-alanpastt-negro hidden xl:block hover:text-alanpastt-acento">ventas@alanpastt.cl</a>
+        <a id="sales-email-header" href="mailto:ventas@codimas.cl" class="text-sm font-bold text-alanpastt-negro hidden xl:block hover:text-alanpastt-acento">ventas@codimas.cl</a>
         <a href="#contacto" class="bg-alanpastt-negro text-alanpastt-amarillo px-6 py-3 rounded font-black hover:bg-alanpastt-amarillo hover:text-alanpastt-negro transition-all shadow-lg uppercase tracking-wide">
           Cotizar Ahora
         </a>
@@ -766,7 +766,7 @@ cat > index.html <<'HTML'
               </div>
               <div>
                 <h4 class="font-black uppercase text-alanpastt-amarillo">Ventas</h4>
-                <a id="sales-email-contact" href="mailto:ventas@alanpastt.cl" class="text-xl hover:text-alanpastt-amarillo transition-colors block">ventas@alanpastt.cl</a>
+                <a id="sales-email-contact" href="mailto:ventas@codimas.cl" class="text-xl hover:text-alanpastt-amarillo transition-colors block">ventas@codimas.cl</a>
                 <a id="contact-whatsapp" href="https://wa.me/56933365549" target="_blank" rel="noopener" class="text-lg text-gray-300 hover:text-[#25D366] transition-colors mt-1 inline-flex items-center">
                   +56 9 3336 5549
                 </a>
@@ -779,7 +779,7 @@ cat > index.html <<'HTML'
               </div>
               <div>
                 <h4 class="font-black uppercase text-alanpastt-amarillo">Contacto</h4>
-                <a id="contact-email" href="mailto:contacto@alanpastt.cl" class="text-xl hover:text-alanpastt-amarillo transition-colors">contacto@alanpastt.cl</a>
+                <a id="contact-email" href="mailto:contacto@codimas.cl" class="text-xl hover:text-alanpastt-amarillo transition-colors">contacto@codimas.cl</a>
               </div>
             </div>
           </div>
