@@ -71,6 +71,10 @@ assert(cmsCatalog.includes('Ya existe otra categoría con ese slug'), 'Duplicate
 assert(cmsMedia.includes('app().upload(file)'), 'Central media manager does not upload files');
 assert(cmsMedia.includes('await app().saveAll()'), 'Central media manager does not persist after upload');
 assert(cmsCore.includes('async function optimizeImage'), 'Image optimization is missing');
+assert(cmsCore.includes("$('.cms-upload-btn',root).forEach"), 'Upload binding must use querySelectorAll for upload buttons');
+assert(cmsCore.includes("$('.cms-file-input',root).forEach"), 'Upload binding must use querySelectorAll for file inputs');
+assert(!cmsCore.includes("$('.cms-upload-btn',root).forEach"), 'Single-element selector regression in upload buttons');
+assert(!cmsCore.includes("$('.cms-file-input',root).forEach"), 'Single-element selector regression in file inputs');
 assert(cmsCore.includes('async function assertAdminSession'), 'Image upload does not validate admin session');
 assert(cmsCore.includes("storage.from(bucket).upload"), 'CMS image Storage upload is missing');
 
