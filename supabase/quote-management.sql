@@ -117,6 +117,12 @@ to authenticated
 using (public.is_admin())
 with check (public.is_admin());
 
+drop policy if exists "Admins can delete quote requests" on public.cotizaciones_entrantes;
+create policy "Admins can delete quote requests"
+on public.cotizaciones_entrantes for delete
+to authenticated
+using (public.is_admin());
+
 -- Policies quote attachments
 drop policy if exists "Admins can manage quote attachments" on public.quote_attachments;
 create policy "Admins can manage quote attachments"
