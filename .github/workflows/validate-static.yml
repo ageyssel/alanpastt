@@ -23,6 +23,8 @@ jobs:
           done
       - name: Validate CMS media and persistence contracts
         run: node scripts/validate-cms-media.js
+      - name: Validate administrative panel contracts
+        run: node scripts/validate-admin-panel.js
       - name: Validate required CMS files
         shell: bash
         run: |
