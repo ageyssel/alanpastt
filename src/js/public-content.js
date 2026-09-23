@@ -44,7 +44,7 @@
 
   function buildWhatsAppUrl(number, message) {
     const cleanNumber = String(number || '').replace(/\D/g, '');
-    const encodedMessage = encodeURIComponent(message || 'Hola Alanpastt, me gustaría solicitar una cotización.');
+    const encodedMessage = encodeURIComponent(message || 'Hola Codimas, me gustaría solicitar una cotización.');
     return cleanNumber ? `https://wa.me/${cleanNumber}?text=${encodedMessage}` : '#contacto';
   }
 
@@ -90,7 +90,7 @@
       const footer = content.footer || {};
       const contact = contactResult.data || {};
 
-      document.title = 'Alanpastt | Soluciones de Goma para Seguridad y Construcción';
+      document.title = 'Codimas SpA | Productos, suministros y soluciones';
 
       setText('hero-badge', hero.badge);
       setHTML('hero-title', hero.title_html);
