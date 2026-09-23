@@ -26,6 +26,15 @@
       <a href="editor.html#contacto" class="cms-editor-card" style="display:block"><p class="cms-kicker">Configuración</p><h2 style="font-size:24px;margin:8px 0 6px;font-weight:400!important">Contacto</h2><p style="font-size:12px;color:#6b6f74;line-height:1.5">Correos, teléfono, WhatsApp, marca y datos visibles del sitio.</p><span style="display:inline-block;margin-top:18px;font-size:11px;font-weight:600;color:#005baa">Configurar →</span></a>
     </section>
 
+    <section class="cms-editor-card" style="margin-bottom:22px">
+      <div class="cms-section-head"><div><p class="cms-kicker">Cuenta administrativa</p><h2>Correo de acceso</h2><p>Actualiza el correo con el que ingresas al portal. Para Alejandro, el correo nuevo es apasten@codimas.cl.</p></div></div>
+      <div class="cms-form-grid two-cols">
+        <label class="cms-field"><span>Correo actual / nuevo</span><input id="account-email" type="email" placeholder="apasten@codimas.cl"></label>
+        <div style="display:flex;align-items:end"><button id="update-account-email" type="button" class="cms-btn cms-btn-primary" style="width:100%">Actualizar correo de acceso</button></div>
+      </div>
+      <div id="account-email-status" class="cms-status is-hidden" style="margin-top:14px;margin-bottom:0"></div>
+    </section>
+
     <section class="cms-editor-card">
       <div class="cms-section-head"><div><p class="cms-kicker">Actividad comercial</p><h2>Últimas solicitudes</h2><p>Vista rápida de los requerimientos ingresados desde la web.</p></div><a href="solicitudes.html" class="cms-btn cms-btn-dark">Ver todas</a></div>
       <div id="cotizaciones-list" class="space-y-4"><p class="text-slate-500 font-bold">Cargando solicitudes...</p></div>
@@ -33,6 +42,6 @@
   </main>
 
   <style>@media(max-width:1200px){.dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}@media(max-width:620px){.dashboard-grid{grid-template-columns:1fr!important}}</style>
-  <script src="assets/admin.js?v=20260923-authfix-1"></script>
+  <script src="assets/admin.js?v=20260923-mailfix-1"></script>
 </body>
 </html>
