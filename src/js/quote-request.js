@@ -7,6 +7,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const textarea = document.getElementById('mensaje');
   const categorySelect = document.getElementById('categoria-interes');
 
+  function esc(value = '') {
+    return String(value ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
   function getParams() {
     const params = new URLSearchParams(window.location.search);
     return {
@@ -49,10 +58,10 @@ document.addEventListener('DOMContentLoaded', () => {
       itemsRoot.innerHTML = items.map((item, index) => `
         <article class="border border-slate-200 bg-white p-4 grid md:grid-cols-[1fr_auto] gap-3 items-start">
           <div>
-            <p class="text-[11px] font-black uppercase tracking-[0.22em] text-codimas-blue">${item.category || 'Producto'}</p>
-            <h3 class="font-black text-lg mt-1">${item.name || 'Producto sin nombre'}</h3>
-            <p class="text-sm text-slate-500 font-bold mt-1">Código ref. ${item.code || 'S/C'}</p>
-            <p class="text-sm text-slate-600 mt-2">${item.spec || ''}</p>
+            <p class="text-[11px] font-black uppercase tracking-[0.22em] text-codimas-blue">${esc(item.category || 'Producto')}</p>
+            <h3 class="font-black text-lg mt-1">${esc(item.name || 'Producto sin nombre')}</h3>
+            <p class="text-sm text-slate-500 font-bold mt-1">Código ref. ${esc(item.code || 'S/C')}</p>
+            <p class="text-sm text-slate-600 mt-2">${esc(item.spec || '')}</p>
           </div>
           <button type="button" class="remove-quote-item text-xs font-black uppercase tracking-wide border border-slate-300 px-3 py-2 hover:bg-black hover:text-white" data-index="${index}">Quitar</button>
         </article>
