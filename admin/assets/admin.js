@@ -118,6 +118,57 @@
     });
   }
 
+  async function initAccountEmail() {
+    const input = $('#account-email');
+    const button = $('#update-account-email');
+    const output = $('#account-email-status');
+    if (!input || !button) return;
+
+    const session = await getSessionOrRedirect();
+    if (!session) return;
+
+    const currentEmail = session.user.email || '';
+    const suggestedEmail = currentEmail.replace(/@alanpastt\.cl$/i, '@codimas.cl');
+    input.value = suggestedEmail || currentEmail;
+
+    const show = (message, type = 'info') => {
+      const classes = {
+        info: 'cms-status is-info',
+        success: 'cms-status is-success',
+        error: 'cms-status is-error'
+      };
+      output.textContent = message;
+      output.className = classes[type] || classes.info;
+    };
+
+    button.addEventListener('click', async () => {
+      const newEmail = input.value.trim().toLowerCase();
+      if (!/^[^@\s]+@codimas\.cl$/i.test(newEmail)) {
+        show('Usa una dirección válida del dominio @codimas.cl.', 'error');
+        return;
+      }
+      button.disabled = true;
+      show('Solicitando cambio de correo de acceso...', 'info');
+      try {
+        const { data, error } = await supabaseClient.auth.updateUser({ email: newEmail });
+        if (error) throw error;
+        const confirmedEmail = data?.user?.email || currentEmail;
+        if (confirmedEmail.toLowerCase() === newEmail) {
+          show('Correo de acceso actualizado correctamente.', 'success');
+          const userEmail = $('#user-email');
+          if (userEmail) userEmail.textContent = confirmedEmail;
+        } else {
+          show('Supabase envió una confirmación al nuevo correo. Revisa ' + newEmail + ' para completar el cambio.', 'success');
+        }
+      } catch (error) {
+        console.error('[Codimas Admin] No se pudo actualizar el correo de acceso:', error);
+        show('No se pudo actualizar el correo: ' + (error.message || 'error desconocido'), 'error');
+      } finally {
+        button.disabled = false;
+      }
+    });
+  }
+
   async function uploadProductImage(file) {
     if (!file) return null;
     const extension = file.name.split('.').pop();
@@ -158,7 +209,7 @@
     list.innerHTML = data.map((product) => `
       <div class="admin-card bg-white rounded-xl p-5 flex flex-col md:flex-row gap-4 md:items-center md:justify-between">
         <div class="flex gap-4">
-          <img src="${escapeHTML(product.image_url || '../public/images/logo.png')}" alt="${escapeHTML(product.image_alt || product.title)}" class="w-24 h-24 rounded-lg object-cover bg-slate-100">
+          <img src="${escapeHTML(product.image_url || '../public/images/codimas-logo.svg')}" alt="${escapeHTML(product.image_alt || product.title)}" class="w-24 h-24 rounded-lg object-cover bg-slate-100">
           <div>
             <p class="text-xs font-black uppercase ${product.is_active ? 'text-green-600' : 'text-slate-400'}">${product.is_active ? 'Activo' : 'Oculto'} · Orden ${product.sort_order}</p>
             <h3 class="text-xl font-black text-slate-900">${escapeHTML(product.title)}</h3>
@@ -413,6 +464,7 @@
   document.addEventListener('DOMContentLoaded', async () => {
     await initLogin();
     await initProtectedPage();
+    await initAccountEmail();
     await initProductsPage();
     await initContentPage();
     await initContactPage();
