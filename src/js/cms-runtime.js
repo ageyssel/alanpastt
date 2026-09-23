@@ -266,7 +266,8 @@
         const isMail = (buttons[1].getAttribute('href') || '').startsWith('mailto:');
         if (isMail && site.global?.sales_email) {
           buttons[1].href = `mailto:${site.global.sales_email}`;
-          buttons[1].textContent = site.global.sales_email;
+          const configured = String(home.contact.secondary_text || '').trim();
+          buttons[1].textContent = configured && !configured.includes('@') ? configured : site.global.sales_email;
         } else if (home.contact.secondary_text) {
           buttons[1].textContent = home.contact.secondary_text;
         }
