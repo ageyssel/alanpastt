@@ -572,3 +572,15 @@ textarea.codimas-input { min-height: 170px; resize: vertical; }
   .codimas-subcategory-grid { grid-template-columns: 1fr; }
   .codimas-btn { width: auto; }
 }
+
+
+/* Local utility subset: replaces Tailwind CDN on public pages */
+.hidden{display:none!important}.block{display:block}.grid{display:grid}.inline-flex{display:inline-flex}
+.gap-5{gap:1.25rem}.gap-8{gap:2rem}.space-y-2>*+*{margin-top:.5rem}.space-y-3>*+*{margin-top:.75rem}.space-y-5>*+*{margin-top:1.25rem}.space-y-8>*+*{margin-top:2rem}
+.mb-2{margin-bottom:.5rem}.mb-3{margin-bottom:.75rem}.mt-1{margin-top:.25rem}.mt-2{margin-top:.5rem}.mt-5{margin-top:1.25rem}.mt-6{margin-top:1.5rem}
+.p-4{padding:1rem}.px-4{padding-left:1rem;padding-right:1rem}.py-2{padding-top:.5rem;padding-bottom:.5rem}
+.text-xs{font-size:.75rem;line-height:1rem}.text-sm{font-size:.875rem;line-height:1.25rem}.text-2xl{font-size:1.5rem;line-height:2rem}
+.font-medium{font-weight:500}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.tracking-wider{letter-spacing:.05em}.tracking-widest{letter-spacing:.1em}
+.text-black{color:#000}.text-slate-500{color:#64748b}.bg-yellow-400{background:#facc15}
+@media(min-width:768px){.md\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(min-width:1024px){.lg\:grid-cols-\[\.7fr_1\.3fr\]{grid-template-columns:.7fr 1.3fr}}
