@@ -73,7 +73,7 @@ const core = fs.readFileSync('admin/assets/cms-core.js', 'utf8');
 });
 
 const runtime = fs.readFileSync('src/js/cms-runtime.js', 'utf8');
-['function applyMediaBindings','[data-cms-media]','[data-cms-background]','[data-cms-favicon]','applyMediaBindings(site)'].forEach(needle => {
+['function applyMediaBindings',"$('[data-cms-media]'","$('[data-cms-background]'","$('[data-cms-favicon]'",'applyMediaBindings(site)','function migrateLegacyEmails'].forEach(needle => {
   assert(runtime.includes(needle), 'Public media binding missing: ' + needle);
 });
 
@@ -126,3 +126,33 @@ assert(adminJs.includes('window.alanpasttSupabase ||'), 'Admin login does not re
 assert(cmsCoreJs.includes('window.alanpasttSupabase||'), 'CMS core does not reuse the shared Supabase client');
 assert(cmsCoreJs.includes("storageKey:'codimas-public-anon'"), 'Public verification client is not isolated from admin auth storage');
 console.log('Production dependency/auth client checks OK');
+
+
+/* Legacy email/domain checks */
+const textExtensions = new Set(['.html','.js','.ts','.sql','.md','.yml','.yaml','.toml','.txt','.sh']);
+const pathApi = require('path');
+function walk(dir, out = []) {
+  fs.readdirSync(dir, { withFileTypes: true }).forEach(entry => {
+    if (entry.name === '.git' || entry.name === 'node_modules') return;
+    const full = pathApi.join(dir, entry.name);
+    if (entry.isDirectory()) walk(full, out);
+    else if (textExtensions.has(pathApi.extname(entry.name).toLowerCase())) out.push(full);
+  });
+  return out;
+}
+const legacyEmailFiles = walk('.')
+  .filter(file => !file.endsWith(pathApi.join('supabase','email-domain-migration.sql')))
+  .filter(file => /@alanpastt\.cl/i.test(fs.readFileSync(file, 'utf8')));
+assert(legacyEmailFiles.length === 0, 'Legacy @alanpastt.cl email remains in: ' + legacyEmailFiles.join(', '));
+
+const dashboardHtml = fs.readFileSync('admin/dashboard.html', 'utf8');
+assert(dashboardHtml.includes('id="account-email"'), 'Admin account email editor is missing');
+assert(dashboardHtml.includes('id="update-account-email"'), 'Admin account email update action is missing');
+assert(adminJs.includes("auth.updateUser({ email: newEmail })"), 'Admin account email update flow is missing');
+
+assert(schema.includes("'ventas@codimas.cl'"), 'Supabase schema does not use ventas@codimas.cl');
+assert(schema.includes("'contacto@codimas.cl'"), 'Supabase schema does not use contacto@codimas.cl');
+const quoteEmail = fs.readFileSync('supabase/functions/quote-email/index.ts', 'utf8');
+assert(quoteEmail.includes("Codimas SpA <ventas@codimas.cl>"), 'Quote email sender default is not ventas@codimas.cl');
+assert(cmsCoreJs.includes('function migrateLegacyEmails'), 'CMS does not migrate persisted legacy email values');
+console.log('Legacy email/domain checks OK');
