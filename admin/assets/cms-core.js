@@ -1,8 +1,8 @@
 (function(){
 'use strict';
 const cfg=window.ALANPASTT_CONFIG||{};
-const sb=window.supabase.createClient(cfg.supabaseUrl||cfg.SUPABASE_URL,cfg.supabaseAnonKey||cfg.SUPABASE_ANON_KEY);
-const publicSb=window.supabase.createClient(cfg.supabaseUrl||cfg.SUPABASE_URL,cfg.supabaseAnonKey||cfg.SUPABASE_ANON_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
+const sb=window.alanpasttSupabase||(window.alanpasttSupabase=window.supabase.createClient(cfg.supabaseUrl||cfg.SUPABASE_URL,cfg.supabaseAnonKey||cfg.SUPABASE_ANON_KEY));
+const publicSb=window.supabase.createClient(cfg.supabaseUrl||cfg.SUPABASE_URL,cfg.supabaseAnonKey||cfg.SUPABASE_ANON_KEY,{auth:{storageKey:'codimas-public-anon',persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
 const bucket=cfg.storageBucket||'alanpastt-assets';
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
 const clone=v=>JSON.parse(JSON.stringify(v));
