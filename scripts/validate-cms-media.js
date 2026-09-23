@@ -96,7 +96,7 @@ function validateStaticMedia(file, expectedBackgroundPath) {
   assert(html.includes('data-cms-favicon="global.favicon_url"'), file + ' favicon is not CMS-controlled');
   assert(html.includes('data-cms-background="' + expectedBackgroundPath + '"'), file + ' primary image binding is missing');
   assert(html.includes('cms-defaults.js?v=20260921-media-2'), file + ' does not load current CMS defaults');
-  assert(html.includes('cms-runtime.js?v=20260921-media-2'), file + ' does not load current CMS runtime');
+  assert(html.includes('cms-runtime.js?v=20260923-ops-1'), file + ' does not load current CMS runtime');
 }
 validateStaticMedia('index.html', 'home.hero.image_url');
 validateStaticMedia('cotizacion.html', 'quote.hero_image_url');
@@ -143,7 +143,7 @@ function walk(dir, out = []) {
 const legacyEmailFiles = walk('.')
   .filter(file => !file.endsWith(pathApi.join('supabase','email-domain-migration.sql')))
   .filter(file => /@alanpastt\.cl/i.test(fs.readFileSync(file, 'utf8')));
-assert(legacyEmailFiles.length === 0, 'Legacy @alanpastt.cl email remains in: ' + legacyEmailFiles.join(', '));
+assert(legacyEmailFiles.length === 0, 'Legacy old-domain email remains in: ' + legacyEmailFiles.join(', '));
 
 const dashboardHtml = fs.readFileSync('admin/dashboard.html', 'utf8');
 assert(dashboardHtml.includes('id="account-email"'), 'Admin account email editor is missing');
