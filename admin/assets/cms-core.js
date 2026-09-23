@@ -208,16 +208,16 @@ async function runQuoteModuleDiagnostics(){
     if(responseError||!response)throw responseError||new Error('No se pudo escribir en quote_responses.');
     responseId=response.id;
 
-    storagePath=`${quoteId}/healthcheck-${stamp}.txt`;
-    const testFile=new Blob(['Codimas admin health check'],{type:'text/plain'});
+    storagePath=`${quoteId}/healthcheck-${stamp}.pdf`;
+    const testFile=new Blob(['%PDF-1.4\n% Codimas admin health check\n%%EOF'],{type:'application/pdf'});
     const {error:storageError}=await sb.storage.from('quote-attachments').upload(storagePath,testFile,{upsert:false,cacheControl:'60'});
     if(storageError)throw new Error('No se pudo escribir en quote-attachments Storage: '+storageError.message);
 
     const {data:attachment,error:attachmentError}=await sb.from('quote_attachments').insert({
       quote_id:quoteId,
-      file_name:'healthcheck.txt',
+      file_name:'healthcheck.pdf',
       file_path:storagePath,
-      file_type:'text/plain',
+      file_type:'application/pdf',
       file_size:testFile.size,
       uploaded_by:session.user.id
     }).select('id').single();
@@ -232,7 +232,7 @@ async function runQuoteModuleDiagnostics(){
     if(!tracking?.found)throw new Error('El seguimiento público no encontró la solicitud temporal.');
     if(tracking.quote?.estado!=='Cerrada')throw new Error('El seguimiento público no reflejó el último estado.');
     if(!(tracking.responses||[]).some(item=>item.subject==='Diagnóstico interno'))throw new Error('El seguimiento público no reflejó la respuesta temporal.');
-    if(!(tracking.attachments||[]).some(item=>item.file_name==='healthcheck.txt'))throw new Error('El seguimiento público no reflejó el adjunto temporal.');
+    if(!(tracking.attachments||[]).some(item=>item.file_name==='healthcheck.pdf'))throw new Error('El seguimiento público no reflejó el adjunto temporal.');
 
     return {ok:true};
   }catch(error){
