@@ -96,7 +96,7 @@ function validateStaticMedia(file, expectedBackgroundPath) {
   assert(html.includes('data-cms-favicon="global.favicon_url"'), file + ' favicon is not CMS-controlled');
   assert(html.includes('data-cms-background="' + expectedBackgroundPath + '"'), file + ' primary image binding is missing');
   assert(html.includes('cms-defaults.js?v=20260923-audit-final-1'), file + ' does not load current CMS defaults');
-  assert(html.includes('cms-runtime.js?v=20260923-audit-final-1'), file + ' does not load current CMS runtime');
+  assert(html.includes('cms-runtime.js?v=20260923-publicfix-1'), file + ' does not load current CMS runtime');
 }
 validateStaticMedia('index.html', 'home.hero.image_url');
 validateStaticMedia('cotizacion.html', 'quote.hero_image_url');
@@ -175,3 +175,8 @@ const quoteRequest = fs.readFileSync('src/js/quote-request.js', 'utf8');
   assert(quoteRequest.includes("params.get('" + param + "')"), 'Quote context parameter missing: ' + param);
 });
 console.log('Contact/full-save/runtime integration checks OK');
+
+
+/* Public runtime selector safety */
+const brokenPublicLoops = runtime.split('\n').filter(line => /(^|[^$])\$\([^)]*\)\.forEach/.test(line));
+assert(brokenPublicLoops.length === 0, 'Public runtime contains querySelector(...).forEach regression: ' + brokenPublicLoops.join(' | '));
