@@ -177,7 +177,7 @@ async function runQuoteModuleDiagnostics(){
   const stamp=Date.now().toString(36).toUpperCase();
   const trackingCode=`COD-HEALTH-${stamp}`;
   const email='healthcheck@codimas.cl';
-  let quoteId=null,responseId=null,attachmentId=null,storagePath=null;
+  let quoteId=null,responseId=null,attachmentId=null,storagePath=null,failed=false;
   try{
     const {data:quote,error:quoteError}=await sb.from('cotizaciones_entrantes').insert({
       tracking_code:trackingCode,
@@ -192,8 +192,9 @@ async function runQuoteModuleDiagnostics(){
     quoteId=quote.id;
 
     for(const estado of ['En revisión','Cotizando','Respondida','Cerrada']){
-      const {error}=await sb.from('cotizaciones_entrantes').update({estado,internal_notes:'Diagnóstico automático'}).eq('id',quoteId);
+      const {data:updated,error}=await sb.from('cotizaciones_entrantes').update({estado,internal_notes:'Diagnóstico automático'}).eq('id',quoteId).select('estado,internal_notes').single();
       if(error)throw new Error(`No se pudo aplicar el estado "${estado}": ${error.message}`);
+      if(updated?.estado!==estado||updated?.internal_notes!=='Diagnóstico automático')throw new Error(`Supabase no confirmó correctamente el estado "${estado}".`);
     }
 
     const {data:response,error:responseError}=await sb.from('quote_responses').insert({
@@ -234,11 +235,19 @@ async function runQuoteModuleDiagnostics(){
     if(!(tracking.attachments||[]).some(item=>item.file_name==='healthcheck.txt'))throw new Error('El seguimiento público no reflejó el adjunto temporal.');
 
     return {ok:true};
+  }catch(error){
+    failed=true;
+    throw error;
   }finally{
-    if(attachmentId)await sb.from('quote_attachments').delete().eq('id',attachmentId);
-    if(storagePath)await sb.storage.from('quote-attachments').remove([storagePath]);
-    if(responseId)await sb.from('quote_responses').delete().eq('id',responseId);
-    if(quoteId)await sb.from('cotizaciones_entrantes').delete().eq('id',quoteId);
+    const cleanupErrors=[];
+    if(attachmentId){const {error}=await sb.from('quote_attachments').delete().eq('id',attachmentId);if(error)cleanupErrors.push('quote_attachments: '+error.message)}
+    if(storagePath){const {error}=await sb.storage.from('quote-attachments').remove([storagePath]);if(error)cleanupErrors.push('Storage adjuntos: '+error.message)}
+    if(responseId){const {error}=await sb.from('quote_responses').delete().eq('id',responseId);if(error)cleanupErrors.push('quote_responses: '+error.message)}
+    if(quoteId){const {error}=await sb.from('cotizaciones_entrantes').delete().eq('id',quoteId);if(error)cleanupErrors.push('solicitud temporal: '+error.message)}
+    if(cleanupErrors.length){
+      console.error('[Codimas CMS] Falló limpieza del diagnóstico:',cleanupErrors);
+      if(!failed)throw new Error('La prueba funcionó, pero no pudo limpiar datos temporales: '+cleanupErrors.join(' · '));
+    }
   }
 }
 async function runDiagnostics(){
