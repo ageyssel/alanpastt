@@ -73,8 +73,8 @@ assert(cmsMedia.includes('await app().saveAll()'), 'Central media manager does n
 assert(cmsCore.includes('async function optimizeImage'), 'Image optimization is missing');
 assert(cmsCore.includes("$('.cms-upload-btn',root).forEach"), 'Upload binding must use querySelectorAll for upload buttons');
 assert(cmsCore.includes("$('.cms-file-input',root).forEach"), 'Upload binding must use querySelectorAll for file inputs');
-assert(!cmsCore.includes("function bindUploads(root=document){$('.cms-upload-btn',root).forEach"), 'Single-element selector regression in upload buttons');
-assert(!cmsCore.includes("});$('.cms-file-input',root).forEach"), 'Single-element selector regression in file inputs');
+assert(!/(^|[^$])\$\('\.cms-upload-btn',root\)\.forEach/.test(cmsCore), 'Single-element selector regression in upload buttons');
+assert(!/(^|[^$])\$\('\.cms-file-input',root\)\.forEach/.test(cmsCore), 'Single-element selector regression in file inputs');
 assert(cmsCore.includes('async function assertAdminSession'), 'Image upload does not validate admin session');
 assert(cmsCore.includes("storage.from(bucket).upload"), 'CMS image Storage upload is missing');
 
