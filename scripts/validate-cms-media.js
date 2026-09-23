@@ -154,5 +154,7 @@ assert(schema.includes("'ventas@codimas.cl'"), 'Supabase schema does not use ven
 assert(schema.includes("'contacto@codimas.cl'"), 'Supabase schema does not use contacto@codimas.cl');
 const quoteEmail = fs.readFileSync('supabase/functions/quote-email/index.ts', 'utf8');
 assert(quoteEmail.includes("Codimas SpA <ventas@codimas.cl>"), 'Quote email sender default is not ventas@codimas.cl');
+assert(quoteEmail.includes('function safeCodimasEmail'), 'Quote email does not guard against legacy email secrets');
+assert(quoteEmail.includes('function safeCodimasUrl'), 'Quote email does not guard against legacy site URL secrets');
 assert(cmsCoreJs.includes('function migrateLegacyEmails'), 'CMS does not migrate persisted legacy email values');
 console.log('Legacy email/domain checks OK');
