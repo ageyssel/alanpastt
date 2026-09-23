@@ -58,6 +58,10 @@ assert(cmsCore.includes("delete homeRest.hero"), 'Technical duplicate hero edito
 // Global save must really persist all open editors and verify public readback
 assert(cmsCore.includes("window.dispatchEvent(new CustomEvent('codimas:before-save'))"), 'Global save does not flush open drafts');
 assert(cmsCore.includes("from('site_content').upsert"), 'Global save does not persist site_content');
+assert(cmsCore.includes('const sitePayload=jsonSafe(window.CODIMAS_ADMIN.site)'), 'Global save does not freeze an immutable JSON payload');
+assert(cmsCore.includes('.upsert([{key:\'cms_site\',value:sitePayload}]'), 'site_content is not written from the immutable JSON payload');
+assert(cmsCore.includes('firstJsonDiff(sitePayload,writtenSite.value)'), 'CMS does not verify the exact site_content write response');
+assert(cmsCore.includes('firstJsonDiff(sitePayload,publicCheck.value)'), 'CMS does not verify the exact public readback');
 assert(cmsCore.includes("from('contact_settings').upsert"), 'Global save does not persist contact_settings');
 assert(cmsCore.includes("publicSb.from('site_content')"), 'Global save does not verify public site_content');
 assert(cmsCore.includes("publicSb.from('contact_settings')"), 'Global save does not verify public contact settings');
