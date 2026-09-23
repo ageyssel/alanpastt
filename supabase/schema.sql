@@ -73,7 +73,7 @@ create table if not exists public.cotizaciones_entrantes (
   telefono text,
   empresa text,
   mensaje text not null,
-  estado text not null default 'Nueva' check (estado in ('Nueva', 'Contactado', 'Cotizado', 'Cerrado', 'Descartado')),
+  estado text not null default 'Nueva' check (estado in ('Nueva', 'En revisión', 'Cotizando', 'Respondida', 'Cerrada')),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -263,25 +263,25 @@ using (bucket_id = 'alanpastt-assets' and public.is_admin());
 insert into public.site_content (key, value)
 values
   ('hero', '{
-    "badge": "Expertos en Soluciones de Caucho",
-    "title_html": "Goma para <span class=\"text-alanpastt-amarillo\">Seguridad</span> <br>& Construcción",
-    "subtitle": "Proveemos y realizamos trabajos con productos de alta resistencia: Pisos antideslizantes, gradas y correas industriales.",
-    "primary_button_text": "Ver Catálogo",
-    "secondary_button_text": "Hablar con un Experto"
+    "badge": "Productos, suministros y soluciones",
+    "title_html": "Todo para instalar, construir y mantener.",
+    "subtitle": "Abastecimiento técnico para empresas, obras, mantención y proyectos.",
+    "primary_button_text": "Explorar catálogo",
+    "secondary_button_text": "Solicitar cotización"
   }'::jsonb),
   ('products_section', '{
-    "title": "Nuestros Productos",
-    "subtitle": "Soluciones de caucho industrial"
+    "title": "Productos de referencia",
+    "subtitle": "Líneas para cotizar según requerimiento técnico"
   }'::jsonb),
   ('contact_section', '{
-    "title_html": "Hablemos de tu <br><span class=\"text-alanpastt-amarillo\">Proyecto</span>",
-    "subtitle": "Asesoría técnica y soluciones a medida en caucho."
+    "title_html": "¿Tienes un requerimiento?",
+    "subtitle": "Cotiza productos, volumen, abastecimiento o proyecto."
   }'::jsonb),
   ('footer', '{
-    "brand": "Alanpastt",
+    "brand": "Codimas SpA",
     "developer_label": "Desarrollo Digital",
-    "developer_name": "FocusFrame Media SpA.",
-    "developer_url": "https://focusframe.cl"
+    "developer_name": "Focus One SpA",
+    "developer_url": "https://focusone.cl"
   }'::jsonb)
 on conflict (key) do update set value = excluded.value;
 
