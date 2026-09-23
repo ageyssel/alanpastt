@@ -1,4 +1,4 @@
--- Alanpastt - Gestión avanzada de solicitudes/cotizaciones
+-- Codimas - Gestión avanzada de solicitudes/cotizaciones
 -- Ejecutar en Supabase SQL Editor.
 
 create extension if not exists pgcrypto;
@@ -41,7 +41,7 @@ alter table public.cotizaciones_entrantes
   add column if not exists updated_at timestamptz not null default now();
 
 update public.cotizaciones_entrantes
-set tracking_code = 'ALP-' || to_char(created_at, 'YYYYMMDD') || '-' || upper(substr(replace(id::text, '-', ''), 1, 6))
+set tracking_code = 'COD-' || to_char(created_at, 'YYYYMMDD') || '-' || upper(substr(replace(id::text, '-', ''), 1, 6))
 where tracking_code is null;
 
 alter table public.cotizaciones_entrantes
