@@ -95,8 +95,8 @@ function validateStaticMedia(file, expectedBackgroundPath) {
   backgrounds.forEach(tag => assert(tag.includes('data-cms-background='), file + ' contains static background image not controlled by CMS'));
   assert(html.includes('data-cms-favicon="global.favicon_url"'), file + ' favicon is not CMS-controlled');
   assert(html.includes('data-cms-background="' + expectedBackgroundPath + '"'), file + ' primary image binding is missing');
-  assert(html.includes('cms-defaults.js?v=20260921-media-2'), file + ' does not load current CMS defaults');
-  assert(html.includes('cms-runtime.js?v=20260923-ops-1'), file + ' does not load current CMS runtime');
+  assert(html.includes('cms-defaults.js?v=20260923-audit-2'), file + ' does not load current CMS defaults');
+  assert(html.includes('cms-runtime.js?v=20260923-audit-2'), file + ' does not load current CMS runtime');
 }
 validateStaticMedia('index.html', 'home.hero.image_url');
 validateStaticMedia('cotizacion.html', 'quote.hero_image_url');
@@ -158,3 +158,20 @@ assert(quoteEmail.includes('function safeCodimasEmail'), 'Quote email does not g
 assert(quoteEmail.includes('function safeCodimasUrl'), 'Quote email does not guard against legacy site URL secrets');
 assert(cmsCoreJs.includes('function migrateLegacyEmails'), 'CMS does not migrate persisted legacy email values');
 console.log('Legacy email/domain checks OK');
+
+
+/* Contact + full-save integration checks */
+assert(runtime.includes("client.from('contact_settings')"), 'Public runtime does not read contact_settings');
+assert(runtime.includes('data-codimas-contact-email'), 'Public runtime does not distinguish general contact email');
+assert(cmsCoreJs.includes("publicSb.from('contact_settings')"), 'CMS save does not verify public contact readback');
+assert(cmsCoreJs.includes("window.dispatchEvent(new CustomEvent('codimas:before-save'))"), 'Global save does not flush open drafts');
+const catalogAdmin = fs.readFileSync('admin/assets/cms-catalog.js', 'utf8');
+assert(catalogAdmin.includes("window.addEventListener('codimas:before-save',flushOpenDrafts)"), 'Catalog drafts are not flushed before global save');
+assert(catalogAdmin.includes('await app().saveAll()'), 'Category/service actions do not persist immediately');
+assert(cmsCoreJs.includes('async function runQuoteModuleDiagnostics()'), 'Live quote-module diagnostics are missing');
+assert(cmsCoreJs.includes("sb.storage.from('quote-attachments').upload"), 'Quote attachment Storage is not covered by diagnostics');
+const quoteRequest = fs.readFileSync('src/js/quote-request.js', 'utf8');
+['categoria','producto','tipo','servicio','busqueda'].forEach(param => {
+  assert(quoteRequest.includes("params.get('" + param + "')"), 'Quote context parameter missing: ' + param);
+});
+console.log('Contact/full-save/runtime integration checks OK');
