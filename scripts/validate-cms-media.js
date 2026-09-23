@@ -95,8 +95,8 @@ function validateStaticMedia(file, expectedBackgroundPath) {
   backgrounds.forEach(tag => assert(tag.includes('data-cms-background='), file + ' contains static background image not controlled by CMS'));
   assert(html.includes('data-cms-favicon="global.favicon_url"'), file + ' favicon is not CMS-controlled');
   assert(html.includes('data-cms-background="' + expectedBackgroundPath + '"'), file + ' primary image binding is missing');
-  assert(html.includes('cms-defaults.js?v=20260923-audit-2'), file + ' does not load current CMS defaults');
-  assert(html.includes('cms-runtime.js?v=20260923-audit-2'), file + ' does not load current CMS runtime');
+  assert(html.includes('cms-defaults.js?v=20260923-audit-final-1'), file + ' does not load current CMS defaults');
+  assert(html.includes('cms-runtime.js?v=20260923-audit-final-1'), file + ' does not load current CMS runtime');
 }
 validateStaticMedia('index.html', 'home.hero.image_url');
 validateStaticMedia('cotizacion.html', 'quote.hero_image_url');
