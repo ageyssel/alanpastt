@@ -5,6 +5,9 @@
   const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
   const isObject = (value) => value && typeof value === 'object' && !Array.isArray(value);
   const assetUrl = (value) => typeof value === 'string' && value.startsWith('public/') ? `/${value}` : value;
+  function releaseCmsGate() {
+    document.documentElement.classList.remove('codimas-cms-loading');
+  }
 
   function migrateLegacyEmails(value) {
     if (typeof value === 'string') return value.replace(/([A-Z0-9._%+-]+)@alanpastt\.cl/gi, '$1@codimas.cl');
@@ -449,17 +452,23 @@
     });
 
     window.CODIMAS_CMS = site;
-    applyGlobal(site);
-    applyMediaBindings(site);
+    try {
+      applyGlobal(site);
+      applyMediaBindings(site);
 
-    const path = (location.pathname || '').toLowerCase();
-    if (path.endsWith('cotizacion.html')) applyQuote(site);
-    else if (path.endsWith('seguimiento.html')) applyTracking(site);
-    else if (!path.includes('/categorias/') && !path.includes('/admin/')) applyHome(site);
+      const path = (location.pathname || '').toLowerCase();
+      if (path.endsWith('cotizacion.html')) applyQuote(site);
+      else if (path.endsWith('seguimiento.html')) applyTracking(site);
+      else if (!path.includes('/categorias/') && !path.includes('/admin/')) applyHome(site);
 
-    window.dispatchEvent(new CustomEvent('codimas:cms-ready', { detail: site }));
-    return site;
+      window.dispatchEvent(new CustomEvent('codimas:cms-ready', { detail: site }));
+      return site;
+    } finally {
+      requestAnimationFrame(releaseCmsGate);
+    }
   }
+
+  setTimeout(releaseCmsGate, 5000);
 
   window.CODIMAS_CMS_API = { deepMerge, migrateLegacyEmails, applyGlobal, applyMediaBindings, applyHome, applyQuote, applyTracking };
   window.CODIMAS_CMS_READY = loadSite();
