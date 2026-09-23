@@ -45,15 +45,15 @@
   }
 
   function applyMediaBindings(site, root = document) {
-    $('[data-cms-media]', root).forEach((element) => {
+    $$('[data-cms-media]', root).forEach((element) => {
       const value = getPathValue(site, element.dataset.cmsMedia);
       if (value) element.setAttribute('src', assetUrl(value));
     });
-    $('[data-cms-background]', root).forEach((element) => {
+    $$('[data-cms-background]', root).forEach((element) => {
       const value = getPathValue(site, element.dataset.cmsBackground);
       if (value) element.style.backgroundImage = `url("${String(assetUrl(value)).replaceAll('"', '\\\"')}")`;
     });
-    $('[data-cms-favicon]', root).forEach((element) => {
+    $$('[data-cms-favicon]', root).forEach((element) => {
       const value = getPathValue(site, element.dataset.cmsFavicon);
       if (value) element.setAttribute('href', assetUrl(value));
     });
@@ -87,13 +87,13 @@
       if (admin && navigation.admin) admin.textContent = navigation.admin;
     }
 
-    $('a[href^="mailto:"]', root).forEach((link) => {
+    $$('a[href^="mailto:"]', root).forEach((link) => {
       if (link.hasAttribute('data-codimas-contact-email')) return;
       if (!global.sales_email) return;
       link.href = `mailto:${global.sales_email}`;
       if ((link.textContent || '').includes('@')) link.textContent = global.sales_email;
     });
-    $('[data-codimas-contact-email]', root).forEach((link) => {
+    $$('[data-codimas-contact-email]', root).forEach((link) => {
       if (!global.contact_email) return;
       link.href = `mailto:${global.contact_email}`;
       link.textContent = global.contact_email;
