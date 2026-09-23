@@ -27,6 +27,29 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
+  async function populateCategories() {
+    if (!categorySelect) return;
+    let site = window.CODIMAS_CMS || null;
+    try {
+      if (window.CODIMAS_CMS_READY) site = await window.CODIMAS_CMS_READY;
+    } catch (_) {}
+    const categories = site?.catalog?.categories?.length
+      ? site.catalog.categories
+      : (window.CODIMAS_CATALOG?.categories || []);
+    const placeholder = categorySelect.querySelector('option[value=""]')?.textContent || 'Seleccionar categoría si corresponde';
+    categorySelect.innerHTML = '';
+    const first = document.createElement('option');
+    first.value = '';
+    first.textContent = placeholder;
+    categorySelect.appendChild(first);
+    categories.forEach((category) => {
+      const option = document.createElement('option');
+      option.value = category.title;
+      option.textContent = category.title;
+      categorySelect.appendChild(option);
+    });
+  }
+
   function buildContext(items) {
     const params = getParams();
     const lines = [];
@@ -107,5 +130,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   window.addEventListener('codimas:quote-cleared', renderItems);
-  renderItems();
+  (async () => {
+    await populateCategories();
+    renderItems();
+  })();
 });
