@@ -20,8 +20,60 @@ const isLong=(k,v)=>/text|subtitle|description|title_html|legal_name|credit/i.te
 function field(k,v,path){const id=`cms-${path.replace(/[^a-z0-9]+/gi,'-')}`;if(isMedia(k))return `<label class="cms-field"><span>${label(k)}</span><div class="cms-media-field"><input id="${id}" data-cms-path="${path}" type="url" value="${esc(v||'')}" placeholder="URL de imagen"><button type="button" class="cms-upload-btn" data-target-id="${id}">Subir</button><input type="file" class="cms-file-input" data-target-id="${id}" accept="image/png,image/jpeg,image/webp,image/gif"></div>${v?`<img class="cms-media-preview" src="${esc(v)}" alt="Vista previa">`:''}</label>`;if(typeof v==='boolean')return `<label class="cms-field cms-checkbox"><span>${label(k)}</span><input data-cms-path="${path}" type="checkbox" ${v?'checked':''}></label>`;if(isLong(k,v))return `<label class="cms-field"><span>${label(k)}</span><textarea data-cms-path="${path}" rows="${String(v||'').length>180?5:3}">${esc(v||'')}</textarea>${/_html$/.test(k)?'<small>Se permite HTML básico para negritas y saltos.</small>':''}</label>`;const t=/href|url/i.test(k)?'url':/email/i.test(k)?'email':'text';return `<label class="cms-field"><span>${label(k)}</span><input data-cms-path="${path}" type="${t}" value="${esc(v??'')}"></label>`}
 function renderObj(root,obj,base){if(!root)return;root.innerHTML='';Object.entries(obj||{}).forEach(([k,v])=>{const path=`${base}.${k}`;if(Array.isArray(v)){const wrap=document.createElement('div');wrap.className='cms-array-group';wrap.innerHTML=`<div class="cms-array-title"><h3>${label(k)}</h3><span>${v.length} elementos</span></div>`;const body=document.createElement('div');body.className='cms-array-body';v.forEach((item,i)=>{if(isObj(item)){const card=document.createElement('div');card.className='cms-editor-card compact';card.innerHTML=`<div class="cms-item-number">${String(i+1).padStart(2,'0')}</div><div class="cms-form-grid two-cols">${Object.entries(item).map(([ck,cv])=>field(ck,cv,`${path}.${i}.${ck}`)).join('')}</div>`;body.appendChild(card)}});wrap.appendChild(body);root.appendChild(wrap)}else if(isObj(v)){const s=document.createElement('div');s.className='cms-object-group';s.innerHTML=`<div class="cms-subhead"><div><h3>${label(k)}</h3></div></div><div class="cms-form-grid two-cols">${Object.entries(v).map(([ck,cv])=>field(ck,cv,`${path}.${ck}`)).join('')}</div>`;root.appendChild(s)}else root.insertAdjacentHTML('beforeend',field(k,v,path))});bindInputs(root);bindUploads(root)}
 function bindInputs(root=document){$$('[data-cms-path]',root).forEach(el=>el.addEventListener('input',()=>setPath(el.dataset.cmsPath,el.type==='checkbox'?el.checked:el.value)))}
-async function upload(file){if(!file)return null;if(file.size>5*1024*1024)throw new Error('La imagen supera 5 MB.');const name=file.name.replace(/[^a-zA-Z0-9._-]+/g,'-').toLowerCase();const path=`cms/${Date.now()}-${Math.random().toString(36).slice(2,8)}-${name}`;const {error}=await sb.storage.from(bucket).upload(path,file,{cacheControl:'3600',upsert:false});if(error)throw error;return sb.storage.from(bucket).getPublicUrl(path).data.publicUrl}
-function bindUploads(root=document){$$('.cms-upload-btn',root).forEach(btn=>{if(btn.dataset.bound)return;btn.dataset.bound='1';btn.addEventListener('click',()=>{const id=btn.dataset.targetId||btn.dataset.target;$(`.cms-file-input[data-target-id="${id}"],.cms-file-input[data-target="${id}"]`)?.click()})});$$('.cms-file-input',root).forEach(inp=>{if(inp.dataset.bound)return;inp.dataset.bound='1';inp.addEventListener('change',async()=>{const f=inp.files?.[0];if(!f)return;const id=inp.dataset.targetId||inp.dataset.target;const target=document.getElementById(id);try{status('Subiendo imagen...');const url=await upload(f);if(target){target.value=url;target.dispatchEvent(new Event('input',{bubbles:true}));let p=target.closest('.cms-field')?.querySelector('.cms-media-preview');if(!p){p=document.createElement('img');p.className='cms-media-preview';target.closest('.cms-field')?.appendChild(p)}if(p)p.src=url}status('Imagen subida correctamente.','success')}catch(e){status(`No se pudo subir la imagen: ${e.message}`,'error')}})})}
+function fileToDataUrl(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result||''));reader.onerror=()=>reject(new Error('No se pudo leer la imagen seleccionada.'));reader.readAsDataURL(file)})}
+function loadBitmap(file){return new Promise((resolve,reject)=>{const img=new Image();const url=URL.createObjectURL(file);img.onload=()=>{URL.revokeObjectURL(url);resolve(img)};img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error('El archivo seleccionado no es una imagen válida.'))};img.src=url})}
+async function optimizeImage(file){
+  if(!file)return null;
+  const allowed=['image/jpeg','image/png','image/webp','image/gif'];
+  if(!allowed.includes(file.type))throw new Error('Formato no permitido. Usa JPG, PNG, WebP o GIF.');
+  if(file.size>12*1024*1024)throw new Error('La imagen supera 12 MB. Reduce su tamaño antes de subirla.');
+  if(file.type==='image/gif')return {blob:file,fileName:file.name,dataUrl:await fileToDataUrl(file),optimized:false};
+  const img=await loadBitmap(file);
+  const max=2200,scale=Math.min(1,max/Math.max(img.naturalWidth||img.width,img.naturalHeight||img.height));
+  const width=Math.max(1,Math.round((img.naturalWidth||img.width)*scale));
+  const height=Math.max(1,Math.round((img.naturalHeight||img.height)*scale));
+  const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;
+  const ctx=canvas.getContext('2d',{alpha:true});if(!ctx)throw new Error('El navegador no pudo preparar la imagen.');
+  ctx.drawImage(img,0,0,width,height);
+  const outputType=file.type==='image/png'&&file.size<1400000?'image/png':'image/webp';
+  const quality=outputType==='image/webp'?0.84:0.92;
+  const blob=await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error('No se pudo optimizar la imagen.')),outputType,quality));
+  const ext=outputType==='image/webp'?'webp':'png';
+  const base=file.name.replace(/\.[^.]+$/,'').replace(/[^a-zA-Z0-9_-]+/g,'-').toLowerCase()||'imagen';
+  const optimizedFile=new File([blob],`${base}.${ext}`,{type:outputType,lastModified:Date.now()});
+  return {blob:optimizedFile,fileName:optimizedFile.name,dataUrl:await fileToDataUrl(optimizedFile),optimized:true};
+}
+async function assertAdminSession(){
+  const {data,error}=await sb.auth.getSession();
+  if(error)throw new Error('No se pudo validar la sesión: '+error.message);
+  const session=data?.session;if(!session)throw new Error('La sesión administrativa expiró. Cierra sesión y vuelve a ingresar.');
+  const {data:profile,error:profileError}=await sb.from('admin_profiles').select('role').eq('user_id',session.user.id).maybeSingle();
+  if(profileError)throw new Error('No se pudo validar el rol administrador: '+profileError.message);
+  if(!profile||profile.role!=='admin')throw new Error('Este usuario no tiene permisos de administrador para subir imágenes.');
+  return session;
+}
+async function upload(file){
+  if(!file)return null;
+  await assertAdminSession();
+  const prepared=await optimizeImage(file);
+  const safeName=prepared.fileName.replace(/[^a-zA-Z0-9._-]+/g,'-').toLowerCase();
+  const path=`cms/${Date.now()}-${Math.random().toString(36).slice(2,8)}-${safeName}`;
+  const result=await sb.storage.from(bucket).upload(path,prepared.blob,{cacheControl:'3600',upsert:false,contentType:prepared.blob.type});
+  if(!result.error){
+    const publicUrl=sb.storage.from(bucket).getPublicUrl(path).data.publicUrl;
+    if(!publicUrl)throw new Error('Storage recibió la imagen, pero no devolvió una URL pública.');
+    console.info('[Codimas CMS] Imagen subida a Storage:',publicUrl);
+    return publicUrl;
+  }
+  console.error('[Codimas CMS] Falló Supabase Storage:',{message:result.error.message,statusCode:result.error.statusCode,error:result.error});
+  if(prepared.dataUrl.length>1800000){
+    throw new Error(`Storage rechazó la imagen (${result.error.message}). La imagen optimizada aún es demasiado grande para usar el respaldo automático.`);
+  }
+  console.warn('[Codimas CMS] Usando respaldo embebido en cms_site porque Storage rechazó la carga.');
+  status('Storage rechazó la carga; publicando mediante respaldo seguro del CMS...','info');
+  return prepared.dataUrl;
+}
+function bindUploads(root=document){$$('.cms-upload-btn',root).forEach(btn=>{if(btn.dataset.bound)return;btn.dataset.bound='1';btn.addEventListener('click',()=>{const id=btn.dataset.targetId||btn.dataset.target;$(`.cms-file-input[data-target-id="${id}"],.cms-file-input[data-target="${id}"]`)?.click()})});$$('.cms-file-input',root).forEach(inp=>{if(inp.dataset.bound)return;inp.dataset.bound='1';inp.addEventListener('change',async()=>{const f=inp.files?.[0];if(!f)return;const id=inp.dataset.targetId||inp.dataset.target;const target=document.getElementById(id);try{status('Subiendo imagen...');const url=await upload(f);if(target){target.value=url;target.dispatchEvent(new Event('input',{bubbles:true}));let p=target.closest('.cms-field')?.querySelector('.cms-media-preview');if(!p){p=document.createElement('img');p.className='cms-media-preview';target.closest('.cms-field')?.appendChild(p)}if(p)p.src=url}status('Imagen subida correctamente.','success')}catch(e){console.error('[Codimas CMS] Error al cambiar imagen:',e);status(`No se pudo cambiar la imagen: ${e.message}`,'error')}finally{inp.value=''}})})}
 function syncRaw(){const el=$('#raw-json');if(el&&window.CODIMAS_ADMIN?.site)el.value=JSON.stringify(window.CODIMAS_ADMIN.site,null,2)}
 async function auth(){const {data}=await sb.auth.getSession();if(!data.session){location.href='login.html';return null}const {data:profile}=await sb.from('admin_profiles').select('role').eq('user_id',data.session.user.id).maybeSingle();if(!profile||profile.role!=='admin'){await sb.auth.signOut();location.href='login.html';return null}$('#user-email').textContent=data.session.user.email||'';return data.session}
 async function loadContact(){const {data}=await sb.from('contact_settings').select('*').eq('id',1).maybeSingle();window.CODIMAS_ADMIN.contact=data||{id:1,sales_email:window.CODIMAS_ADMIN.site.global.sales_email||'',contact_email:'',whatsapp_number:window.CODIMAS_ADMIN.site.global.whatsapp||'',whatsapp_message:'',footer_text:window.CODIMAS_ADMIN.site.global.tagline||''};const c=window.CODIMAS_ADMIN.contact;$('#contact-sales-email').value=c.sales_email||'';$('#contact-email').value=c.contact_email||'';$('#contact-whatsapp').value=c.whatsapp_number||'';$('#contact-whatsapp-message').value=c.whatsapp_message||'';$('#contact-footer').value=c.footer_text||''}
