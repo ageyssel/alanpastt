@@ -12,7 +12,29 @@ function migrateLegacyEmails(value){if(typeof value==='string')return value.repl
 function hasLegacyEmails(value){try{return /@alanpastt\.cl/i.test(JSON.stringify(value))}catch{return false}}
 function normalizeSite(site,defaults){const out=site||{};out.catalog=out.catalog||{};const dc=defaults.catalog?.categories||[];const ds=defaults.catalog?.services||[];const currentCategories=out.catalog.categories?.length?out.catalog.categories:dc;out.catalog.categories=currentCategories.map((category)=>{const base=dc.find((item)=>item.slug===category.slug)||{};const merged={...base,...category};if(merged.image_url===undefined||merged.image_url===null)merged.image_url=base.image_url||'';const baseProducts=base.featuredProducts||[];const products=category.featuredProducts||baseProducts;merged.featuredProducts=products.map((product,index)=>({...baseProducts[index],...product,image_url:product.image_url??baseProducts[index]?.image_url??''}));return merged});const currentServices=out.catalog.services?.length?out.catalog.services:ds;out.catalog.services=currentServices.map((service,index)=>({...ds[index],...service,image_url:service.image_url??ds[index]?.image_url??''}));out.catalog.brands=out.catalog.brands||defaults.catalog?.brands||[];return migrateLegacyEmails(out)}
 function esc(v=''){return String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;')}
+function jsonSafe(v){return JSON.parse(JSON.stringify(v))}
 function canonical(v){if(Array.isArray(v))return v.map(canonical);if(isObj(v))return Object.keys(v).sort().reduce((o,k)=>{o[k]=canonical(v[k]);return o},{});return v}
+function sameJson(a,b){return JSON.stringify(canonical(jsonSafe(a)))===JSON.stringify(canonical(jsonSafe(b)))}
+function firstJsonDiff(expected,actual,path='root'){
+  const a=jsonSafe(expected),b=jsonSafe(actual);
+  if(Object.is(a,b))return null;
+  if(Array.isArray(a)||Array.isArray(b)){
+    if(!Array.isArray(a)||!Array.isArray(b))return{path,expected:a,actual:b};
+    if(a.length!==b.length)return{path:`${path}.length`,expected:a.length,actual:b.length};
+    for(let i=0;i<a.length;i++){const diff=firstJsonDiff(a[i],b[i],`${path}[${i}]`);if(diff)return diff}
+    return null;
+  }
+  if(isObj(a)||isObj(b)){
+    if(!isObj(a)||!isObj(b))return{path,expected:a,actual:b};
+    const keys=[...new Set([...Object.keys(a),...Object.keys(b)])].sort();
+    for(const key of keys){
+      if(!(key in a)||!(key in b))return{path:`${path}.${key}`,expected:a[key],actual:b[key]};
+      const diff=firstJsonDiff(a[key],b[key],`${path}.${key}`);if(diff)return diff;
+    }
+    return null;
+  }
+  return a===b?null:{path,expected:a,actual:b};
+}
 function status(msg,type='info'){const el=$('#status');if(!el)return;el.textContent=msg;el.className=`cms-status is-${type}`;if(type==='success')setTimeout(()=>el.classList.add('is-hidden'),4200)}
 const labels={logo_url:'Logo principal',logo_negative_url:'Logo negativo / footer',favicon_url:'Favicon',company_name:'Nombre de empresa',legal_name:'Descripción corporativa',tagline:'Bajada de marca',sales_email:'Email de ventas',phone:'Teléfono visible',whatsapp:'WhatsApp',topbar_left:'Texto superior izquierdo',topbar_company:'Enlace superior empresas',topbar_contact:'Enlace superior contacto',footer_country:'Texto inferior footer',developer_credit:'Crédito del sitio',eyebrow:'Etiqueta superior',title_html:'Título',subtitle:'Subtítulo',image_url:'Imagen',primary_text:'Texto botón principal',primary_href:'Destino botón principal',secondary_text:'Texto botón secundario',secondary_href:'Destino botón secundario',text:'Texto',title:'Título',button_text:'Texto del botón',button_href:'Destino del botón',hero_eyebrow:'Etiqueta del hero',hero_title_html:'Título del hero',hero_text:'Texto del hero',hero_image_url:'Imagen del hero',items_title:'Título productos agregados',form_eyebrow:'Etiqueta formulario',form_title_html:'Título formulario',submit_text:'Texto botón enviar',search_eyebrow:'Etiqueta buscador',search_title_html:'Título buscador'};
 const label=k=>labels[k]||k.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
@@ -135,6 +157,11 @@ async function saveAll(options={}){
     if(options.flushDrafts!==false)window.dispatchEvent(new CustomEvent('codimas:before-save'));
     collectContact();
     if($('#brands-editor'))window.CODIMAS_ADMIN.site.catalog.brands=$('#brands-editor').value.split('\n').map(v=>v.trim()).filter(Boolean);
+
+    // Freeze the exact JSON that will be sent. Supabase jsonb stores JSON-safe values,
+    // so verification must compare against this immutable payload, not a live editor object.
+    const sitePayload=jsonSafe(window.CODIMAS_ADMIN.site);
+    const contactPayload=jsonSafe(window.CODIMAS_ADMIN.contact);
     status('Guardando y verificando cambios...');
 
     const [{data:siteSnapshot,error:siteSnapshotError},{data:contactSnapshot,error:contactSnapshotError}]=await Promise.all([
@@ -146,37 +173,60 @@ async function saveAll(options={}){
     beforeSite=siteSnapshot;
     beforeContact=contactSnapshot;
 
-    const {error:e1}=await sb.from('site_content').upsert([{key:'cms_site',value:window.CODIMAS_ADMIN.site}],{onConflict:'key'});
+    const {data:writtenSite,error:e1}=await sb.from('site_content')
+      .upsert([{key:'cms_site',value:sitePayload}],{onConflict:'key'})
+      .select('value')
+      .single();
     if(e1)throw new Error('No se pudo guardar contenido: '+e1.message);
     siteWritten=true;
+    if(!writtenSite?.value)throw new Error('Supabase no devolvió el contenido recién guardado.');
 
-    const {error:e2}=await sb.from('contact_settings').upsert([window.CODIMAS_ADMIN.contact],{onConflict:'id'});
+    const writtenDiff=firstJsonDiff(sitePayload,writtenSite.value);
+    if(writtenDiff){
+      console.error('[Codimas CMS] Diferencia después de guardar site_content:',writtenDiff);
+      throw new Error(`Supabase devolvió un contenido distinto en ${writtenDiff.path}.`);
+    }
+
+    const {data:writtenContact,error:e2}=await sb.from('contact_settings')
+      .upsert([contactPayload],{onConflict:'id'})
+      .select('sales_email,contact_email,whatsapp_number,whatsapp_message,footer_text')
+      .single();
     if(e2)throw new Error('No se pudo guardar contacto: '+e2.message);
     contactWritten=true;
 
-    const {data:check,error:e3}=await sb.from('site_content').select('value').eq('key','cms_site').maybeSingle();
-    if(e3||!check?.value)throw e3||new Error('Supabase no devolvió el contenido guardado.');
-    const expected=JSON.stringify(canonical(window.CODIMAS_ADMIN.site));
-    const actual=JSON.stringify(canonical(check.value));
-    if(expected!==actual)throw new Error('El contenido guardado no coincide con el editor.');
+    const contactExpected={
+      sales_email:contactPayload.sales_email,
+      contact_email:contactPayload.contact_email,
+      whatsapp_number:contactPayload.whatsapp_number,
+      whatsapp_message:contactPayload.whatsapp_message,
+      footer_text:contactPayload.footer_text
+    };
+    const contactWriteDiff=firstJsonDiff(contactExpected,writtenContact);
+    if(contactWriteDiff){
+      console.error('[Codimas CMS] Diferencia después de guardar contact_settings:',contactWriteDiff);
+      throw new Error(`Supabase devolvió datos de contacto distintos en ${contactWriteDiff.path}.`);
+    }
 
     const [{data:publicCheck,error:e4},{data:publicContact,error:e5}]=await Promise.all([
       publicSb.from('site_content').select('value').eq('key','cms_site').maybeSingle(),
       publicSb.from('contact_settings').select('sales_email,contact_email,whatsapp_number,whatsapp_message,footer_text').eq('id',1).maybeSingle()
     ]);
     if(e4||!publicCheck?.value)throw e4||new Error('El sitio público no puede leer el CMS.');
-    if(JSON.stringify(canonical(publicCheck.value))!==expected)throw new Error('La lectura pública del contenido no coincide con lo guardado.');
+    const publicDiff=firstJsonDiff(sitePayload,publicCheck.value);
+    if(publicDiff){
+      console.error('[Codimas CMS] Diferencia en lectura pública site_content:',publicDiff);
+      throw new Error(`La versión pública todavía difiere en ${publicDiff.path}.`);
+    }
     if(e5||!publicContact)throw e5||new Error('El sitio público no puede leer los datos de contacto.');
+    const publicContactDiff=firstJsonDiff(contactExpected,publicContact);
+    if(publicContactDiff){
+      console.error('[Codimas CMS] Diferencia en lectura pública contact_settings:',publicContactDiff);
+      throw new Error(`El contacto público todavía difiere en ${publicContactDiff.path}.`);
+    }
 
-    const contactExpected=canonical({
-      sales_email:window.CODIMAS_ADMIN.contact.sales_email,
-      contact_email:window.CODIMAS_ADMIN.contact.contact_email,
-      whatsapp_number:window.CODIMAS_ADMIN.contact.whatsapp_number,
-      whatsapp_message:window.CODIMAS_ADMIN.contact.whatsapp_message,
-      footer_text:window.CODIMAS_ADMIN.contact.footer_text
-    });
-    if(JSON.stringify(canonical(publicContact))!==JSON.stringify(contactExpected))throw new Error('La lectura pública de contacto no coincide con lo guardado.');
-
+    // Keep the in-memory model aligned with the exact JSON that was persisted.
+    window.CODIMAS_ADMIN.site=sitePayload;
+    window.CODIMAS_ADMIN.contact={...contactPayload};
     syncRaw();
     status('Cambios publicados y verificados en contenido, contacto y lectura pública.','success');
     window.dispatchEvent(new CustomEvent('codimas:cms-saved',{detail:publicCheck.value}));
