@@ -112,3 +112,17 @@ console.log('Editable media fields validated:', allMedia.length);
 console.log('Categories validated:', site.catalog.categories.length);
 console.log('Products with editable image slot:', productCount);
 console.log('Services with editable image slot:', site.catalog.services.length);
+
+/* Production dependency checks */
+['cotizacion.html','seguimiento.html','admin/login.html','admin/dashboard.html','admin/solicitudes.html'].forEach(file => {
+  const html = fs.readFileSync(file, 'utf8');
+  assert(!html.includes('cdn.tailwindcss.com'), file + ' still loads Tailwind CDN in production');
+});
+const configJs = fs.readFileSync('src/js/config.js', 'utf8');
+const adminJs = fs.readFileSync('admin/assets/admin.js', 'utf8');
+const cmsCoreJs = fs.readFileSync('admin/assets/cms-core.js', 'utf8');
+assert(configJs.includes('window.alanpasttSupabase = window.alanpasttSupabase || window.supabase.createClient'), 'Supabase singleton is missing from config.js');
+assert(adminJs.includes('window.alanpasttSupabase ||'), 'Admin login does not reuse the shared Supabase client');
+assert(cmsCoreJs.includes('window.alanpasttSupabase||'), 'CMS core does not reuse the shared Supabase client');
+assert(cmsCoreJs.includes("storageKey:'codimas-public-anon'"), 'Public verification client is not isolated from admin auth storage');
+console.log('Production dependency/auth client checks OK');
