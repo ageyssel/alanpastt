@@ -14,9 +14,17 @@ window.ALANPASTT_CONFIG = {
   quoteAttachmentsBucket: 'quote-attachments'
 };
 
-window.alanpasttSupabase = window.supabase.createClient(
+window.alanpasttSupabase = window.alanpasttSupabase || window.supabase.createClient(
   window.ALANPASTT_CONFIG.SUPABASE_URL,
-  window.ALANPASTT_CONFIG.SUPABASE_ANON_KEY
+  window.ALANPASTT_CONFIG.SUPABASE_ANON_KEY,
+  {
+    auth: {
+      storageKey: 'sb-gpswsmhfrdetvztstnyi-auth-token',
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true
+    }
+  }
 );
 
 // Rebranding visual no destructivo para páginas administrativas heredadas.
