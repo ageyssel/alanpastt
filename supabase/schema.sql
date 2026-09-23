@@ -1,4 +1,4 @@
--- Alanpastt CMS - Schema inicial
+-- Codimas CMS - Schema inicial
 -- Ejecutar en Supabase Dashboard > SQL Editor.
 
 create extension if not exists pgcrypto;
@@ -57,11 +57,11 @@ create table if not exists public.products (
 
 create table if not exists public.contact_settings (
   id int primary key default 1,
-  sales_email text not null default 'ventas@alanpastt.cl',
-  contact_email text not null default 'contacto@alanpastt.cl',
+  sales_email text not null default 'ventas@codimas.cl',
+  contact_email text not null default 'contacto@codimas.cl',
   whatsapp_number text not null default '56933365549',
-  whatsapp_message text not null default 'Hola Alanpastt, me gustaría solicitar una cotización.',
-  footer_text text not null default 'Soluciones Industriales - Santiago, Chile.',
+  whatsapp_message text not null default 'Hola Codimas, me gustaría solicitar una cotización.',
+  footer_text text not null default 'Productos, suministros y soluciones.',
   updated_at timestamptz not null default now(),
   constraint contact_settings_singleton check (id = 1)
 );
@@ -288,11 +288,11 @@ on conflict (key) do update set value = excluded.value;
 insert into public.contact_settings (id, sales_email, contact_email, whatsapp_number, whatsapp_message, footer_text)
 values (
   1,
-  'ventas@alanpastt.cl',
-  'contacto@alanpastt.cl',
+  'ventas@codimas.cl',
+  'contacto@codimas.cl',
   '56933365549',
-  'Hola Alanpastt, me gustaría solicitar una cotización.',
-  'Soluciones Industriales - Santiago, Chile.'
+  'Hola Codimas, me gustaría solicitar una cotización.',
+  'Productos, suministros y soluciones.'
 )
 on conflict (id) do update set
   sales_email = excluded.sales_email,
