@@ -51,6 +51,8 @@ assert(cmsCore.includes('function renderHeroEditor()'), 'Direct hero editor is n
 assert(cmsCore.includes('function heroTitleHTML('), 'Hero title composition is missing');
 assert(cmsCore.includes("h.title_html=heroTitleHTML"), 'Hero title changes do not update CMS model');
 assert(cmsCore.includes("h.image_url=$('#hero-image-url')"), 'Hero image changes do not update CMS model');
+assert(cmsCore.includes("target.id==='hero-image-url'"), 'Hero image upload is not auto-published');
+assert(cmsCore.includes("await saveAll({flushDrafts:false})"), 'Direct CMS image upload does not persist automatically');
 assert(cmsCore.includes("delete homeRest.hero"), 'Technical duplicate hero editor is still rendered');
 
 // Global save must really persist all open editors and verify public readback
