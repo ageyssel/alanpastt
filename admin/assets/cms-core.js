@@ -21,6 +21,51 @@ const isMedia=k=>/(image|logo|favicon).*(_url)?$/i.test(k)||/(_image|_logo)$/i.t
 const isLong=(k,v)=>/text|subtitle|description|title_html|legal_name|credit/i.test(k)||String(v||'').length>100;
 function field(k,v,path){const id=`cms-${path.replace(/[^a-z0-9]+/gi,'-')}`;if(isMedia(k))return `<label class="cms-field"><span>${label(k)}</span><div class="cms-media-field"><input id="${id}" data-cms-path="${path}" type="url" value="${esc(v||'')}" placeholder="URL de imagen"><button type="button" class="cms-upload-btn" data-target-id="${id}">Subir</button><input type="file" class="cms-file-input" data-target-id="${id}" accept="image/png,image/jpeg,image/webp,image/gif"></div>${v?`<img class="cms-media-preview" src="${esc(v)}" alt="Vista previa">`:''}</label>`;if(typeof v==='boolean')return `<label class="cms-field cms-checkbox"><span>${label(k)}</span><input data-cms-path="${path}" type="checkbox" ${v?'checked':''}></label>`;if(isLong(k,v))return `<label class="cms-field"><span>${label(k)}</span><textarea data-cms-path="${path}" rows="${String(v||'').length>180?5:3}">${esc(v||'')}</textarea>${/_html$/.test(k)?'<small>Se permite HTML básico para negritas y saltos.</small>':''}</label>`;const t=/href|url/i.test(k)?'url':/email/i.test(k)?'email':'text';return `<label class="cms-field"><span>${label(k)}</span><input data-cms-path="${path}" type="${t}" value="${esc(v??'')}"></label>`}
 function renderObj(root,obj,base){if(!root)return;root.innerHTML='';Object.entries(obj||{}).forEach(([k,v])=>{const path=`${base}.${k}`;if(Array.isArray(v)){const wrap=document.createElement('div');wrap.className='cms-array-group';wrap.innerHTML=`<div class="cms-array-title"><h3>${label(k)}</h3><span>${v.length} elementos</span></div>`;const body=document.createElement('div');body.className='cms-array-body';v.forEach((item,i)=>{if(isObj(item)){const card=document.createElement('div');card.className='cms-editor-card compact';card.innerHTML=`<div class="cms-item-number">${String(i+1).padStart(2,'0')}</div><div class="cms-form-grid two-cols">${Object.entries(item).map(([ck,cv])=>field(ck,cv,`${path}.${i}.${ck}`)).join('')}</div>`;body.appendChild(card)}});wrap.appendChild(body);root.appendChild(wrap)}else if(isObj(v)){const s=document.createElement('div');s.className='cms-object-group';s.innerHTML=`<div class="cms-subhead"><div><h3>${label(k)}</h3></div></div><div class="cms-form-grid two-cols">${Object.entries(v).map(([ck,cv])=>field(ck,cv,`${path}.${ck}`)).join('')}</div>`;root.appendChild(s)}else root.insertAdjacentHTML('beforeend',field(k,v,path))});bindInputs(root);bindUploads(root)}
+function plainFromHTML(value){const node=document.createElement('div');node.innerHTML=String(value||'');return (node.textContent||'').trim()}
+function splitHeroTitle(value){const html=String(value||'');const match=html.match(/^([\s\S]*?)<strong>([\s\S]*?)<\/strong>([\s\S]*)$/i);if(!match)return{prefix:plainFromHTML(html),strong:''};return{prefix:plainFromHTML(match[1]),strong:plainFromHTML(match[2]+match[3])}}
+function heroTitleHTML(prefix,strong){const first=String(prefix||'').trim(),emphasis=String(strong||'').trim();return [first?esc(first):'',emphasis?`<strong>${esc(emphasis)}</strong>`:''].filter(Boolean).join(' ')}
+function renderHeroPreview(){
+  const prefix=$('#hero-title-prefix')?.value||'',strong=$('#hero-title-strong')?.value||'';
+  if($('#hero-preview-eyebrow'))$('#hero-preview-eyebrow').textContent=$('#hero-eyebrow')?.value||'';
+  if($('#hero-preview-prefix'))$('#hero-preview-prefix').textContent=prefix;
+  if($('#hero-preview-strong'))$('#hero-preview-strong').textContent=strong;
+  if($('#hero-preview-subtitle'))$('#hero-preview-subtitle').textContent=$('#hero-subtitle')?.value||'';
+  const img=$('#hero-preview-image'),url=$('#hero-image-url')?.value||'';
+  if(img){if(url){img.src=url;img.hidden=false}else{img.removeAttribute('src');img.hidden=true}}
+}
+function renderHeroEditor(){
+  const root=$('#hero-main-editor');if(!root||!window.CODIMAS_ADMIN?.site)return;
+  const hero=window.CODIMAS_ADMIN.site.home?.hero||{};
+  const title=splitHeroTitle(hero.title_html);
+  const values={
+    '#hero-eyebrow':hero.eyebrow||'',
+    '#hero-title-prefix':title.prefix||'',
+    '#hero-title-strong':title.strong||'',
+    '#hero-subtitle':hero.subtitle||'',
+    '#hero-image-url':hero.image_url||'',
+    '#hero-primary-text':hero.primary_text||'',
+    '#hero-primary-href':hero.primary_href||'',
+    '#hero-secondary-text':hero.secondary_text||'',
+    '#hero-secondary-href':hero.secondary_href||''
+  };
+  Object.entries(values).forEach(([selector,value])=>{const el=$(selector);if(el)el.value=value});
+  const sync=()=>{
+    const h=window.CODIMAS_ADMIN.site.home.hero;
+    h.eyebrow=$('#hero-eyebrow')?.value||'';
+    h.title_html=heroTitleHTML($('#hero-title-prefix')?.value,$('#hero-title-strong')?.value);
+    h.subtitle=$('#hero-subtitle')?.value||'';
+    h.image_url=$('#hero-image-url')?.value||'';
+    h.primary_text=$('#hero-primary-text')?.value||'';
+    h.primary_href=$('#hero-primary-href')?.value||'';
+    h.secondary_text=$('#hero-secondary-text')?.value||'';
+    h.secondary_href=$('#hero-secondary-href')?.value||'';
+    renderHeroPreview();
+    syncRaw();
+  };
+  ['hero-eyebrow','hero-title-prefix','hero-title-strong','hero-subtitle','hero-image-url','hero-primary-text','hero-primary-href','hero-secondary-text','hero-secondary-href'].forEach(id=>{const el=document.getElementById(id);if(el)el.oninput=sync});
+  bindUploads(root);
+  renderHeroPreview();
+}
 function bindInputs(root=document){$$('[data-cms-path]',root).forEach(el=>el.addEventListener('input',()=>setPath(el.dataset.cmsPath,el.type==='checkbox'?el.checked:el.value)))}
 function fileToDataUrl(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result||''));reader.onerror=()=>reject(new Error('No se pudo leer la imagen seleccionada.'));reader.readAsDataURL(file)})}
 function loadBitmap(file){return new Promise((resolve,reject)=>{const img=new Image();const url=URL.createObjectURL(file);img.onload=()=>{URL.revokeObjectURL(url);resolve(img)};img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error('El archivo seleccionado no es una imagen válida.'))};img.src=url})}
@@ -305,7 +350,7 @@ async function runDiagnostics(){
     throw error
   }finally{if(button)button.disabled=false}
 }
-function renderMainEditors(){const s=window.CODIMAS_ADMIN.site;renderObj($('#editor-global'),s.global,'global');renderObj($('#editor-navigation'),s.navigation,'navigation');renderObj($('#editor-home'),s.home,'home');renderObj($('#editor-quote'),s.quote,'quote');renderObj($('#editor-tracking'),s.tracking,'tracking');syncRaw()}
+function renderMainEditors(){const s=window.CODIMAS_ADMIN.site;renderObj($('#editor-global'),s.global,'global');renderObj($('#editor-navigation'),s.navigation,'navigation');renderHeroEditor();const homeRest=clone(s.home||{});delete homeRest.hero;renderObj($('#editor-home'),homeRest,'home');renderObj($('#editor-quote'),s.quote,'quote');renderObj($('#editor-tracking'),s.tracking,'tracking');syncRaw()}
 function tabs(){$$('.cms-nav-item').forEach(b=>b.addEventListener('click',()=>{const t=b.dataset.tab;$$('.cms-nav-item').forEach(x=>x.classList.toggle('is-active',x===b));$$('.cms-tab').forEach(p=>p.classList.toggle('is-active',p.dataset.panel===t));history.replaceState(null,'',`#${t}`)}));const t=location.hash.replace('#','');if(t)$(`.cms-nav-item[data-tab="${t}"]`)?.click()}
 async function init(){if(window.__CODIMAS_CORE_INIT__)return;window.__CODIMAS_CORE_INIT__=true;if(!await auth())return;const defaults=window.CODIMAS_CMS_DEFAULTS();const {data,error}=await sb.from('site_content').select('value').eq('key','cms_site').maybeSingle();if(error){status(`No se pudo cargar: ${error.message}`,'error');return}const legacySite=hasLegacyEmails(data?.value);const site=normalizeSite(data?.value?merge(defaults,data.value):defaults,defaults);window.CODIMAS_ADMIN={site,contact:null,sb,publicSb,bucket,clone,escapeHTML:esc,status,upload,bindUploads,syncRaw,saveAll,runDiagnostics,renderMainEditors};if(!data?.value||legacySite){const seeded=await sb.from('site_content').upsert([{key:'cms_site',value:site}],{onConflict:'key'});if(seeded.error){status(`No se pudo migrar el contenido: ${seeded.error.message}`,'error');console.warn(seeded.error)}else if(legacySite)console.info('[Codimas CMS] Correos del contenido migrados a @codimas.cl')}renderMainEditors();await loadContact();tabs();$('#save-all').addEventListener('click',()=>saveAll().catch(console.error));$('#run-diagnostics')?.addEventListener('click',()=>runDiagnostics().catch(()=>{}));$('#apply-json').addEventListener('click',async()=>{try{const parsed=JSON.parse($('#raw-json').value);window.CODIMAS_ADMIN.site=normalizeSite(parsed,window.CODIMAS_CMS_DEFAULTS());renderMainEditors();syncContactInputsFromSite();await saveAll({flushDrafts:false});location.reload()}catch(e){console.error(e);if(!(e&&e.message&&e.message.includes('No se')))status('JSON inválido o no se pudo guardar.','error')}});$('#reset-defaults').addEventListener('click',async()=>{if(!confirm('¿Restaurar todos los contenidos a los valores por defecto?'))return;window.CODIMAS_ADMIN.site=window.CODIMAS_CMS_DEFAULTS();renderMainEditors();syncContactInputsFromSite();try{await saveAll({flushDrafts:false});location.reload()}catch(e){console.error(e)}});$('#logout-btn').addEventListener('click',async()=>{await sb.auth.signOut();location.href='login.html'});window.dispatchEvent(new Event('codimas:admin-core-ready'))}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
