@@ -42,9 +42,16 @@ assert(solicitudesJs.includes("from('admin_profiles')"), 'Solicitudes does not v
   assert(editor.includes('data-tab="' + tab + '"'), 'Missing editor tab: ' + tab);
   assert(editor.includes('data-panel="' + tab + '"'), 'Missing editor panel: ' + tab);
 });
-['editor-global','editor-navigation','editor-home','media-admin-grid','editor-quote','editor-tracking','categories-admin-list','category-products-editor','services-admin-list','brands-editor','contact-sales-email','contact-email','contact-whatsapp','contact-whatsapp-message','contact-footer','raw-json'].forEach(id => {
+['editor-global','editor-navigation','hero-main-editor','hero-eyebrow','hero-title-prefix','hero-title-strong','hero-subtitle','hero-image-url','hero-primary-text','hero-primary-href','hero-secondary-text','hero-secondary-href','editor-home','media-admin-grid','editor-quote','editor-tracking','categories-admin-list','category-products-editor','services-admin-list','brands-editor','contact-sales-email','contact-email','contact-whatsapp','contact-whatsapp-message','contact-footer','raw-json'].forEach(id => {
   assert(editor.includes('id="' + id + '"'), 'Missing editor control: ' + id);
 });
+
+// Direct homepage hero editor
+assert(cmsCore.includes('function renderHeroEditor()'), 'Direct hero editor is not wired');
+assert(cmsCore.includes('function heroTitleHTML('), 'Hero title composition is missing');
+assert(cmsCore.includes("h.title_html=heroTitleHTML"), 'Hero title changes do not update CMS model');
+assert(cmsCore.includes("h.image_url=$('#hero-image-url')"), 'Hero image changes do not update CMS model');
+assert(cmsCore.includes("delete homeRest.hero"), 'Technical duplicate hero editor is still rendered');
 
 // Global save must really persist all open editors and verify public readback
 assert(cmsCore.includes("window.dispatchEvent(new CustomEvent('codimas:before-save'))"), 'Global save does not flush open drafts');
