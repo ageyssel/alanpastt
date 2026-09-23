@@ -9,7 +9,7 @@
   <script src="../src/js/config.js?v=20260923-authfix-1"></script>
   <script src="../src/js/catalog-data.js"></script>
   <script src="../src/js/cms-defaults.js?v=20260923-audit-final-1"></script>
-  <link rel="stylesheet" href="assets/admin.css?v=20260923-prod-1">
+  <link rel="stylesheet" href="assets/admin.css?v=20260923-heroedit-1">
 </head>
 <body data-admin-page class="cms-admin-body">
   <header class="cms-admin-topbar">
@@ -62,6 +62,42 @@
 
       <section class="cms-tab" data-panel="inicio">
         <div class="cms-section-head"><div><p class="cms-kicker">Contenido</p><h2>Página de inicio</h2><p>Todos los textos e imágenes principales del home.</p></div></div>
+
+        <div id="hero-main-editor" class="cms-editor-card cms-hero-editor">
+          <div class="cms-subhead">
+            <div>
+              <p class="cms-kicker">Portada</p>
+              <h3>Hero principal</h3>
+              <p>Edita directamente el bloque grande que aparece al inicio del sitio. No necesitas escribir HTML.</p>
+            </div>
+          </div>
+
+          <div class="cms-hero-editor-layout">
+            <div class="cms-form-grid two-cols">
+              <label class="cms-field span-2"><span>Texto superior</span><input id="hero-eyebrow" type="text" placeholder="Productos, suministros y soluciones"></label>
+              <label class="cms-field"><span>Primera parte del título</span><input id="hero-title-prefix" type="text" placeholder="Todo para"></label>
+              <label class="cms-field"><span>Parte destacada del título</span><input id="hero-title-strong" type="text" placeholder="instalar, construir y mantener."></label>
+              <label class="cms-field span-2"><span>Bajada / descripción</span><textarea id="hero-subtitle" rows="3"></textarea></label>
+              <label class="cms-field span-2"><span>Imagen principal</span><div class="cms-media-field"><input id="hero-image-url" type="url" placeholder="URL de imagen"><button type="button" class="cms-upload-btn" data-target-id="hero-image-url">Cambiar imagen</button><input type="file" class="cms-file-input" data-target-id="hero-image-url" accept="image/png,image/jpeg,image/webp,image/gif"></div></label>
+              <label class="cms-field"><span>Texto botón principal</span><input id="hero-primary-text" type="text"></label>
+              <label class="cms-field"><span>Enlace botón principal</span><input id="hero-primary-href" type="text"></label>
+              <label class="cms-field"><span>Texto botón secundario</span><input id="hero-secondary-text" type="text"></label>
+              <label class="cms-field"><span>Enlace botón secundario</span><input id="hero-secondary-href" type="text"></label>
+            </div>
+
+            <div class="cms-hero-preview" aria-label="Vista previa del hero">
+              <div class="cms-hero-preview-copy">
+                <span id="hero-preview-eyebrow"></span>
+                <h4><span id="hero-preview-prefix"></span> <strong id="hero-preview-strong"></strong></h4>
+                <p id="hero-preview-subtitle"></p>
+              </div>
+              <img id="hero-preview-image" alt="Vista previa de imagen principal">
+            </div>
+          </div>
+        </div>
+
+        <div class="cms-section-divider"></div>
+        <div class="cms-section-head"><div><p class="cms-kicker">Resto del inicio</p><h2>Secciones de la portada</h2><p>Edita beneficios, categorías, banners, productos, empresas, servicios, marcas y contacto.</p></div></div>
         <div id="editor-home"></div>
       </section>
 
@@ -147,6 +183,6 @@
     </main>
   </div>
 
-  <script src="assets/cms-editor.js?v=20260923-audit-final-1"></script>
+  <script src="assets/cms-editor.js?v=20260923-heroedit-1"></script>
 </body>
 </html>
