@@ -256,7 +256,15 @@
       setText('.codimas-section-title', home.contact.title, contact);
       const buttons = $$('.codimas-btn', contact);
       if (buttons[0] && home.contact.primary_text) buttons[0].textContent = home.contact.primary_text;
-      if (buttons[1] && home.contact.secondary_text) buttons[1].textContent = home.contact.secondary_text;
+      if (buttons[1]) {
+        const isMail = (buttons[1].getAttribute('href') || '').startsWith('mailto:');
+        if (isMail && site.global?.sales_email) {
+          buttons[1].href = `mailto:${site.global.sales_email}`;
+          buttons[1].textContent = site.global.sales_email;
+        } else if (home.contact.secondary_text) {
+          buttons[1].textContent = home.contact.secondary_text;
+        }
+      }
     }
   }
 
@@ -406,8 +414,22 @@
 
     if (client) {
       try {
-        const { data, error } = await client.from('site_content').select('value').eq('key', 'cms_site').maybeSingle();
-        if (!error && data?.value) site = migrateLegacyEmails(deepMerge(defaults, data.value));
+        const [{ data: contentData, error: contentError }, { data: contactData, error: contactError }] = await Promise.all([
+          client.from('site_content').select('value').eq('key', 'cms_site').maybeSingle(),
+          client.from('contact_settings').select('sales_email,contact_email,whatsapp_number,whatsapp_message,footer_text').eq('id', 1).maybeSingle()
+        ]);
+        if (!contentError && contentData?.value) site = migrateLegacyEmails(deepMerge(defaults, contentData.value));
+        if (!contactError && contactData) {
+          site.global = site.global || {};
+          if (contactData.sales_email) site.global.sales_email = contactData.sales_email;
+          if (contactData.contact_email) site.global.contact_email = contactData.contact_email;
+          if (contactData.whatsapp_number) {
+            site.global.whatsapp = String(contactData.whatsapp_number).replace(/\D/g, '');
+            site.global.phone = '+' + site.global.whatsapp;
+          }
+          if (contactData.whatsapp_message) site.global.whatsapp_message = contactData.whatsapp_message;
+          if (contactData.footer_text) site.global.tagline = contactData.footer_text;
+        }
       } catch (error) {
         console.warn('CMS público: usando contenido local.', error);
       }
