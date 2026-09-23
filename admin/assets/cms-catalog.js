@@ -17,7 +17,27 @@ function listServices(){const root=$('#services-admin-list');if(!root)return;con
 function editService(i){activeServiceIndex=i;const s=app().site.catalog.services[i]||{};$('#service-index').value=String(i);$('#service-title').value=s.title||'';$('#service-text').value=s.text||'';$('#service-image').value=s.image_url||'';listServices()}
 function newService(){activeServiceIndex=null;$('#service-index').value='';$('#service-title').value='';$('#service-text').value='';$('#service-image').value='';listServices()}
 async function saveService(){const s={title:$('#service-title').value.trim(),text:$('#service-text').value.trim(),image_url:$('#service-image').value.trim()};if(!s.title){app().status('El servicio necesita título.','error');return}if(activeServiceIndex===null){app().site.catalog.services.push(s);activeServiceIndex=app().site.catalog.services.length-1}else app().site.catalog.services[activeServiceIndex]=s;listServices();app().syncRaw();try{await app().saveAll();app().status('Servicio guardado, publicado y verificado.','success')}catch(error){console.error('[Codimas CMS] No se pudo publicar el servicio:',error)}}
-async function deleteService(){if(activeServiceIndex===null)return;if(!confirm('¿Eliminar este servicio?'))return;const backup=app().clone(app().site.catalog.services);app().site.catalog.services.splice(activeServiceIndex,1);newService();listServices();app().syncRaw();try{await app().saveAll();app().status('Servicio eliminado y cambio publicado.','success')}catch(error){app().site.catalog.services=backup;listServices();console.error('[Codimas CMS] No se pudo eliminar el servicio:',error)}}
-function init(){if(initialized||!app())return;initialized=true;listCategories();if(app().site.catalog.categories.length)editCategory(0);else newCategory();listServices();if(app().site.catalog.services.length)editService(0);else newService();$('#brands-editor').value=(app().site.catalog.brands||[]).map(b=>typeof b==='string'?b:b.name).join('\n');$('#add-category').addEventListener('click',newCategory);$('#save-category').addEventListener('click',()=>saveCategory());$('#delete-category').addEventListener('click',()=>deleteCategory());$('#add-category-product').addEventListener('click',()=>{const c=categoryDraft();c.featuredProducts.push({name:'',brand:'',code:'',spec:'',unit:'',image_url:''});fillCategory(c)});$('#add-service').addEventListener('click',newService);$('#save-service').addEventListener('click',()=>saveService());$('#delete-service').addEventListener('click',()=>deleteService());app().bindUploads(document)}
+async function flushOpenDrafts(){
+  if(activeCategoryIndex!==null){
+    const draft=categoryDraft();
+    if(draft.title&&draft.slug)app().site.catalog.categories[activeCategoryIndex]=draft;
+  }else{
+    const draft=categoryDraft();
+    if(draft.title&&draft.slug){
+      const duplicate=app().site.catalog.categories.some(item=>item.slug===draft.slug);
+      if(!duplicate){app().site.catalog.categories.push(draft);activeCategoryIndex=app().site.catalog.categories.length-1}
+    }
+  }
+  if(activeServiceIndex!==null){
+    const draft={title:$('#service-title').value.trim(),text:$('#service-text').value.trim(),image_url:$('#service-image').value.trim()};
+    if(draft.title)app().site.catalog.services[activeServiceIndex]=draft;
+  }else{
+    const draft={title:$('#service-title').value.trim(),text:$('#service-text').value.trim(),image_url:$('#service-image').value.trim()};
+    if(draft.title){app().site.catalog.services.push(draft);activeServiceIndex=app().site.catalog.services.length-1}
+  }
+  app().syncRaw();
+}
+function deleteService(){if(activeServiceIndex===null)return;if(!confirm('¿Eliminar este servicio?'))return;const backup=app().clone(app().site.catalog.services);app().site.catalog.services.splice(activeServiceIndex,1);newService();listServices();app().syncRaw();try{await app().saveAll();app().status('Servicio eliminado y cambio publicado.','success')}catch(error){app().site.catalog.services=backup;listServices();console.error('[Codimas CMS] No se pudo eliminar el servicio:',error)}}
+function init(){if(initialized||!app())return;initialized=true;window.addEventListener('codimas:before-save',flushOpenDrafts);listCategories();if(app().site.catalog.categories.length)editCategory(0);else newCategory();listServices();if(app().site.catalog.services.length)editService(0);else newService();$('#brands-editor').value=(app().site.catalog.brands||[]).map(b=>typeof b==='string'?b:b.name).join('\n');$('#add-category').addEventListener('click',newCategory);$('#save-category').addEventListener('click',()=>saveCategory());$('#delete-category').addEventListener('click',()=>deleteCategory());$('#add-category-product').addEventListener('click',()=>{const c=categoryDraft();c.featuredProducts.push({name:'',brand:'',code:'',spec:'',unit:'',image_url:''});fillCategory(c)});$('#add-service').addEventListener('click',newService);$('#save-service').addEventListener('click',()=>saveService());$('#delete-service').addEventListener('click',()=>deleteService());app().bindUploads(document)}
 if(window.CODIMAS_ADMIN)init();else window.addEventListener('codimas:admin-core-ready',init,{once:true});
 })();
