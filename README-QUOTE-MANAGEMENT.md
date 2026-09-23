@@ -1,4 +1,4 @@
-# Alanpastt - Gestión de solicitudes
+# Codimas - Gestión de solicitudes
 
 ## Archivos creados/actualizados
 
@@ -17,10 +17,10 @@
 
 ```bash
 supabase secrets set RESEND_API_KEY="re_xxx"
-supabase secrets set FROM_EMAIL="Alanpastt <cotizaciones@alanpastt.cl>"
-supabase secrets set SALES_EMAIL="ventas@alanpastt.cl"
-supabase secrets set SITE_URL="https://www.alanpastt.cl"
-supabase secrets set LOGO_URL="https://www.alanpastt.cl/public/images/logo.png"
+supabase secrets set FROM_EMAIL="Codimas SpA <ventas@codimas.cl>"
+supabase secrets set SALES_EMAIL="ventas@codimas.cl"
+supabase secrets set SITE_URL="https://codimas.cl"
+supabase secrets set LOGO_URL="https://codimas.cl/public/images/codimas-logo.svg"
 ```
 
 4. Desplegar la función:
