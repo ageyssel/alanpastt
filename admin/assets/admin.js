@@ -10,7 +10,7 @@
     throw new Error('Falta configurar Supabase URL o Supabase anon key en src/js/config.js');
   }
 
-  const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+  const supabaseClient = window.alanpasttSupabase || (window.alanpasttSupabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey));
   const bucket = config.storageBucket || 'alanpastt-assets';
 
   const $ = (selector) => document.querySelector(selector);
