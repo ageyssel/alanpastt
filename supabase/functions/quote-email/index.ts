@@ -24,6 +24,18 @@ function jsonResponse(body: unknown, status = 200) {
   });
 }
 
+function safeCodimasEmail(value: string | undefined, fallback: string) {
+  const candidate = String(value || '').trim();
+  if (!candidate || /@alanpastt\.cl/i.test(candidate)) return fallback;
+  return candidate;
+}
+
+function safeCodimasUrl(value: string | undefined, fallback: string) {
+  const candidate = String(value || '').trim();
+  if (!candidate || /alanpastt\.cl/i.test(candidate)) return fallback;
+  return candidate.replace(/\/$/, '');
+}
+
 function escapeHtml(value = '') {
   return value
     .replaceAll('&', '&amp;')
@@ -34,8 +46,9 @@ function escapeHtml(value = '') {
 }
 
 function emailLayout(title: string, content: string) {
-  const siteUrl = Deno.env.get('SITE_URL') || 'https://www.codimas.cl';
-  const logoUrl = Deno.env.get('LOGO_URL') || `${siteUrl}/public/images/codimas-logo.svg`;
+  const siteUrl = safeCodimasUrl(Deno.env.get('SITE_URL'), 'https://codimas.cl');
+  const logoSecret = Deno.env.get('LOGO_URL');
+  const logoUrl = logoSecret && !/alanpastt\.cl/i.test(logoSecret) ? logoSecret : `${siteUrl}/public/images/codimas-logo.svg`;
 
   return `
   <!doctype html>
@@ -76,7 +89,7 @@ function emailLayout(title: string, content: string) {
 
 async function sendEmail(to: string | string[], subject: string, html: string) {
   const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
-  const FROM_EMAIL = Deno.env.get('FROM_EMAIL') || 'Codimas SpA <ventas@codimas.cl>';
+  const FROM_EMAIL = safeCodimasEmail(Deno.env.get('FROM_EMAIL'), 'Codimas SpA <ventas@codimas.cl>');
 
   if (!RESEND_API_KEY) {
     throw new Error('Falta RESEND_API_KEY en Supabase secrets');
@@ -123,8 +136,8 @@ Deno.serve(async (req) => {
 
   const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
   const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || JSON.parse(Deno.env.get('SUPABASE_SECRET_KEYS') || '{}')?.default;
-  const SALES_EMAIL = Deno.env.get('SALES_EMAIL') || 'ventas@codimas.cl';
-  const SITE_URL = Deno.env.get('SITE_URL') || 'https://www.codimas.cl';
+  const SALES_EMAIL = safeCodimasEmail(Deno.env.get('SALES_EMAIL'), 'ventas@codimas.cl');
+  const SITE_URL = safeCodimasUrl(Deno.env.get('SITE_URL'), 'https://codimas.cl');
 
   if (!SERVICE_ROLE_KEY) return jsonResponse({ error: 'Falta service role key en secrets' }, 500);
 
