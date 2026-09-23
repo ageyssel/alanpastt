@@ -6,6 +6,13 @@
   const isObject = (value) => value && typeof value === 'object' && !Array.isArray(value);
   const assetUrl = (value) => typeof value === 'string' && value.startsWith('public/') ? `/${value}` : value;
 
+  function migrateLegacyEmails(value) {
+    if (typeof value === 'string') return value.replace(/([A-Z0-9._%+-]+)@alanpastt\.cl/gi, '$1@codimas.cl');
+    if (Array.isArray(value)) return value.map(migrateLegacyEmails);
+    if (isObject(value)) return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, migrateLegacyEmails(item)]));
+    return value;
+  }
+
   function deepMerge(base, override) {
     if (!isObject(base)) return override === undefined ? base : override;
     const output = { ...base };
@@ -400,12 +407,13 @@
     if (client) {
       try {
         const { data, error } = await client.from('site_content').select('value').eq('key', 'cms_site').maybeSingle();
-        if (!error && data?.value) site = deepMerge(defaults, data.value);
+        if (!error && data?.value) site = migrateLegacyEmails(deepMerge(defaults, data.value));
       } catch (error) {
         console.warn('CMS público: usando contenido local.', error);
       }
     }
 
+    site = migrateLegacyEmails(site);
     site.global = site.global || {};
     ['logo_url', 'logo_negative_url', 'favicon_url'].forEach((key) => {
       if (site.global[key]) site.global[key] = assetUrl(site.global[key]);
@@ -424,6 +432,6 @@
     return site;
   }
 
-  window.CODIMAS_CMS_API = { deepMerge, applyGlobal, applyMediaBindings, applyHome, applyQuote, applyTracking };
+  window.CODIMAS_CMS_API = { deepMerge, migrateLegacyEmails, applyGlobal, applyMediaBindings, applyHome, applyQuote, applyTracking };
   window.CODIMAS_CMS_READY = loadSite();
 })();
