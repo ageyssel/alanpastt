@@ -76,7 +76,7 @@ function emailLayout(title: string, content: string) {
 
 async function sendEmail(to: string | string[], subject: string, html: string) {
   const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
-  const FROM_EMAIL = Deno.env.get('FROM_EMAIL') || 'Codimas SpA <cotizaciones@codimas.cl>';
+  const FROM_EMAIL = Deno.env.get('FROM_EMAIL') || 'Codimas SpA <ventas@codimas.cl>';
 
   if (!RESEND_API_KEY) {
     throw new Error('Falta RESEND_API_KEY en Supabase secrets');
