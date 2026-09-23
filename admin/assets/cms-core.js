@@ -79,7 +79,7 @@ function bindUploads(root=document){$$('.cms-upload-btn',root).forEach(btn=>{if(
 function syncRaw(){const el=$('#raw-json');if(el&&window.CODIMAS_ADMIN?.site)el.value=JSON.stringify(window.CODIMAS_ADMIN.site,null,2)}
 async function auth(){const {data}=await sb.auth.getSession();if(!data.session){location.href='login.html';return null}const {data:profile}=await sb.from('admin_profiles').select('role').eq('user_id',data.session.user.id).maybeSingle();if(!profile||profile.role!=='admin'){await sb.auth.signOut();location.href='login.html';return null}$('#user-email').textContent=data.session.user.email||'';return data.session}
 async function loadContact(){const {data,error}=await sb.from('contact_settings').select('*').eq('id',1).maybeSingle();if(error)throw error;const fallback={id:1,sales_email:window.CODIMAS_ADMIN.site.global.sales_email||'ventas@codimas.cl',contact_email:'contacto@codimas.cl',whatsapp_number:window.CODIMAS_ADMIN.site.global.whatsapp||'',whatsapp_message:'Hola Codimas, me gustaría solicitar una cotización.',footer_text:window.CODIMAS_ADMIN.site.global.tagline||''};const raw=data||fallback;const migrated=migrateLegacyEmails(raw);if(data&&hasLegacyEmails(data)){const {error:migrationError}=await sb.from('contact_settings').upsert([migrated],{onConflict:'id'});if(migrationError)throw migrationError;console.info('[Codimas CMS] Contactos migrados a @codimas.cl');}window.CODIMAS_ADMIN.contact=migrated;const c=window.CODIMAS_ADMIN.contact;$('#contact-sales-email').value=c.sales_email||'';$('#contact-email').value=c.contact_email||'';$('#contact-whatsapp').value=c.whatsapp_number||'';$('#contact-whatsapp-message').value=c.whatsapp_message||'';$('#contact-footer').value=c.footer_text||''}
-function collectContact(){const c={id:1,sales_email:$('#contact-sales-email').value.trim(),contact_email:$('#contact-email').value.trim(),whatsapp_number:$('#contact-whatsapp').value.replace(/\D/g,''),whatsapp_message:$('#contact-whatsapp-message').value.trim(),footer_text:$('#contact-footer').value.trim()};window.CODIMAS_ADMIN.contact=c;const s=window.CODIMAS_ADMIN.site;s.global.sales_email=c.sales_email||s.global.sales_email;s.global.whatsapp=c.whatsapp_number||s.global.whatsapp;if(c.whatsapp_number)s.global.phone=`+${c.whatsapp_number}`}
+function collectContact(){const c={id:1,sales_email:$('#contact-sales-email').value.trim(),contact_email:$('#contact-email').value.trim(),whatsapp_number:$('#contact-whatsapp').value.replace(/\D/g,''),whatsapp_message:$('#contact-whatsapp-message').value.trim(),footer_text:$('#contact-footer').value.trim()};window.CODIMAS_ADMIN.contact=c;const s=window.CODIMAS_ADMIN.site;s.global=s.global||{};s.global.sales_email=c.sales_email||s.global.sales_email;s.global.contact_email=c.contact_email||s.global.contact_email;s.global.whatsapp=c.whatsapp_number||s.global.whatsapp;s.global.whatsapp_message=c.whatsapp_message||s.global.whatsapp_message;if(c.whatsapp_number)s.global.phone=`+${c.whatsapp_number}`;if(c.footer_text)s.global.tagline=c.footer_text;if(s.home?.contact&&c.sales_email&&/@/.test(s.home.contact.secondary_text||''))s.home.contact.secondary_text=c.sales_email}
 async function saveAll(){
   collectContact();
   if($('#brands-editor'))window.CODIMAS_ADMIN.site.catalog.brands=$('#brands-editor').value.split('\n').map(v=>v.trim()).filter(Boolean);
@@ -97,8 +97,13 @@ async function saveAll(){
   if(e4||!publicCheck?.value){const err=e4||new Error('El sitio público no puede leer el CMS.');status('Guardado correcto, pero la lectura pública del CMS falló. Revisa RLS.', 'error');throw err}
   const publicActual=JSON.stringify(canonical(publicCheck.value));
   if(publicActual!==expected){const err=new Error('La lectura pública no coincide con lo guardado.');status('El CMS se guardó, pero la versión pública todavía no coincide.', 'error');throw err}
+  const {data:publicContact,error:e5}=await publicSb.from('contact_settings').select('sales_email,contact_email,whatsapp_number,whatsapp_message,footer_text').eq('id',1).maybeSingle();
+  if(e5||!publicContact){const err=e5||new Error('El sitio público no puede leer contact_settings.');status('El contenido se guardó, pero la lectura pública de contacto falló.', 'error');throw err}
+  const contactExpected=canonical({sales_email:window.CODIMAS_ADMIN.contact.sales_email,contact_email:window.CODIMAS_ADMIN.contact.contact_email,whatsapp_number:window.CODIMAS_ADMIN.contact.whatsapp_number,whatsapp_message:window.CODIMAS_ADMIN.contact.whatsapp_message,footer_text:window.CODIMAS_ADMIN.contact.footer_text});
+  const contactActual=canonical(publicContact);
+  if(JSON.stringify(contactActual)!==JSON.stringify(contactExpected)){const err=new Error('Los datos públicos de contacto no coinciden con lo guardado.');status('El contacto se guardó, pero la lectura pública todavía no coincide.', 'error');throw err}
   syncRaw();
-  status('Cambios publicados y verificados también como visitante público.','success');
+  status('Cambios publicados y verificados en contenido, contacto y lectura pública.','success');
   window.dispatchEvent(new CustomEvent('codimas:cms-saved',{detail:publicCheck.value}));
   return true
 }
@@ -123,8 +128,12 @@ async function runDiagnostics(){
   try{
     const {data:adminRead,error:aerr}=await sb.from('site_content').select('value').eq('key','cms_site').maybeSingle();
     if(aerr||!adminRead?.value)throw aerr||new Error('No se puede leer cms_site como administrador.');
-    const {data:publicRead,error:perr}=await publicSb.from('site_content').select('value').eq('key','cms_site').maybeSingle();
+    const [{data:publicRead,error:perr},{data:publicContact,error:pcerr}]=await Promise.all([
+      publicSb.from('site_content').select('value').eq('key','cms_site').maybeSingle(),
+      publicSb.from('contact_settings').select('sales_email,contact_email,whatsapp_number,whatsapp_message,footer_text').eq('id',1).maybeSingle()
+    ]);
     if(perr||!publicRead?.value)throw perr||new Error('RLS impide leer cms_site como visitante.');
+    if(pcerr||!publicContact)throw pcerr||new Error('RLS impide leer contact_settings como visitante.');
     const media=mediaPaths(window.CODIMAS_ADMIN.site);
     const required=['global.logo_url','global.logo_negative_url','global.favicon_url','home.hero.image_url','home.promos.0.image_url','home.promos.1.image_url','home.enterprise.image_url','quote.hero_image_url','tracking.hero_image_url'];
     const paths=new Set(media.map(item=>item.path));
