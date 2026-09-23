@@ -41,8 +41,15 @@ function collect(value,path='',out=[]){
 }
 function esc(v=''){return app().escapeHTML(v)}
 async function publishPath(path,value){
+  const previous=path.split('.').reduce((cursor,key)=>cursor?.[key],app().site);
   setAt(path,value);
-  await app().saveAll();
+  try{
+    await app().saveAll();
+    return true;
+  }catch(error){
+    setAt(path,previous??'');
+    throw error;
+  }
 }
 function render(){
   const root=$('#media-admin-grid');if(!root)return;
@@ -86,8 +93,9 @@ function render(){
       render();
       app().status('Imagen publicada y verificada correctamente.','success');
     }catch(error){
-      console.error(error);
+      console.error('[Codimas CMS] Error al publicar imagen:',error);
       app().status(`No se pudo publicar la imagen: ${error.message||'error desconocido'}`,'error');
+      alert(`No se pudo cambiar la imagen.\n\n${error.message||'Error desconocido'}`);
     }finally{input.value=''}
   }));
 
@@ -99,7 +107,11 @@ function render(){
       await publishPath(button.dataset.mediaPublish,input?.value.trim()||'');
       render();
       app().status('URL publicada y verificada correctamente.','success');
-    }catch(error){console.error(error)}
+    }catch(error){
+      console.error('[Codimas CMS] Error al publicar URL de imagen:',error);
+      app().status(`No se pudo publicar la URL: ${error.message||'error desconocido'}`,'error');
+      alert(`No se pudo publicar la imagen.\n\n${error.message||'Error desconocido'}`);
+    }
   }));
 
   const count=$('#media-count');if(count)count.textContent=String(media.length);
