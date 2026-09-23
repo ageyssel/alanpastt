@@ -122,6 +122,75 @@ async function verifyImage(url,timeout=8000){
     img.src=/^(data:|blob:)/i.test(url)?url:url+(url.includes('?')?'&':'?')+'cmscheck='+Date.now();
   })
 }
+async function runQuoteModuleDiagnostics(){
+  const session=await assertAdminSession();
+  const stamp=Date.now().toString(36).toUpperCase();
+  const trackingCode=`COD-HEALTH-${stamp}`;
+  const email='healthcheck@codimas.cl';
+  let quoteId=null,responseId=null,attachmentId=null,storagePath=null;
+  try{
+    const {data:quote,error:quoteError}=await sb.from('cotizaciones_entrantes').insert({
+      tracking_code:trackingCode,
+      nombre:'Diagnóstico Codimas',
+      email,
+      telefono:'+56900000000',
+      empresa:'Codimas · prueba automática',
+      mensaje:'Registro temporal creado por Verificar sistema.',
+      estado:'Nueva'
+    }).select('id,tracking_code,estado').single();
+    if(quoteError||!quote)throw quoteError||new Error('No se pudo crear solicitud de diagnóstico.');
+    quoteId=quote.id;
+
+    for(const estado of ['En revisión','Cotizando','Respondida','Cerrada']){
+      const {error}=await sb.from('cotizaciones_entrantes').update({estado,internal_notes:'Diagnóstico automático'}).eq('id',quoteId);
+      if(error)throw new Error(`No se pudo aplicar el estado "${estado}": ${error.message}`);
+    }
+
+    const {data:response,error:responseError}=await sb.from('quote_responses').insert({
+      quote_id:quoteId,
+      subject:'Diagnóstico interno',
+      body:'Respuesta temporal para validar el módulo administrativo.',
+      sent_to:email,
+      sent_by:session.user.id,
+      attachment_ids:[]
+    }).select('id').single();
+    if(responseError||!response)throw responseError||new Error('No se pudo escribir en quote_responses.');
+    responseId=response.id;
+
+    storagePath=`${quoteId}/healthcheck-${stamp}.txt`;
+    const testFile=new Blob(['Codimas admin health check'],{type:'text/plain'});
+    const {error:storageError}=await sb.storage.from('quote-attachments').upload(storagePath,testFile,{upsert:false,cacheControl:'60'});
+    if(storageError)throw new Error('No se pudo escribir en quote-attachments Storage: '+storageError.message);
+
+    const {data:attachment,error:attachmentError}=await sb.from('quote_attachments').insert({
+      quote_id:quoteId,
+      file_name:'healthcheck.txt',
+      file_path:storagePath,
+      file_type:'text/plain',
+      file_size:testFile.size,
+      uploaded_by:session.user.id
+    }).select('id').single();
+    if(attachmentError||!attachment)throw attachmentError||new Error('No se pudo escribir en quote_attachments.');
+    attachmentId=attachment.id;
+
+    const {data:tracking,error:trackingError}=await publicSb.rpc('get_quote_tracking',{
+      p_tracking_code:trackingCode,
+      p_email:email
+    });
+    if(trackingError)throw new Error('RPC de seguimiento falló: '+trackingError.message);
+    if(!tracking?.found)throw new Error('El seguimiento público no encontró la solicitud temporal.');
+    if(tracking.quote?.estado!=='Cerrada')throw new Error('El seguimiento público no reflejó el último estado.');
+    if(!(tracking.responses||[]).some(item=>item.subject==='Diagnóstico interno'))throw new Error('El seguimiento público no reflejó la respuesta temporal.');
+    if(!(tracking.attachments||[]).some(item=>item.file_name==='healthcheck.txt'))throw new Error('El seguimiento público no reflejó el adjunto temporal.');
+
+    return {ok:true};
+  }finally{
+    if(attachmentId)await sb.from('quote_attachments').delete().eq('id',attachmentId);
+    if(storagePath)await sb.storage.from('quote-attachments').remove([storagePath]);
+    if(responseId)await sb.from('quote_responses').delete().eq('id',responseId);
+    if(quoteId)await sb.from('cotizaciones_entrantes').delete().eq('id',quoteId);
+  }
+}
 async function runDiagnostics(){
   const button=$('#run-diagnostics'),panel=$('#diagnostics-result');
   if(button)button.disabled=true;
@@ -146,20 +215,7 @@ async function runDiagnostics(){
       footer_text:publicContact.footer_text
     }).eq('id',1);
     if(contactWriteError)throw new Error('No se puede escribir contact_settings: '+contactWriteError.message);
-    const {error:quotesError}=await sb.from('cotizaciones_entrantes').select('id,tracking_code,estado,internal_notes,last_response_at').limit(1);
-    if(quotesError)throw new Error('Módulo solicitudes no está operativo: '+quotesError.message);
-    const [{error:attachmentsError},{error:responsesError}]=await Promise.all([
-      sb.from('quote_attachments').select('id,quote_id,file_name,file_path').limit(1),
-      sb.from('quote_responses').select('id,quote_id,subject,sent_to').limit(1)
-    ]);
-    if(attachmentsError)throw new Error('Módulo de adjuntos no está operativo: '+attachmentsError.message);
-    if(responsesError)throw new Error('Módulo de respuestas no está operativo: '+responsesError.message);
-    const {data:trackingHealth,error:trackingError}=await publicSb.rpc('get_quote_tracking',{
-      p_tracking_code:'COD-HEALTHCHECK-NOTFOUND',
-      p_email:'healthcheck@codimas.cl'
-    });
-    if(trackingError)throw new Error('Seguimiento público no está operativo: '+trackingError.message);
-    if(!trackingHealth||trackingHealth.found!==false)throw new Error('Seguimiento público devolvió una respuesta inesperada.');
+    await runQuoteModuleDiagnostics();
     const media=mediaPaths(window.CODIMAS_ADMIN.site);
     const required=['global.logo_url','global.logo_negative_url','global.favicon_url','home.hero.image_url','home.promos.0.image_url','home.promos.1.image_url','home.enterprise.image_url','quote.hero_image_url','tracking.hero_image_url'];
     const paths=new Set(media.map(item=>item.path));
@@ -179,7 +235,7 @@ async function runDiagnostics(){
     const failed=sample.filter((_,i)=>!checks[i].ok);
     if(panel){
       panel.className='cms-diagnostics is-success';
-      panel.innerHTML=`<strong>Validación completa aprobada.</strong><span>Autenticación admin OK · CMS lectura/escritura OK · contacto público OK · solicitudes/adjuntos/respuestas OK · seguimiento público OK · Storage lectura/escritura OK · ${media.length} campos de imagen editables · ${sample.length} imágenes verificadas${failed.length?` · ${failed.length} URL externas no respondieron al test de carga`:''}.</span>`;
+      panel.innerHTML=`<strong>Validación completa aprobada.</strong><span>Autenticación admin OK · CMS lectura/escritura OK · contacto público OK · solicitudes/estados/notas OK · respuestas/adjuntos OK · seguimiento público OK · ambos Storage OK · ${media.length} campos de imagen editables · ${sample.length} imágenes verificadas${failed.length?` · ${failed.length} URL externas no respondieron al test de carga`:''}.</span>`;
     }
     status('Validación del CMS completada correctamente.','success');
     return {mediaCount:media.length,failedImages:failed.map(item=>item.path)}
