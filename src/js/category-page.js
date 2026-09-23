@@ -82,6 +82,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const heroImage = imageFor(category);
   const related = categories.filter((item) => item.slug !== category.slug && item.world === category.world).slice(0, 4);
   const global = site?.global || {};
+  const favicon = document.querySelector('link[rel*="icon"]');
+  if (favicon && global.favicon_url) favicon.href = resolveAsset(global.favicon_url);
   const nav = site?.navigation || {};
   const ui = site?.category_page || {};
 
