@@ -11,7 +11,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
     return {
       categoria: params.get('categoria') || '',
-      producto: params.get('producto') || ''
+      producto: params.get('producto') || '',
+      tipo: params.get('tipo') || '',
+      servicio: params.get('servicio') || '',
+      busqueda: params.get('busqueda') || ''
     };
   }
 
@@ -21,6 +24,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (params.categoria) lines.push(`Categoría de interés: ${params.categoria}`);
     if (params.producto) lines.push(`Producto / línea consultada: ${params.producto}`);
+    if (params.tipo) lines.push(`Tipo de solicitud: ${params.tipo}`);
+    if (params.servicio) lines.push(`Servicio consultado: ${params.servicio}`);
+    if (params.busqueda) lines.push(`Búsqueda realizada: ${params.busqueda}`);
 
     if (items.length) {
       lines.push('');
@@ -56,7 +62,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (emptyRoot) emptyRoot.classList.toggle('hidden', items.length > 0);
 
     const params = getParams();
-    if (categorySelect && params.categoria) categorySelect.value = params.categoria;
+    if (categorySelect && params.categoria) {
+      const exists = Array.from(categorySelect.options).some((option) => option.value === params.categoria);
+      if (exists) categorySelect.value = params.categoria;
+    }
 
     if (textarea && context && !textarea.value.trim()) {
       textarea.value = `Hola, necesito cotizar lo siguiente:\n\n${context}\n\nCantidad / medidas / comuna de entrega:`;
