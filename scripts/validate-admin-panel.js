@@ -150,7 +150,12 @@ function walk(dir) {
 }
 walk('.');
 htmlFiles.forEach(file => {
-  assert(!read(file).includes('cdn.tailwindcss.com'), 'Tailwind CDN remains in production HTML: ' + file);
+  const html = read(file);
+  assert(!html.includes('cdn.tailwindcss.com'), 'Tailwind CDN remains in production HTML: ' + file);
+  const googleTagMatches = html.match(/AW-18475369331/g) || [];
+  assert(googleTagMatches.length === 2, 'Google Ads tag must appear exactly once (loader + config) in production HTML: ' + file);
+  assert(html.includes('https://www.googletagmanager.com/gtag/js?id=AW-18475369331'), 'Google Ads loader missing in production HTML: ' + file);
+  assert(html.includes("gtag('config', 'AW-18475369331')"), 'Google Ads config missing in production HTML: ' + file);
 });
 
 // Redirect compatibility pages
